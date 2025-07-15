@@ -11,14 +11,14 @@ export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const interval = setInterval(() => {
+    setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+  }, 5000);
+  return () => clearInterval(interval);
+}, []);
 
-  // === COUNTER LOGIC ===
-  useEffect(() => {
+useEffect(() => {
+  const tryInitCountUp = () => {
     if (typeof window !== "undefined" && (window as any).CountUp) {
       const { CountUp } = (window as any);
 
@@ -52,10 +52,16 @@ export default function Home() {
         { threshold: 0.6 }
       );
 
-      const targetSection = document.getElementById("stats-section");
-      if (targetSection) observer.observe(targetSection);
+      const statSection = document.getElementById("stats-section");
+      if (statSection) observer.observe(statSection);
+    } else {
+      // If CountUp is not ready, try again shortly
+      setTimeout(tryInitCountUp, 200);
     }
-  }, []);
+  };
+
+  tryInitCountUp();
+}, []);
 
   return (
     <>
