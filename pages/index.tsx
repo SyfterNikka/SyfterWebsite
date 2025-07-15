@@ -202,13 +202,6 @@ export default function Home() {
           </blockquote>
         </section>
 
-        {/* CTA */}
-        <section id="contact" className="bg-blue-600 text-white py-16 text-center px-6">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-          <p className="mb-6 text-lg">Let Syfter help you find the right match — fast.</p>
-          <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Get Started</button>
-        </section>
-
         {/* Footer with image */}
         <section
           className="relative text-white text-center py-20 bg-cover bg-center"
