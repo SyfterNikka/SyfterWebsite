@@ -1,31 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
-// === Bulletproof CDN script loader for CountUp ===
-function useScript(src: string) {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-      setLoaded(true);
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.onload = () => setLoaded(true);
-    document.head.appendChild(script);
-
-    return () => {
-      script.remove();
-    };
-  }, [src]);
-
-  return loaded;
-}
-
 export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
@@ -35,10 +10,7 @@ export default function Home() {
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
-  // Load CountUp.js via CDN
-  const countupLoaded = useScript("https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.6.2/countUp.umd.min.js");
-
-  // Rotate testimonial every 5s
+  // Rotate testimonial every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -46,34 +18,29 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Trigger counter when in view
+  // Animate counter when stats section is in view
   useEffect(() => {
-    if (!countupLoaded || typeof window === "undefined") return;
+    const animateCount = (id: string, end: number, suffix = "") => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      let start = 0;
+      const duration = 2000;
+      const stepTime = Math.max(Math.floor(duration / end), 20);
 
-    const { CountUp } = (window as any);
-    const counters = [
-      { id: "counter1", end: 1200 },
-      { id: "counter2", end: 5 },
-      { id: "counter3", end: 92, suffix: "%" },
-    ];
+      const timer = setInterval(() => {
+        start++;
+        el.textContent = `${start}${suffix}`;
+        if (start >= end) clearInterval(timer);
+      }, stepTime);
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            counters.forEach(({ id, end, suffix }) => {
-              const el = document.getElementById(id);
-              if (el && !el.classList.contains("counted")) {
-                const countUp = new CountUp(id, end, {
-                  suffix: suffix || "",
-                  duration: 2,
-                });
-                if (!countUp.error) {
-                  countUp.start();
-                  el.classList.add("counted");
-                }
-              }
-            });
+            animateCount("counter1", 1200);
+            animateCount("counter2", 5);
+            animateCount("counter3", 92, "%");
             observer.disconnect();
           }
         });
@@ -81,9 +48,9 @@ export default function Home() {
       { threshold: 0.6 }
     );
 
-    const targetSection = document.getElementById("stats-section");
-    if (targetSection) observer.observe(targetSection);
-  }, [countupLoaded]);
+    const section = document.getElementById("stats-section");
+    if (section) observer.observe(section);
+  }, []);
 
   return (
     <>
@@ -142,7 +109,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats with CountUp */}
+        {/* Stats Section with animated counters */}
         <section id="stats-section" className="bg-gray-100 py-12 text-center px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-blue-600 font-bold text-4xl">
             <div>
@@ -198,7 +165,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="bg-white border-t py-6 px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-500">© {new Date().getFullYear()} Syfter. All rights reserved.</div>
+          <div className="text-sm text-gray-500">© 2025 Syfter. All rights reserved.</div>
           <form className="flex items-center gap-2">
             <input type="email" placeholder="Email address" className="border px-3 py-2 text-sm rounded" />
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Subscribe</button>
