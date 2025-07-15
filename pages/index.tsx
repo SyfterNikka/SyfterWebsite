@@ -100,7 +100,7 @@ export default function Home() {
           className="text-white text-center py-40 bg-cover bg-center relative"
 style={{
   backgroundImage: "url('/HeroImage1.png')",
-  backgroundPosition: "center 25%",
+  backgroundPosition: "center 35%",
 }}        >
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           <div className="relative z-10">
