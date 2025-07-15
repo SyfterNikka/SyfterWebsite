@@ -159,14 +159,23 @@ style={{
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="bg-gray-100 py-12 text-center px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-blue-600 font-bold text-xl">
-            <div>💼 <span id="counter1">0</span> hires placed</div>
-            <div>⏱️ <span id="counter2">0</span> average fill time</div>
-            <div>🔁 <span id="counter3">0</span> retention rate</div>
-          </div>
-        </section>
+      {/* Stats */}
+<section className="bg-gray-100 py-16 text-center px-6">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-gray-800">
+    <div>
+      <div id="counter1" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">hires placed</p>
+    </div>
+    <div>
+      <div id="counter2" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">average fill time</p>
+    </div>
+    <div>
+      <div id="counter3" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">retention rate</p>
+    </div>
+  </div>
+</section>
 
         {/* Featured Jobs */}
         <section id="jobs" className="py-16 px-6 bg-white">
