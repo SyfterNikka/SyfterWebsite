@@ -8,11 +8,39 @@ export default function Home() {
     "“Their candidate quality was unmatched.” — Healthcare Director",
   ];
 
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const rotatingWords = ["Smarter", "Faster", "Securely", "Better"];
-  const [activeWord, setActiveWord] = useState(0);
+  // Typing Animation Setup
+  const words = ["Smarter", "Faster", "Securely", "Intuitively"];
+  const [displayText, setDisplayText] = useState("");
+  const [wordIndex, setWordIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
 
-  // Rotate testimonials
+  useEffect(() => {
+    const currentWord = words[wordIndex];
+    const typingSpeed = deleting ? 50 : 100;
+
+    const timeout = setTimeout(() => {
+      if (!deleting) {
+        setDisplayText(currentWord.slice(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+        if (charIndex + 1 === currentWord.length) {
+          setTimeout(() => setDeleting(true), 1200); // Pause before deleting
+        }
+      } else {
+        setDisplayText(currentWord.slice(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+        if (charIndex - 1 === 0) {
+          setDeleting(false);
+          setWordIndex((wordIndex + 1) % words.length);
+        }
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, deleting, wordIndex]);
+
+  // Testimonial rotator
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -20,15 +48,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Rotate "Hire ____" words
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveWord((prev) => (prev + 1) % rotatingWords.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Animate counters on scroll
+  // Stats counter animation
   useEffect(() => {
     const animateCount = (id: string, end: number, suffix = "") => {
       const el = document.getElementById(id);
@@ -92,7 +112,7 @@ export default function Home() {
         {/* Hero */}
         <section className="bg-gradient-to-r from-blue-400 to-blue-600 text-white text-center py-24 px-6">
           <h1 className="text-4xl font-bold mb-4">
-            Hire <span className="text-yellow-300 transition duration-500">{rotatingWords[activeWord]}</span>
+            Hire <span className="italic text-gray-300">{displayText}</span>
           </h1>
           <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
           <div className="flex justify-center gap-6">
