@@ -34,32 +34,49 @@ export default function Home() {
   }, [charIndex, deleting, wordIndex]);
 
   // Counter animations
-  useEffect(() => {
-    const animateCount = (id: string, end: number, suffix = "") => {
-      const el = document.getElementById(id);
-      if (!el) return;
+useEffect(() => {
+  const animateCount = (el: HTMLElement, end: number, suffix = "") => {
+    let start = 0;
+    const duration = 1500;
+    const startTime = performance.now();
 
-      let current = 0;
-      const steps = 60;
-      const increment = end / steps;
-      let step = 0;
-
-      const timer = setInterval(() => {
-        step++;
-        current += increment;
-        if (step >= steps) {
-          el.textContent = `${end}${suffix}`;
-          clearInterval(timer);
-        } else {
-          el.textContent = `${Math.floor(current)}${suffix}`;
-        }
-      }, 16);
+    const step = (currentTime: number) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const value = Math.floor(progress * end);
+      el.textContent = `${value}${suffix}`;
+      if (progress < 1) requestAnimationFrame(step);
     };
 
-    animateCount("counter1", 1200, "+");
-    animateCount("counter2", 5, " days");
-    animateCount("counter3", 92, "%");
-  }, []);
+    requestAnimationFrame(step);
+  };
+
+  const counters = [
+    { id: "counter1", end: 1200, suffix: "+" },
+    { id: "counter2", end: 5, suffix: " days" },
+    { id: "counter3", end: 92, suffix: "%" },
+  ];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target as HTMLElement;
+          const { end, suffix } = counters.find(c => c.id === el.id)!;
+          animateCount(el, end, suffix);
+          observer.unobserve(el); // animate only once
+        }
+      });
+    },
+    { threshold: 0.6 }
+  );
+
+  counters.forEach(({ id }) => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  return () => observer.disconnect();
+}, []);
 
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
@@ -100,7 +117,7 @@ export default function Home() {
           className="text-white text-center py-40 bg-cover bg-center relative"
 style={{
   backgroundImage: "url('/HeroImage1.png')",
-  backgroundPosition: "center 35%",
+  backgroundPosition: "center 40%",
 }}        >
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           <div className="relative z-10">
