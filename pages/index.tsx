@@ -21,18 +21,25 @@ export default function Home() {
   // Animate counter when stats section is in view
   useEffect(() => {
     const animateCount = (id: string, end: number, suffix = "") => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      let start = 0;
-      const duration = 2000;
-      const stepTime = Math.max(Math.floor(duration / end), 20);
+  const el = document.getElementById(id);
+  if (!el) return;
 
-      const timer = setInterval(() => {
-        start++;
-        el.textContent = `${start}${suffix}`;
-        if (start >= end) clearInterval(timer);
-      }, stepTime);
-    };
+  let current = 0;
+  const totalSteps = 60; // Animate in 60 steps (~1 second at 16ms per frame)
+  const increment = end / totalSteps;
+  let step = 0;
+
+  const timer = setInterval(() => {
+    step++;
+    current += increment;
+    if (step >= totalSteps) {
+      el.textContent = `${end}${suffix}`;
+      clearInterval(timer);
+    } else {
+      el.textContent = `${Math.floor(current)}${suffix}`;
+    }
+  }, 16); // ~60fps
+};
 
     const observer = new IntersectionObserver(
       (entries) => {
