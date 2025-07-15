@@ -9,8 +9,10 @@ export default function Home() {
   ];
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const rotatingWords = ["Smarter", "Faster", "Securely", "Better"];
+  const [activeWord, setActiveWord] = useState(0);
 
-  // Rotate testimonial every 5 seconds
+  // Rotate testimonials
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
@@ -18,28 +20,36 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Animate counter when stats section is in view
+  // Rotate "Hire ____" words
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveWord((prev) => (prev + 1) % rotatingWords.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animate counters on scroll
   useEffect(() => {
     const animateCount = (id: string, end: number, suffix = "") => {
-  const el = document.getElementById(id);
-  if (!el) return;
+      const el = document.getElementById(id);
+      if (!el) return;
 
-  let current = 0;
-  const totalSteps = 60; // Animate in 60 steps (~1 second at 16ms per frame)
-  const increment = end / totalSteps;
-  let step = 0;
+      let current = 0;
+      const totalSteps = 60;
+      const increment = end / totalSteps;
+      let step = 0;
 
-  const timer = setInterval(() => {
-    step++;
-    current += increment;
-    if (step >= totalSteps) {
-      el.textContent = `${end}${suffix}`;
-      clearInterval(timer);
-    } else {
-      el.textContent = `${Math.floor(current)}${suffix}`;
-    }
-  }, 16); // ~60fps
-};
+      const timer = setInterval(() => {
+        step++;
+        current += increment;
+        if (step >= totalSteps) {
+          el.textContent = `${end}${suffix}`;
+          clearInterval(timer);
+        } else {
+          el.textContent = `${Math.floor(current)}${suffix}`;
+        }
+      }, 16);
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -81,7 +91,9 @@ export default function Home() {
 
         {/* Hero */}
         <section className="bg-gradient-to-r from-blue-400 to-blue-600 text-white text-center py-24 px-6">
-          <h1 className="text-4xl font-bold mb-4">Precision Hiring. Human-Centric. AI-Vetted.</h1>
+          <h1 className="text-4xl font-bold mb-4">
+            Hire <span className="text-yellow-300 transition duration-500">{rotatingWords[activeWord]}</span>
+          </h1>
           <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
           <div className="flex justify-center gap-6">
             <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
@@ -116,7 +128,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Section with animated counters */}
+        {/* Stats */}
         <section id="stats-section" className="bg-gray-100 py-12 text-center px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-blue-600 font-bold text-4xl">
             <div>
@@ -172,7 +184,7 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="bg-white border-t py-6 px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-500">© 2025 Syfter. All rights reserved.</div>
+          <div className="text-sm text-gray-500">© {2025} Syfter. All rights reserved.</div>
           <form className="flex items-center gap-2">
             <input type="email" placeholder="Email address" className="border px-3 py-2 text-sm rounded" />
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Subscribe</button>
