@@ -1,104 +1,129 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const testimonials = [
+    "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
+    "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
+    "“Their candidate quality was unmatched.” — Healthcare Director",
+  ];
+
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Head>
-        <title>Syfter - Hire Talent or Find Work</title>
+        <title>Syfter — Precision Staffing Made Human</title>
       </Head>
 
-      <main className="font-sans text-gray-800">
-        {/* Hero Banner */}
-        <section className="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-20">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-6 text-center md:text-left">
-            <div>
-              <h1 className="text-4xl font-bold mb-4">Looking to Hire?</h1>
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200 transition">
-                Find Talent
-              </button>
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold mb-4">Looking for Work?</h1>
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200 transition">
-                Find Jobs
-              </button>
-            </div>
+      {/* Navbar */}
+      <header className="fixed top-0 w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center">
+        <div className="text-xl font-bold text-blue-600">Syfter</div>
+        <nav className="space-x-6 hidden md:flex">
+          <a href="#why" className="hover:text-blue-600">Why Syfter</a>
+          <a href="#jobs" className="hover:text-blue-600">Find Work</a>
+          <a href="#hire" className="hover:text-blue-600">Hire Talent</a>
+          <a href="#contact" className="hover:text-blue-600">Contact</a>
+        </nav>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
+      </header>
+
+      <main className="pt-20">
+
+        {/* Hero */}
+        <section className="bg-gradient-to-r from-blue-400 to-blue-600 text-white text-center py-24 px-6">
+          <h1 className="text-4xl font-bold mb-4">Precision Hiring. Human-Centric. AI-Vetted.</h1>
+          <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
+          <div className="flex justify-center gap-6">
+            <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
+            <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
           </div>
         </section>
 
-        {/* Feature Highlights */}
-        <section className="bg-white py-12">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 text-center gap-10 px-6">
+        {/* Why Syfter */}
+        <section id="why" className="py-16 bg-white px-6 text-center">
+          <h2 className="text-2xl font-bold mb-10">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <div>
               <div className="text-4xl mb-2">✅</div>
-              <h3 className="text-lg font-semibold">Syfter Certified</h3>
-              <p className="text-sm mt-1">
-                Human, Excellence<br />
-                Adaptability, Resilience,<br />
-                Togetherness.
-              </p>
+              <h4 className="font-semibold">Syfter Certified</h4>
+              <p className="text-sm">Screened for resilience, communication, and excellence.</p>
             </div>
             <div>
               <div className="text-4xl mb-2">🤖</div>
-              <h3 className="text-lg font-semibold">AI-Proofed Talent</h3>
-              <p className="text-sm mt-1">Expert-vetted by humans</p>
+              <h4 className="font-semibold">AI-Proofed</h4>
+              <p className="text-sm">Human-reviewed to avoid automation blind spots.</p>
             </div>
             <div>
               <div className="text-4xl mb-2">⚡</div>
-              <h3 className="text-lg font-semibold">Fast Hiring Process</h3>
-              <p className="text-sm mt-1">Speed + quality = win</p>
+              <h4 className="font-semibold">Fast Hiring</h4>
+              <p className="text-sm">Reduce time-to-hire to under 5 days.</p>
+            </div>
+            <div>
+              <div className="text-4xl mb-2">🌱</div>
+              <h4 className="font-semibold">People First</h4>
+              <p className="text-sm">We don’t fill seats — we grow teams.</p>
             </div>
           </div>
         </section>
 
-        {/* Testimonial */}
-        <section className="py-12 px-6 text-center bg-gray-50">
-          <div className="max-w-3xl mx-auto">
-            <blockquote className="italic text-xl">
-              “Syfter was instrumental in finding top notch candidates for our team. Highly recommend!”
-            </blockquote>
-            <p className="mt-4 text-sm text-gray-600">— Client Name</p>
+        {/* Stats */}
+        <section className="bg-gray-100 py-12 text-center px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto text-blue-600 font-bold text-xl">
+            <div>💼 1,200+ hires placed</div>
+            <div>⏱️ 5-day average fill time</div>
+            <div>🔁 92% retention rate</div>
           </div>
         </section>
 
         {/* Featured Jobs */}
-        <section className="py-12 px-6 bg-white">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Featured Jobs</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { title: "Frontend Developer", location: "New York, NV", type: "Full-Time" },
-                { title: "Product Manager", location: "Chicago, IL", type: "Contract" },
-                { title: "IT Project Manager", location: "Chicago, IL", type: "Contract" },
-                { title: "Data Analyst", location: "Stousburg, L", type: "Full-Time" },
-              ].map((job, index) => (
-                <div key={index} className="bg-gray-100 rounded-lg p-4 border">
-                  <h3 className="font-semibold text-lg">{job.title}</h3>
-                  <p className="text-sm text-gray-600">{job.location} • {job.type}</p>
-                </div>
-              ))}
-            </div>
+        <section id="jobs" className="py-16 px-6 bg-white">
+          <h2 className="text-2xl font-bold text-center mb-10">Featured Jobs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {[
+              { title: "Frontend Developer", loc: "NY, Full-Time" },
+              { title: "Product Manager", loc: "Remote, Contract" },
+              { title: "IT Project Manager", loc: "Chicago, Contract" },
+              { title: "Data Analyst", loc: "Stousburg, Full-Time" },
+            ].map((job, i) => (
+              <div key={i} className="bg-gray-100 p-4 rounded border">
+                <h4 className="font-semibold text-lg">{job.title}</h4>
+                <p className="text-sm text-gray-600">{job.loc}</p>
+              </div>
+            ))}
           </div>
+          <div className="text-center mt-8">
+            <a href="#" className="text-blue-600 hover:underline">View All Jobs →</a>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="bg-gray-50 py-16 text-center px-6">
+          <h2 className="text-2xl font-bold mb-6">What Our Clients Say</h2>
+          <blockquote className="italic text-lg max-w-2xl mx-auto text-gray-700">
+            {testimonials[activeTestimonial]}
+          </blockquote>
+        </section>
+
+        {/* CTA */}
+        <section id="contact" className="bg-blue-600 text-white py-16 text-center px-6">
+          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
+          <p className="mb-6 text-lg">Let Syfter help you find the right match — fast.</p>
+          <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Get Started</button>
         </section>
 
         {/* Footer */}
         <footer className="bg-white border-t py-6 px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-4 text-xl">
-            <a href="#" className="hover:opacity-70">🐦</a>
-            <a href="#" className="hover:opacity-70">💼</a>
-            <a href="#" className="hover:opacity-70">📘</a>
-          </div>
-          <form className="flex flex-col sm:flex-row items-center gap-2">
-            <label htmlFor="email" className="text-sm">Email address</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Email address"
-              className="border rounded px-3 py-2 text-sm"
-            />
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Submit
-            </button>
+          <div className="text-sm text-gray-500">© {new Date().getFullYear()} Syfter. All rights reserved.</div>
+          <form className="flex items-center gap-2">
+            <input type="email" placeholder="Email address" className="border px-3 py-2 text-sm rounded" />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Subscribe</button>
           </form>
         </footer>
       </main>
