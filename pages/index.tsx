@@ -132,32 +132,28 @@ style={{
           </div>
         </section>
 
-        {/* Why Syfter */}
-        <section id="why" className="py-16 bg-white px-6 text-center">
-          <h2 className="text-2xl font-bold mb-10">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            <div>
-              <div className="text-4xl mb-2">✅</div>
-              <h4 className="font-semibold">Syfter Certified</h4>
-              <p className="text-sm">Screened for resilience, communication, and excellence.</p>
-            </div>
-            <div>
-              <div className="text-4xl mb-2">🤖</div>
-              <h4 className="font-semibold">AI-Proofed</h4>
-              <p className="text-sm">Human-reviewed to avoid automation blind spots.</p>
-            </div>
-            <div>
-              <div className="text-4xl mb-2">⚡</div>
-              <h4 className="font-semibold">Fast Hiring</h4>
-              <p className="text-sm">Reduce time-to-hire to under 5 days.</p>
-            </div>
-            <div>
-              <div className="text-4xl mb-2">🌱</div>
-              <h4 className="font-semibold">People First</h4>
-              <p className="text-sm">We don’t fill seats — we grow teams.</p>
-            </div>
-          </div>
-        </section>
+      {/* Why Syfter */}
+<section id="why" className="py-20 bg-white px-6 text-center">
+  <h2 className="text-3xl font-bold mb-12 text-gray-900">Why Syfter</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+    <div>
+      <h4 className="text-xl font-semibold text-gray-800 mb-2">Syfter Certified</h4>
+      <p className="text-sm text-gray-600">Screened for resilience, communication, and excellence.</p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold text-gray-800 mb-2">AI-Proofed</h4>
+      <p className="text-sm text-gray-600">Human-reviewed to avoid automation blind spots.</p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold text-gray-800 mb-2">Fast Hiring</h4>
+      <p className="text-sm text-gray-600">Reduce time-to-hire to under 5 days.</p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold text-gray-800 mb-2">People First</h4>
+      <p className="text-sm text-gray-600">We don’t fill seats — we grow teams.</p>
+    </div>
+  </div>
+</section>
 
       {/* Stats */}
 <section className="bg-gray-100 py-16 text-center px-6">
