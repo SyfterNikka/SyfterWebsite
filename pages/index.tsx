@@ -210,14 +210,22 @@ style={{
         </section>
 
         {/* Footer */}
-        <footer className="bg-white border-t py-6 px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-gray-500">© {new Date().getFullYear()} Syfter. All rights reserved.</div>
-          <form className="flex items-center gap-2">
-            <input type="email" placeholder="Email address" className="border px-3 py-2 text-sm rounded" />
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Subscribe</button>
-          </form>
-        </footer>
-      </main>
-    </>
-  );
-}
+<section
+  className="relative text-white text-center py-20 bg-cover bg-center"
+  style={{
+    backgroundImage: "url('/FooterImage1.png')",
+    backgroundPosition: "center 35%",
+  }}
+>
+  <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+  <div className="relative z-10 max-w-3xl mx-auto px-6">
+    <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
+    <p className="mb-6 text-lg">
+      Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+    </p>
+    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
+      Contact Us
+    </button>
+  </div>
+</section>
+
