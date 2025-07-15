@@ -115,7 +115,7 @@ export default function Home() {
         <section
           className="text-white text-center py-40 bg-cover bg-center relative"
           style={{
-            backgroundImage: "url('/HeroImage1.png')",
+            backgroundImage: "url('/Header2.png')",
             backgroundPosition: "center 40%",
           }}
         >
