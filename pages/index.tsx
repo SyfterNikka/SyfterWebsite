@@ -33,7 +33,7 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  // Dynamic counters
+  // Counter animations
   useEffect(() => {
     const animateCount = (id: string, end: number, suffix = "") => {
       const el = document.getElementById(id);
@@ -61,6 +61,20 @@ export default function Home() {
     animateCount("counter3", 92, "%");
   }, []);
 
+  const testimonials = [
+    "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
+    "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
+    "“Their candidate quality was unmatched.” — Healthcare Director",
+  ];
+
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Head>
@@ -81,7 +95,7 @@ export default function Home() {
 
       <main className="pt-20">
 
-        {/* Hero Banner with Image */}
+        {/* Hero */}
         <section
           className="text-white text-center py-40 bg-cover bg-center relative"
           style={{ backgroundImage: "url('/HeroImage1.png')" }}
@@ -133,6 +147,42 @@ export default function Home() {
             <div>⏱️ <span id="counter2">0</span> average fill time</div>
             <div>🔁 <span id="counter3">0</span> retention rate</div>
           </div>
+        </section>
+
+        {/* Featured Jobs */}
+        <section id="jobs" className="py-16 px-6 bg-white">
+          <h2 className="text-2xl font-bold text-center mb-10">Featured Jobs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {[
+              { title: "Frontend Developer", loc: "NY, Full-Time" },
+              { title: "Product Manager", loc: "Remote, Contract" },
+              { title: "IT Project Manager", loc: "Chicago, Contract" },
+              { title: "Data Analyst", loc: "Stousburg, Full-Time" },
+            ].map((job, i) => (
+              <div key={i} className="bg-gray-100 p-4 rounded border">
+                <h4 className="font-semibold text-lg">{job.title}</h4>
+                <p className="text-sm text-gray-600">{job.loc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <a href="#" className="text-blue-600 hover:underline">View All Jobs →</a>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="bg-gray-50 py-16 text-center px-6">
+          <h2 className="text-2xl font-bold mb-6">What Our Clients Say</h2>
+          <blockquote className="italic text-lg max-w-2xl mx-auto text-gray-700">
+            {testimonials[activeTestimonial]}
+          </blockquote>
+        </section>
+
+        {/* CTA */}
+        <section id="contact" className="bg-blue-600 text-white py-16 text-center px-6">
+          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
+          <p className="mb-6 text-lg">Let Syfter help you find the right match — fast.</p>
+          <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Get Started</button>
         </section>
 
         {/* Footer */}
