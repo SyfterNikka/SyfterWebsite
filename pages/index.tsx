@@ -2,7 +2,6 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  // Typing animation setup
   const words = ["Smarter", "Faster", "Securely", "Intuitively"];
   const [displayText, setDisplayText] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -16,16 +15,16 @@ export default function Home() {
     const timeout = setTimeout(() => {
       if (!deleting) {
         setDisplayText(currentWord.slice(0, charIndex + 1));
-        setCharIndex(charIndex + 1);
+        setCharIndex((prev) => prev + 1);
         if (charIndex + 1 === currentWord.length) {
           setTimeout(() => setDeleting(true), 1200);
         }
       } else {
         setDisplayText(currentWord.slice(0, charIndex - 1));
-        setCharIndex(charIndex - 1);
+        setCharIndex((prev) => prev - 1);
         if (charIndex - 1 === 0) {
           setDeleting(false);
-          setWordIndex((wordIndex + 1) % words.length);
+          setWordIndex((prev) => (prev + 1) % words.length);
         }
       }
     }, typingSpeed);
@@ -33,50 +32,50 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  // Counter animations
-useEffect(() => {
-  const animateCount = (el: HTMLElement, end: number, suffix = "") => {
-    let start = 0;
-    const duration = 1500;
-    const startTime = performance.now();
+  // Counter animation on scroll
+  useEffect(() => {
+    const animateCount = (el: HTMLElement, end: number, suffix = "") => {
+      let start = 0;
+      const duration = 1500;
+      const startTime = performance.now();
 
-    const step = (currentTime: number) => {
-      const progress = Math.min((currentTime - startTime) / duration, 1);
-      const value = Math.floor(progress * end);
-      el.textContent = `${value}${suffix}`;
-      if (progress < 1) requestAnimationFrame(step);
+      const step = (currentTime: number) => {
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        const value = Math.floor(progress * end);
+        el.textContent = `${value}${suffix}`;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
     };
 
-    requestAnimationFrame(step);
-  };
+    const counters = [
+      { id: "counter1", end: 1200, suffix: "+" },
+      { id: "counter2", end: 5, suffix: " days" },
+      { id: "counter3", end: 92, suffix: "%" },
+    ];
 
-  const counters = [
-    { id: "counter1", end: 1200, suffix: "+" },
-    { id: "counter2", end: 5, suffix: " days" },
-    { id: "counter3", end: 92, suffix: "%" },
-  ];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const { end, suffix } = counters.find(c => c.id === el.id)!;
+            animateCount(el, end, suffix);
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          const { end, suffix } = counters.find(c => c.id === el.id)!;
-          animateCount(el, end, suffix);
-          observer.unobserve(el); // animate only once
-        }
-      });
-    },
-    { threshold: 0.6 }
-  );
+    counters.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
 
-  counters.forEach(({ id }) => {
-    const el = document.getElementById(id);
-    if (el) observer.observe(el);
-  });
-
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
 
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
@@ -115,10 +114,11 @@ useEffect(() => {
         {/* Hero */}
         <section
           className="text-white text-center py-40 bg-cover bg-center relative"
-style={{
-  backgroundImage: "url('/HeroImage1.png')",
-  backgroundPosition: "center 40%",
-}}        >
+          style={{
+            backgroundImage: "url('/HeroImage1.png')",
+            backgroundPosition: "center 40%",
+          }}
+        >
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           <div className="relative z-10">
             <h1 className="text-5xl font-bold mb-4">
@@ -132,48 +132,48 @@ style={{
           </div>
         </section>
 
-      {/* Why Syfter */}
-<section id="why" className="py-20 bg-white px-6 text-center">
-  <h2 className="text-3xl font-bold mb-12 text-gray-900">Why Syfter</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">Syfter Certified</h4>
-      <p className="text-sm text-gray-600">Screened for resilience, communication, and excellence.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">AI-Proofed</h4>
-      <p className="text-sm text-gray-600">Human-reviewed to avoid automation blind spots.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">Fast Hiring</h4>
-      <p className="text-sm text-gray-600">Reduce time-to-hire to under 5 days.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">People First</h4>
-      <p className="text-sm text-gray-600">We don’t fill seats — we grow teams.</p>
-    </div>
-  </div>
-</section>
+        {/* Why Syfter */}
+        <section id="why" className="py-20 bg-white px-6 text-center">
+          <h2 className="text-3xl font-bold mb-12 text-gray-900">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+            <div>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">Syfter Certified</h4>
+              <p className="text-sm text-gray-600">Screened for resilience, communication, and excellence.</p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">AI-Proofed</h4>
+              <p className="text-sm text-gray-600">Human-reviewed to avoid automation blind spots.</p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">Fast Hiring</h4>
+              <p className="text-sm text-gray-600">Reduce time-to-hire to under 5 days.</p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">People First</h4>
+              <p className="text-sm text-gray-600">We don’t fill seats — we grow teams.</p>
+            </div>
+          </div>
+        </section>
 
-      {/* Stats */}
-<section className="bg-gray-100 py-16 text-center px-6">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-gray-800">
-    <div>
-      <div id="counter1" className="text-4xl font-bold mb-2">0</div>
-      <p className="text-lg font-medium">hires placed</p>
-    </div>
-    <div>
-      <div id="counter2" className="text-4xl font-bold mb-2">0</div>
-      <p className="text-lg font-medium">average fill time</p>
-    </div>
-    <div>
-      <div id="counter3" className="text-4xl font-bold mb-2">0</div>
-      <p className="text-lg font-medium">retention rate</p>
-    </div>
-  </div>
-</section>
+        {/* Stats */}
+        <section className="bg-gray-100 py-16 text-center px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-gray-800">
+            <div>
+              <div id="counter1" className="text-4xl font-bold mb-2">0</div>
+              <p className="text-lg font-medium">hires placed</p>
+            </div>
+            <div>
+              <div id="counter2" className="text-4xl font-bold mb-2">0</div>
+              <p className="text-lg font-medium">average fill time</p>
+            </div>
+            <div>
+              <div id="counter3" className="text-4xl font-bold mb-2">0</div>
+              <p className="text-lg font-medium">retention rate</p>
+            </div>
+          </div>
+        </section>
 
-        {/* Featured Jobs */}
+        {/* Jobs */}
         <section id="jobs" className="py-16 px-6 bg-white">
           <h2 className="text-2xl font-bold text-center mb-10">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -209,23 +209,26 @@ style={{
           <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Get Started</button>
         </section>
 
-        {/* Footer */}
-<section
-  className="relative text-white text-center py-20 bg-cover bg-center"
-  style={{
-    backgroundImage: "url('/FooterImage1.png')",
-    backgroundPosition: "center 35%",
-  }}
->
-  <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-  <div className="relative z-10 max-w-3xl mx-auto px-6">
-    <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
-    <p className="mb-6 text-lg">
-      Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
-    </p>
-    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
-      Contact Us
-    </button>
-  </div>
-</section>
-
+        {/* Footer with image */}
+        <section
+          className="relative text-white text-center py-20 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/FooterImage1.png')",
+            backgroundPosition: "center 35%",
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+          <div className="relative z-10 max-w-3xl mx-auto px-6">
+            <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
+            <p className="mb-6 text-lg">
+              Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+            </p>
+            <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
+              Contact Us
+            </button>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
