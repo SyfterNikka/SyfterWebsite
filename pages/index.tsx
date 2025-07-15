@@ -133,8 +133,8 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <section id="why" className="pt-12 pb-8 bg-white px-6 text-center">
-  <h2 className="text-5xl font-bold mb-10 text-gray-900">Why Syfter</h2>
+        <section id="why" className="pt-12 pb-10 bg-white px-6 text-center">
+  <h2 className="text-5xl font-bold mb-14 text-gray-900">Why Syfter</h2>
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
     <div>
       <h4 className="text-xl font-semibold text-gray-800 mb-2">Syfter Certified</h4>
