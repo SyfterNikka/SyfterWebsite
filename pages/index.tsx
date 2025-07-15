@@ -1,6 +1,31 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
+// === Bulletproof CDN script loader for CountUp ===
+function useScript(src: string) {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      setLoaded(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = () => setLoaded(true);
+    document.head.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [src]);
+
+  return loaded;
+}
+
 export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
@@ -10,58 +35,55 @@ export default function Home() {
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
+  // Load CountUp.js via CDN
+  const countupLoaded = useScript("https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.6.2/countUp.umd.min.js");
+
+  // Rotate testimonial every 5s
   useEffect(() => {
-  const interval = setInterval(() => {
-    setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-  }, 5000);
-  return () => clearInterval(interval);
-}, []);
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-useEffect(() => {
-  const tryInitCountUp = () => {
-    if (typeof window !== "undefined" && (window as any).CountUp) {
-      const { CountUp } = (window as any);
+  // Trigger counter when in view
+  useEffect(() => {
+    if (!countupLoaded || typeof window === "undefined") return;
 
-      const counters = [
-        { id: "counter1", end: 1200 },
-        { id: "counter2", end: 5 },
-        { id: "counter3", end: 92, suffix: "%" },
-      ];
+    const { CountUp } = (window as any);
+    const counters = [
+      { id: "counter1", end: 1200 },
+      { id: "counter2", end: 5 },
+      { id: "counter3", end: 92, suffix: "%" },
+    ];
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              counters.forEach(({ id, end, suffix }) => {
-                const el = document.getElementById(id);
-                if (el && !el.classList.contains("counted")) {
-                  const countUp = new CountUp(id, end, {
-                    suffix: suffix || "",
-                    duration: 2,
-                  });
-                  if (!countUp.error) {
-                    countUp.start();
-                    el.classList.add("counted");
-                  }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            counters.forEach(({ id, end, suffix }) => {
+              const el = document.getElementById(id);
+              if (el && !el.classList.contains("counted")) {
+                const countUp = new CountUp(id, end, {
+                  suffix: suffix || "",
+                  duration: 2,
+                });
+                if (!countUp.error) {
+                  countUp.start();
+                  el.classList.add("counted");
                 }
-              });
-              observer.disconnect();
-            }
-          });
-        },
-        { threshold: 0.6 }
-      );
+              }
+            });
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
 
-      const statSection = document.getElementById("stats-section");
-      if (statSection) observer.observe(statSection);
-    } else {
-      // If CountUp is not ready, try again shortly
-      setTimeout(tryInitCountUp, 200);
-    }
-  };
-
-  tryInitCountUp();
-}, []);
+    const targetSection = document.getElementById("stats-section");
+    if (targetSection) observer.observe(targetSection);
+  }, [countupLoaded]);
 
   return (
     <>
