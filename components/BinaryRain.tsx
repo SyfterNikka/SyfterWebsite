@@ -41,7 +41,8 @@ const BinaryRain = () => {
           drops[i] = 0;
         }
 
-        drops[i]++;
+        // Slightly slower animation
+        drops[i] += 0.75;
       }
     };
 
