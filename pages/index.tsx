@@ -68,32 +68,43 @@ export default function Home() {
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white transition-all duration-1000">
 
-        {/* Hero */}
-        <section className="relative h-[600px] overflow-hidden bg-black text-white">
-          <BinaryRain />
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-            <h1 className="text-5xl font-bold mb-4">
-              Hire <span className="italic text-syfterBlue">{displayText}</span>
-            </h1>
-            <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
-            <div className="flex justify-center gap-6">
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
-            </div>
-          </div>
-        </section>
+       {/* Hero */}
+<section className="relative h-[600px] overflow-hidden bg-black text-white">
+  <BinaryRain />
 
-       {/* Why Syfter */}
-<section
+  {/* Content Layer */}
+  <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+    <h1 className="text-5xl font-bold mb-4">
+      Hire <span className="italic text-syfterBlue">{displayText}</span>
+    </h1>
+    <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
+    <div className="flex justify-center gap-6">
+      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+        Find Talent
+      </button>
+      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+        Find Jobs
+      </button>
+    </div>
+  </div>
+
+  {/* FADE-OUT Gradient Layer */}
+  <div
+    className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10"
+    style={{
+      background: "linear-gradient(to bottom, rgba(0,0,0,0), #1e3a5f)",
+    }}
+  />
+</section>
+
+
+      <section
   id="why"
-  className="pt-20 pb-10 relative z-10 text-center text-white"
-  style={{
-    background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,58,95,1) 100%)",
-  }}
+  className="pt-20 pb-10 bg-[#1e3a5f] relative z-10 text-center text-white"
 >
-  <h2 className="text-5xl font-bold mb-14 relative z-30">Why Syfter</h2>
+  <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto relative z-30">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
     <div>
       <h4 className="text-xl font-semibold mb-2">Syfter Certified</h4>
       <p className="text-sm">Screened for resilience, communication, and excellence.</p>
