@@ -83,18 +83,26 @@ const BinaryRain = () => {
   }, []);
 
   return (
+  <div
+    ref={containerRef}
+    className="absolute inset-0 z-0 overflow-hidden"
+    style={{ backgroundColor: "#1e3a5f" }}
+  >
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full"
+      style={{ pointerEvents: "none" }}
+    />
+
+    {/* Mist fade layer at bottom */}
     <div
-      ref={containerRef}
-      className="absolute inset-0 z-0 overflow-hidden"
-      style={{ backgroundColor: "#1e3a5f" }}
-    >
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ pointerEvents: "none" }}
-      />
-    </div>
-  );
+      className="absolute bottom-0 left-0 w-full h-48 pointer-events-none z-10"
+      style={{
+        background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,58,95,0.5) 60%, #1e3a5f 100%)",
+      }}
+    />
+  </div>
+);
 };
 
 export default BinaryRain;
