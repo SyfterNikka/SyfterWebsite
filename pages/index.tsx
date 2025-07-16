@@ -83,28 +83,46 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Why Syfter */}
-        <section id="why" className="pt-12 pb-10 bg-[#1e3a5f] -mt-1 z-10 relative text-center text-white">
-          <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-            <div>
-              <h4 className="text-xl font-semibold mb-2">Syfter Certified</h4>
-              <p className="text-sm">Screened for resilience, communication, and excellence.</p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2">AI-Proofed</h4>
-              <p className="text-sm">Human-reviewed to avoid automation blind spots.</p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2">Fast Hiring</h4>
-              <p className="text-sm">Reduce time-to-hire to under 5 days.</p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2">People First</h4>
-              <p className="text-sm">We don’t fill seats — we grow teams.</p>
-            </div>
-          </div>
-        </section>
+       {/* Why Syfter */}
+<section
+  id="why"
+  className="pt-12 pb-10 bg-[#1e3a5f] -mt-1 z-10 relative text-center text-white"
+>
+  {/* Top gradient overlay to blend with BinaryRain */}
+  <div
+    className="absolute top-0 left-0 w-full h-16 pointer-events-none z-10"
+    style={{
+      background:
+        "linear-gradient(to bottom, #1e3a5f 0%, rgba(30,58,95,0.85) 40%, rgba(30,58,95,0.6) 100%)",
+    }}
+  />
+
+  <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+    <div>
+      <h4 className="text-xl font-semibold mb-2">Syfter Certified</h4>
+      <p className="text-sm">
+        Screened for resilience, communication, and excellence.
+      </p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold mb-2">AI-Proofed</h4>
+      <p className="text-sm">
+        Human-reviewed to avoid automation blind spots.
+      </p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold mb-2">Fast Hiring</h4>
+      <p className="text-sm">Reduce time-to-hire to under 5 days.</p>
+    </div>
+    <div>
+      <h4 className="text-xl font-semibold mb-2">People First</h4>
+      <p className="text-sm">We don’t fill seats — we grow teams.</p>
+    </div>
+  </div>
+</section>
+
 
         {/* Stats */}
         <section className="py-20 text-center px-6 fade-in transition-opacity duration-1000">
