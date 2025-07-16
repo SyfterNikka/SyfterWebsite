@@ -112,18 +112,39 @@ export default function Home() {
       <main className="pt-20">
 
         {/* Hero */}
-        <section
-  className="w-full text-white text-center py-40 bg-cover bg-center relative"
-  style={{
-    backgroundImage: "url('/SkylineSyfter1.png')",
-    backgroundPosition: "center 40%",
-  }}
->
-  {/* Dark overlay */}
-  <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        <section className="relative text-white text-center py-40 overflow-hidden">
+  {/* Background image */}
+  <div
+    className="absolute inset-0 bg-cover bg-center animate-pulse"
+    style={{
+      backgroundImage: "url('/f8c4061a-90d8-4ef1-ad44-c5c4022a4fdc.png')",
+      opacity: 0.12,
+      zIndex: 1,
+    }}
+  ></div>
 
-  {/* Content wrapper */}
-  <div className="relative z-10 px-8 max-w-[1600px] mx-auto">
+  {/* Floating binary columns */}
+  <div className="absolute inset-0 z-10 overflow-hidden">
+    {[...Array(20)].map((_, i) => (
+      <div
+        key={i}
+        className="absolute text-green-400 font-mono text-xs opacity-30 animate-binary"
+        style={{
+          left: `${i * 5}%`,
+          top: `${Math.random() * 100}%`,
+          animationDelay: `${Math.random() * 4}s`,
+        }}
+      >
+        {Array(20)
+          .fill(0)
+          .map(() => (Math.random() > 0.5 ? "1" : "0"))
+          .join("\n")}
+      </div>
+    ))}
+  </div>
+
+  {/* Hero content */}
+  <div className="relative z-20 px-8 max-w-[1600px] mx-auto">
     <h1 className="text-6xl font-bold mb-6 leading-tight">
       Hire <span className="italic text-gray-300">{displayText}</span>
     </h1>
@@ -134,6 +155,7 @@ export default function Home() {
     </div>
   </div>
 </section>
+
 
         {/* Why Syfter */}
         <section id="why" className="pt-12 pb-10 bg-white px-6 text-center">
