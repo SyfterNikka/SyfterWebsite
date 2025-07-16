@@ -3,11 +3,13 @@ import { useEffect, useRef } from "react";
 const BinaryRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    const fade = fadeRef.current;
+    if (!canvas || !container || !fade) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -21,20 +23,6 @@ const BinaryRain = () => {
     const columns = Math.floor(width / fontSize);
     const drops = Array(columns).fill(1);
     const chars = ["0", "1"];
-
-    // Create gradient mask once
-    const gradientCanvas = document.createElement("canvas");
-    gradientCanvas.width = width;
-    gradientCanvas.height = height;
-    const gtx = gradientCanvas.getContext("2d")!;
-    const fadeHeight = 100;
-    const fadeGradient = gtx.createLinearGradient(0, height - fadeHeight, 0, height);
-    fadeGradient.addColorStop(0, "rgba(0, 0, 0, 1)");
-    fadeGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-    gtx.fillStyle = "black";
-    gtx.fillRect(0, 0, width, height);
-    gtx.fillStyle = fadeGradient;
-    gtx.fillRect(0, height - fadeHeight, width, fadeHeight);
 
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -56,12 +44,6 @@ const BinaryRain = () => {
 
         drops[i]++;
       }
-
-      // 🪄 Apply fade only to bottom using composite mask
-      ctx.save();
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.drawImage(gradientCanvas, 0, 0);
-      ctx.restore();
     };
 
     let animationFrameId: number;
@@ -70,7 +52,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18);
+      }, 18); // ≈55fps
     };
 
     render();
@@ -84,28 +66,45 @@ const BinaryRain = () => {
 
     window.addEventListener("resize", handleResize);
 
+    // Scroll-based opacity adjustment for mist fade
+    const handleScroll = () => {
+      const heroBottom = container.getBoundingClientRect().bottom;
+      const fadeStart = 100; // start fading when 100px from bottom
+      const fadeEnd = 0; // fully faded at bottom
+
+      const opacity = Math.max(0, Math.min(1, (heroBottom - fadeEnd) / (fadeStart - fadeEnd)));
+      fade.style.opacity = opacity.toString();
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // trigger initial fade
+
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   return (
-  <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      style={{ pointerEvents: "none" }}
-    />
-    {/* Seamless scroll fade */}
-    <div
-      className="absolute bottom-0 left-0 w-full h-32 pointer-events-none z-10"
-      style={{
-        background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(30, 58, 95, 0.8), #1e3a5f)",
-      }}
-    />
-  </div>
-);
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ pointerEvents: "none" }}
+      />
+      {/* Scroll-reactive mist gradient */}
+      <div
+        ref={fadeRef}
+        className="absolute bottom-0 left-0 w-full h-40 z-10 pointer-events-none"
+        style={{
+          background: "linear-gradient(to bottom, transparent, #1e3a5f)",
+          opacity: 1,
+          transition: "opacity 0.2s ease-out",
+        }}
+      />
+    </div>
+  );
 };
 
 export default BinaryRain;
