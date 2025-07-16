@@ -112,46 +112,55 @@ export default function Home() {
       <main className="pt-20">
 
         {/* Hero */}
-        <section className="relative text-white text-center py-40 overflow-hidden">
-  {/* Background image */}
-  <div
-    className="absolute inset-0 bg-cover bg-center animate-pulse"
-    style={{
-      backgroundImage: "url('/f8c4061a-90d8-4ef1-ad44-c5c4022a4fdc.png')",
-      opacity: 0.12,
-      zIndex: 1,
-    }}
-  ></div>
-
-  {/* Floating binary columns */}
-  <div className="absolute inset-0 z-10 overflow-hidden">
-    {[...Array(20)].map((_, i) => (
+        <section className="relative h-[600px] overflow-hidden bg-black text-white">
+  {/* Matrix-like animated numbers */}
+  <div className="absolute inset-0 z-0 flex flex-wrap justify-center items-center">
+    {Array.from({ length: 40 }).map((_, i) => (
       <div
         key={i}
-        className="absolute text-green-400 font-mono text-xs opacity-30 animate-binary"
-        style={{
-          left: `${i * 5}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 4}s`,
-        }}
+        className="w-4 h-full overflow-hidden mx-1"
       >
-        {Array(20)
-          .fill(0)
-          .map(() => (Math.random() > 0.5 ? "1" : "0"))
-          .join("\n")}
+        <div
+          className="animate-scrollUp"
+          style={{
+            animationDelay: `${Math.random() * 5}s`,
+            animationDuration: `${8 + Math.random() * 5}s`,
+          }}
+        >
+          {Array.from({ length: 40 }).map((_, j) => (
+            <div
+              key={j}
+              className={`text-xs leading-4 ${
+                Math.random() < 0.5
+                  ? 'text-syfterBlue'
+                  : Math.random() < 0.5
+                  ? 'text-midBlue'
+                  : 'text-darkBlue'
+              }`}
+            >
+              {Math.random() < 0.5 ? '0' : '1'}
+            </div>
+          ))}
+        </div>
       </div>
     ))}
   </div>
 
-  {/* Hero content */}
-  <div className="relative z-20 px-8 max-w-[1600px] mx-auto">
-    <h1 className="text-6xl font-bold mb-6 leading-tight">
-      Hire <span className="italic text-gray-300">{displayText}</span>
+  {/* Hero Content */}
+  <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+    <h1 className="text-5xl font-bold mb-4">
+      Hire <span className="italic text-syfterBlue">{displayText}</span>
     </h1>
-    <p className="text-xl mb-10">Syfter Certified talent delivered faster, smarter, better.</p>
-    <div className="flex flex-wrap justify-center gap-6">
-      <button className="bg-white text-blue-600 font-semibold py-3 px-8 rounded hover:bg-gray-200 text-lg">Find Talent</button>
-      <button className="bg-white text-blue-600 font-semibold py-3 px-8 rounded hover:bg-gray-200 text-lg">Find Jobs</button>
+    <p className="text-lg mb-8">
+      Syfter Certified talent delivered faster, smarter, better.
+    </p>
+    <div className="flex justify-center gap-6">
+      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+        Find Talent
+      </button>
+      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+        Find Jobs
+      </button>
     </div>
   </div>
 </section>
