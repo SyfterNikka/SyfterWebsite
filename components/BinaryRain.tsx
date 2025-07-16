@@ -22,8 +22,21 @@ const BinaryRain = () => {
     const drops = Array(columns).fill(1);
     const chars = ["0", "1"];
 
+    // Create gradient mask once
+    const gradientCanvas = document.createElement("canvas");
+    gradientCanvas.width = width;
+    gradientCanvas.height = height;
+    const gtx = gradientCanvas.getContext("2d")!;
+    const fadeHeight = 100;
+    const fadeGradient = gtx.createLinearGradient(0, height - fadeHeight, 0, height);
+    fadeGradient.addColorStop(0, "rgba(0, 0, 0, 1)");
+    fadeGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    gtx.fillStyle = "black";
+    gtx.fillRect(0, 0, width, height);
+    gtx.fillStyle = fadeGradient;
+    gtx.fillRect(0, height - fadeHeight, width, fadeHeight);
+
     const draw = () => {
-      // Black translucent background to create trail
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
       ctx.font = `${fontSize}px monospace`;
@@ -44,13 +57,11 @@ const BinaryRain = () => {
         drops[i]++;
       }
 
-      // 🔽 Apply fade-out gradient at bottom inside canvas
-      const fadeHeight = 100;
-      const gradient = ctx.createLinearGradient(0, height - fadeHeight, 0, height);
-      gradient.addColorStop(0, "rgba(30,58,95,0)");
-      gradient.addColorStop(1, "rgba(30,58,95,1)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, height - fadeHeight, width, fadeHeight);
+      // 🪄 Apply fade only to bottom using composite mask
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.drawImage(gradientCanvas, 0, 0);
+      ctx.restore();
     };
 
     let animationFrameId: number;
@@ -59,7 +70,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18); // Maintain your original slower pace
+      }, 18);
     };
 
     render();
