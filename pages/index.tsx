@@ -112,39 +112,10 @@ export default function Home() {
       <main className="pt-20">
 
         {/* Hero */}
-        <section className="relative h-[600px] overflow-hidden bg-black text-white">
-  {/* Matrix-like animated numbers */}
-  <div className="absolute inset-0 z-0 flex flex-wrap justify-center items-center">
-    {Array.from({ length: 40 }).map((_, i) => (
-      <div
-        key={i}
-        className="w-4 h-full overflow-hidden mx-1"
-      >
-        <div
-          className="animate-scrollUp"
-          style={{
-            animationDelay: `${Math.random() * 5}s`,
-            animationDuration: `${8 + Math.random() * 5}s`,
-          }}
-        >
-          {Array.from({ length: 40 }).map((_, j) => (
-            <div
-              key={j}
-              className={`text-xs leading-4 ${
-                Math.random() < 0.5
-                  ? 'text-syfterBlue'
-                  : Math.random() < 0.5
-                  ? 'text-midBlue'
-                  : 'text-darkBlue'
-              }`}
-            >
-              {Math.random() < 0.5 ? '0' : '1'}
-            </div>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div>
+        import BinaryRain from "@/components/BinaryRain"; // adjust path as needed
+
+<section className="relative h-[600px] overflow-hidden bg-black text-white">
+  <BinaryRain />
 
   {/* Hero Content */}
   <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
@@ -164,7 +135,6 @@ export default function Home() {
     </div>
   </div>
 </section>
-
 
         {/* Why Syfter */}
         <section id="why" className="pt-12 pb-10 bg-white px-6 text-center">
