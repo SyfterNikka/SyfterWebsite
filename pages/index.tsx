@@ -119,15 +119,18 @@ export default function Home() {
     backgroundPosition: "center 40%",
   }}
 >
+  {/* Dark overlay */}
   <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-  <div className="relative z-10 max-w-7xl mx-auto px-6">
-    <h1 className="text-5xl font-bold mb-4">
+
+  {/* Content wrapper */}
+  <div className="relative z-10 px-8 max-w-[1600px] mx-auto">
+    <h1 className="text-6xl font-bold mb-6 leading-tight">
       Hire <span className="italic text-gray-300">{displayText}</span>
     </h1>
-    <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
-    <div className="flex justify-center gap-6">
-      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
-      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
+    <p className="text-xl mb-10">Syfter Certified talent delivered faster, smarter, better.</p>
+    <div className="flex flex-wrap justify-center gap-6">
+      <button className="bg-white text-blue-600 font-semibold py-3 px-8 rounded hover:bg-gray-200 text-lg">Find Talent</button>
+      <button className="bg-white text-blue-600 font-semibold py-3 px-8 rounded hover:bg-gray-200 text-lg">Find Jobs</button>
     </div>
   </div>
 </section>
