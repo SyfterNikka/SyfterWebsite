@@ -33,7 +33,7 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  // Counter animation on scroll
+  // Counter animation
   useEffect(() => {
     const animateCount = (el: HTMLElement, end: number, suffix = "") => {
       let start = 0;
@@ -61,7 +61,7 @@ export default function Home() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement;
-            const { end, suffix } = counters.find(c => c.id === el.id)!;
+            const { end, suffix } = counters.find((c) => c.id === el.id)!;
             animateCount(el, end, suffix);
             observer.unobserve(el);
           }
@@ -99,69 +99,76 @@ export default function Home() {
       </Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <div className="text-xl font-bold text-blue-600">Syfter</div>
+      <header className="fixed top-0 w-full z-50 bg-[#0f172a] shadow-md py-4 px-6 flex justify-between items-center">
+        <div className="text-xl font-bold text-syfterBlue">Syfter</div>
         <nav className="space-x-6 hidden md:flex">
-          <a href="#why" className="hover:text-blue-600">Why Syfter</a>
-          <a href="#jobs" className="hover:text-blue-600">Find Work</a>
-          <a href="#hire" className="hover:text-blue-600">Hire Talent</a>
-          <a href="#contact" className="hover:text-blue-600">Contact</a>
+          <a href="#why" className="hover:text-syfterBlue text-white">Why Syfter</a>
+          <a href="#jobs" className="hover:text-syfterBlue text-white">Find Work</a>
+          <a href="#hire" className="hover:text-syfterBlue text-white">Hire Talent</a>
+          <a href="#contact" className="hover:text-syfterBlue text-white">Contact</a>
         </nav>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
+        <button className="bg-syfterBlue text-white px-4 py-2 rounded hover:bg-blue-400 text-sm">
+          Get Started
+        </button>
       </header>
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
         {/* Hero */}
-
-<section className="relative h-[600px] overflow-hidden bg-black text-white">
-  <BinaryRain />
-
-  {/* Hero Content */}
-  <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-    <h1 className="text-5xl font-bold mb-4">
-      Hire <span className="italic text-syfterBlue">{displayText}</span>
-    </h1>
-    <p className="text-lg mb-8">
-      Syfter Certified talent delivered faster, smarter, better.
-    </p>
-    <div className="flex justify-center gap-6">
-      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
-        Find Talent
-      </button>
-      <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
-        Find Jobs
-      </button>
-    </div>
-  </div>
-</section>
+        <section className="relative h-[600px] overflow-hidden bg-black text-white">
+          <BinaryRain />
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+            <h1 className="text-5xl font-bold mb-4">
+              Hire <span className="italic text-syfterBlue">{displayText}</span>
+            </h1>
+            <p className="text-lg mb-8">
+              Syfter Certified talent delivered faster, smarter, better.
+            </p>
+            <div className="flex justify-center gap-6">
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Talent
+              </button>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Jobs
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* Why Syfter */}
-        <section id="why" className="pt-12 pb-10 bg-white px-6 text-center">
-  <h2 className="text-5xl font-bold mb-14 text-gray-900">Why Syfter</h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">Syfter Certified</h4>
-      <p className="text-sm text-gray-600">Screened for resilience, communication, and excellence.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">AI-Proofed</h4>
-      <p className="text-sm text-gray-600">Human-reviewed to avoid automation blind spots.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">Fast Hiring</h4>
-      <p className="text-sm text-gray-600">Reduce time-to-hire to under 5 days.</p>
-    </div>
-    <div>
-      <h4 className="text-xl font-semibold text-gray-800 mb-2">People First</h4>
-      <p className="text-sm text-gray-600">We don’t fill seats — we grow teams.</p>
-    </div>
-  </div>
-</section>
+        <section id="why" className="pt-12 pb-10 px-6 text-center">
+          <h2 className="text-5xl font-bold mb-14 text-white">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+            <div>
+              <h4 className="text-xl font-semibold text-white mb-2">Syfter Certified</h4>
+              <p className="text-sm text-gray-300">
+                Screened for resilience, communication, and excellence.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-white mb-2">AI-Proofed</h4>
+              <p className="text-sm text-gray-300">
+                Human-reviewed to avoid automation blind spots.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-white mb-2">Fast Hiring</h4>
+              <p className="text-sm text-gray-300">
+                Reduce time-to-hire to under 5 days.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold text-white mb-2">People First</h4>
+              <p className="text-sm text-gray-300">
+                We don’t fill seats — we grow teams.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* Stats */}
-        <section className="bg-gray-100 py-16 text-center px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-gray-800">
+        <section className="py-16 text-center px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-white">
             <div>
               <div id="counter1" className="text-4xl font-bold mb-2">0</div>
               <p className="text-lg font-medium">hires placed</p>
@@ -178,8 +185,8 @@ export default function Home() {
         </section>
 
         {/* Jobs */}
-        <section id="jobs" className="py-16 px-6 bg-white">
-          <h2 className="text-2xl font-bold text-center mb-10">Featured Jobs</h2>
+        <section id="jobs" className="py-16 px-6">
+          <h2 className="text-3xl font-bold text-center mb-10 text-white">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {[
               { title: "Frontend Developer", loc: "NY, Full-Time" },
@@ -187,26 +194,23 @@ export default function Home() {
               { title: "IT Project Manager", loc: "Chicago, Contract" },
               { title: "Data Analyst", loc: "Stousburg, Full-Time" },
             ].map((job, i) => (
-              <div key={i} className="bg-gray-100 p-4 rounded border">
-                <h4 className="font-semibold text-lg">{job.title}</h4>
-                <p className="text-sm text-gray-600">{job.loc}</p>
+              <div key={i} className="bg-[#1e3a5f] p-4 rounded border border-gray-700">
+                <h4 className="font-semibold text-lg text-white">{job.title}</h4>
+                <p className="text-sm text-gray-300">{job.loc}</p>
               </div>
             ))}
-          </div>
-          <div className="text-center mt-8">
-            <a href="#" className="text-blue-600 hover:underline">View All Jobs →</a>
           </div>
         </section>
 
         {/* Testimonials */}
-        <section className="bg-gray-50 py-16 text-center px-6">
-          <h2 className="text-2xl font-bold mb-6">What Our Clients Say</h2>
-          <blockquote className="italic text-lg max-w-2xl mx-auto text-gray-700">
+        <section className="py-16 text-center px-6">
+          <h2 className="text-2xl font-bold mb-6 text-white">What Our Clients Say</h2>
+          <blockquote className="italic text-lg max-w-2xl mx-auto text-gray-300">
             {testimonials[activeTestimonial]}
           </blockquote>
         </section>
 
-        {/* Footer with image */}
+        {/* Footer Image */}
         <section
           className="relative text-white text-center py-20 bg-cover bg-center"
           style={{
