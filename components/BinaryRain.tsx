@@ -3,13 +3,11 @@ import { useEffect, useRef } from "react";
 const BinaryRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const fadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    const fade = fadeRef.current;
-    if (!canvas || !container || !fade) return;
+    if (!canvas || !container) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -24,6 +22,15 @@ const BinaryRain = () => {
     const drops = Array(columns).fill(1);
     const chars = ["0", "1"];
 
+    const fadeStartY = height * 0.75;
+    const fadeEndY = height;
+
+    const getAlpha = (y: number) => {
+      if (y < fadeStartY) return 1;
+      const fadeProgress = (y - fadeStartY) / (fadeEndY - fadeStartY);
+      return 1 - Math.min(Math.max(fadeProgress, 0), 1);
+    };
+
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
@@ -36,7 +43,10 @@ const BinaryRain = () => {
 
         const colorOptions = ["#3b82f6", "#69bdff", "#1e3a8a"];
         ctx.fillStyle = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+
+        ctx.globalAlpha = getAlpha(y);
         ctx.fillText(text, x, y);
+        ctx.globalAlpha = 1; // Reset for next draw
 
         if (y > height && Math.random() > 0.975) {
           drops[i] = 0;
@@ -64,22 +74,11 @@ const BinaryRain = () => {
       canvas.height = height;
     };
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const fadeStart = 0;
-      const fadeEnd = 150;
-      const opacity = Math.max(0, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
-      fade.style.opacity = opacity.toString();
-    };
-
     window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -93,17 +92,6 @@ const BinaryRain = () => {
         ref={canvasRef}
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
-      />
-      {/* Gradient that fades into #1e3a5f, NOT black */}
-      <div
-        ref={fadeRef}
-        className="absolute bottom-0 left-0 w-full h-40 z-10 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(30,58,95,0), rgba(30,58,95,0.8), #1e3a5f)",
-          opacity: 1,
-          transition: "opacity 0.2s ease-out",
-        }}
       />
     </div>
   );
