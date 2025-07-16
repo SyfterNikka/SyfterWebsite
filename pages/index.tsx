@@ -110,7 +110,7 @@ export default function Home() {
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
-      <main className="pt-20">
+      <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
         {/* Hero */}
 
