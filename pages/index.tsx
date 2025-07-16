@@ -86,17 +86,11 @@ export default function Home() {
        {/* Why Syfter */}
 <section
   id="why"
-  className="pt-16 pb-10 bg-[#1e3a5f] relative z-10 text-center text-white"
+  className="pt-20 pb-10 relative z-10 text-center text-white"
+  style={{
+    background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(30,58,95,0.95) 20%, #1e3a5f 40%, #1e3a5f 100%)",
+  }}
 >
-  {/* Top overlay to hide the binary transition seam */}
-  <div
-    className="absolute -top-10 left-0 w-full h-16 pointer-events-none z-20"
-    style={{
-      background:
-        "linear-gradient(to bottom, rgba(30,58,95,1), rgba(30,58,95,0.85), rgba(30,58,95,0))",
-    }}
-  />
-
   <h2 className="text-5xl font-bold mb-14 relative z-30">Why Syfter</h2>
 
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto relative z-30">
