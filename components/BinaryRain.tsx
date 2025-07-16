@@ -50,7 +50,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18);
+      }, 18); // Preserved your ~55fps pacing
     };
 
     render();
@@ -71,17 +71,19 @@ const BinaryRain = () => {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
-    >
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
       <canvas
         ref={canvasRef}
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-      {/* Add scroll-aware fading mask */}
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-b from-transparent to-[#1e3a5f] pointer-events-none z-10" />
+      
+      {/* Soft fade at bottom for mist-like transition */}
+      <div className="absolute bottom-0 left-0 w-full h-32 pointer-events-none z-10"
+        style={{
+          backgroundImage: "linear-gradient(to bottom, transparent 0%, #1e3a5f 100%)"
+        }}
+      />
     </div>
   );
 };
