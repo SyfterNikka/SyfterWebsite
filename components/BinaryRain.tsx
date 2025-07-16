@@ -52,7 +52,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18); // ≈55fps
+      }, 18);
     };
 
     render();
@@ -64,20 +64,18 @@ const BinaryRain = () => {
       canvas.height = height;
     };
 
-    window.addEventListener("resize", handleResize);
-
-    // Scroll-based opacity adjustment for mist fade
     const handleScroll = () => {
-      const heroBottom = container.getBoundingClientRect().bottom;
-      const fadeStart = 100; // start fading when 100px from bottom
-      const fadeEnd = 0; // fully faded at bottom
+      const scrollY = window.scrollY;
+      const fadeStart = 0;
+      const fadeEnd = 150; // fully faded by 150px scroll
 
-      const opacity = Math.max(0, Math.min(1, (heroBottom - fadeEnd) / (fadeStart - fadeEnd)));
+      const opacity = Math.max(0, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
       fade.style.opacity = opacity.toString();
     };
 
+    window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // trigger initial fade
+    handleScroll(); // initialize once
 
     return () => {
       cancelAnimationFrame(animationFrameId);
@@ -93,14 +91,14 @@ const BinaryRain = () => {
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-      {/* Scroll-reactive mist gradient */}
+      {/* Mist overlay that fades on scroll */}
       <div
         ref={fadeRef}
         className="absolute bottom-0 left-0 w-full h-40 z-10 pointer-events-none"
         style={{
           background: "linear-gradient(to bottom, transparent, #1e3a5f)",
           opacity: 1,
-          transition: "opacity 0.2s ease-out",
+          transition: "opacity 0.1s ease-out",
         }}
       />
     </div>
