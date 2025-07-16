@@ -25,8 +25,7 @@ const BinaryRain = () => {
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
-
-      ctx.font = ${fontSize}px monospace;
+      ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
@@ -49,7 +48,9 @@ const BinaryRain = () => {
 
     const render = () => {
       draw();
-      animationFrameId = requestAnimationFrame(render);
+      setTimeout(() => {
+        animationFrameId = requestAnimationFrame(render);
+      }, 18); // Slight delay to slow animation (was ~16ms for 60fps; now ~55fps)
     };
 
     render();
