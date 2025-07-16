@@ -1,3 +1,4 @@
+// components/BinaryRain.tsx
 import { useEffect, useRef } from "react";
 
 const BinaryRain = () => {
@@ -25,6 +26,7 @@ const BinaryRain = () => {
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
+
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -48,9 +50,7 @@ const BinaryRain = () => {
 
     const render = () => {
       draw();
-      setTimeout(() => {
-        animationFrameId = requestAnimationFrame(render);
-      }, 18); // Slight delay to slow animation (was ~16ms for 60fps; now ~55fps)
+      animationFrameId = requestAnimationFrame(render);
     };
 
     render();
@@ -77,6 +77,8 @@ const BinaryRain = () => {
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
+      {/* Gradient Fade at Bottom */}
+      <div className="absolute bottom-0 w-full h-40 bg-gradient-to-t from-[#0f172a] to-transparent pointer-events-none z-10" />
     </div>
   );
 };
