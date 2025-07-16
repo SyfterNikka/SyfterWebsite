@@ -23,7 +23,8 @@ const BinaryRain = () => {
     const chars = ["0", "1"];
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      // Slower fade-out for smoother trails
+      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
       ctx.fillRect(0, 0, width, height);
 
       ctx.font = `${fontSize}px monospace`;
@@ -33,15 +34,18 @@ const BinaryRain = () => {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
+        // Use Syfter brand color tones
         const colorOptions = ["#3b82f6", "#69bdff", "#1e3a8a"];
         ctx.fillStyle = colorOptions[Math.floor(Math.random() * colorOptions.length)];
         ctx.fillText(text, x, y);
 
-        if (y > height && Math.random() > 0.975) {
+        // Lower chance to reset for slower rain
+        if (y > height && Math.random() > 0.995) {
           drops[i] = 0;
         }
 
-        drops[i]++;
+        // Slower drop
+        drops[i] += 0.5;
       }
     };
 
