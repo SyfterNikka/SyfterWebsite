@@ -101,7 +101,7 @@ const BinaryRain = () => {
     <div
       className="absolute bottom-0 left-0 w-full h-32 pointer-events-none z-10"
       style={{
-        background: "linear-gradient(to bottom, rgba(0, 0, 0, 0), #1e3a5f 100%)",
+        background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(30, 58, 95, 0.8), #1e3a5f)",
       }}
     />
   </div>
