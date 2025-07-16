@@ -84,7 +84,7 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <section id="why" className="pt-20 pb-16 px-6 text-center transition-opacity duration-1000 fade-in">
+        <section id="why" className="pt-12 pb-10 bg-[#1e3a5f] px-6 text-center text-white">
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             <div>
