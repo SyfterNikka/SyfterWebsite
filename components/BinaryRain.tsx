@@ -23,16 +23,8 @@ const BinaryRain = () => {
     const chars = ["0", "1"];
 
     const draw = () => {
-     // Slight trail darkening
-ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-ctx.fillRect(0, 0, width, height);
-
-// Apply fade mask at the bottom
-const gradient = ctx.createLinearGradient(0, height * 0.85, 0, height);
-gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
-ctx.fillStyle = gradient;
-ctx.fillRect(0, height * 0.85, width, height * 0.15);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, width, height);
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -58,7 +50,7 @@ ctx.fillRect(0, height * 0.85, width, height * 0.15);
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18); // Slight delay to slow animation (was ~16ms for 60fps; now ~55fps)
+      }, 18);
     };
 
     render();
@@ -78,17 +70,20 @@ ctx.fillRect(0, height * 0.85, width, height * 0.15);
     };
   }, []);
 
- return (
-  <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      style={{ pointerEvents: "none" }}
-    />
-    {/* Bottom fade gradient overlay */}
-    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#0f172a] pointer-events-none z-10" />
-  </div>
-);
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 z-0 overflow-hidden pointer-events-none"
+    >
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ pointerEvents: "none" }}
+      />
+      {/* Add scroll-aware fading mask */}
+      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-b from-transparent to-[#1e3a5f] pointer-events-none z-10" />
+    </div>
+  );
 };
 
 export default BinaryRain;
