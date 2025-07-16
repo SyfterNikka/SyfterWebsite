@@ -26,7 +26,7 @@ const BinaryRain = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
 
-      ctx.font = `${fontSize}px monospace`;
+      ctx.font = ${fontSize}px monospace;
 
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
@@ -41,8 +41,7 @@ const BinaryRain = () => {
           drops[i] = 0;
         }
 
-        // Slightly slower animation
-        drops[i] += 0.75;
+        drops[i]++;
       }
     };
 
