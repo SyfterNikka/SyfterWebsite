@@ -1,4 +1,3 @@
-// components/BinaryRain.tsx
 import { useEffect, useRef } from "react";
 
 const BinaryRain = () => {
@@ -26,7 +25,6 @@ const BinaryRain = () => {
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
-
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -50,7 +48,9 @@ const BinaryRain = () => {
 
     const render = () => {
       draw();
-      animationFrameId = requestAnimationFrame(render);
+      setTimeout(() => {
+        animationFrameId = requestAnimationFrame(render);
+      }, 18); // Slight delay to slow animation (was ~16ms for 60fps; now ~55fps)
     };
 
     render();
@@ -70,17 +70,17 @@ const BinaryRain = () => {
     };
   }, []);
 
-  return (
-    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ pointerEvents: "none" }}
-      />
-      {/* Fade-out gradient overlay */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#0f172a] z-10" />
-    </div>
-  );
+ return (
+  <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full"
+      style={{ pointerEvents: "none" }}
+    />
+    {/* Bottom fade gradient overlay */}
+    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#0f172a] pointer-events-none z-10" />
+  </div>
+);
 };
 
 export default BinaryRain;
