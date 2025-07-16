@@ -113,7 +113,6 @@ export default function Home() {
       <main className="pt-20">
 
         {/* Hero */}
-        import BinaryRain from "@/components/BinaryRain"; // adjust path as needed
 
 <section className="relative h-[600px] overflow-hidden bg-black text-white">
   <BinaryRain />
