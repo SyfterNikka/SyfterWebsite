@@ -88,7 +88,7 @@ export default function Home() {
   id="why"
   className="pt-20 pb-10 relative z-10 text-center text-white"
   style={{
-    background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(30,58,95,0.95) 20%, #1e3a5f 40%, #1e3a5f 100%)",
+    background: "linear-gradient(to bottom, rgba(0,0,0,0), rgba(30,58,95,0.6) 35%, rgba(30,58,95,0.9) 55%, #1e3a5f 75%)",
   }}
 >
   <h2 className="text-5xl font-bold mb-14 relative z-30">Why Syfter</h2>
