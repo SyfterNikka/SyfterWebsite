@@ -21,13 +21,9 @@ const BinaryRain = () => {
     const chars = ["0", "1"];
 
     const draw = () => {
-      if (!ctx) return;
-
-      // Semi-transparent background for trail effect
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
 
-      // Style for text
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -35,8 +31,7 @@ const BinaryRain = () => {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
-        // Varying blue tones
-        const colorOptions = ["#3b82f6", "#69bdff", "#1e3a8a"]; // Tailwind blue shades
+        const colorOptions = ["#3b82f6", "#69bdff", "#1e3a8a"];
         ctx.fillStyle = colorOptions[Math.floor(Math.random() * colorOptions.length)];
         ctx.fillText(text, x, y);
 
@@ -57,15 +52,28 @@ const BinaryRain = () => {
 
     render();
 
-    // Resize listener
     const handleResize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
     };
+
     window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
+    };
+  }, []); // <-- this closing brace and bracket were missing
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-screen h-screen z-0"
+      style={{ pointerEvents: "none" }}
+    />
+  );
+};
+
+export default BinaryRain;
