@@ -2,16 +2,18 @@ import { useEffect, useRef } from "react";
 
 const BinaryRain = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    let width = container.clientWidth;
+    let height = container.clientHeight;
     canvas.width = width;
     canvas.height = height;
 
@@ -53,8 +55,8 @@ const BinaryRain = () => {
     render();
 
     const handleResize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
+      width = container.clientWidth;
+      height = container.clientHeight;
       canvas.width = width;
       canvas.height = height;
     };
@@ -65,14 +67,16 @@ const BinaryRain = () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
     };
-  }, []); // <-- this closing brace and bracket were missing
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed top-0 left-0 w-screen h-screen z-0"
-      style={{ pointerEvents: "none" }}
-    />
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ pointerEvents: "none" }}
+      />
+    </div>
   );
 };
 
