@@ -86,31 +86,27 @@ export default function Home() {
        {/* Why Syfter */}
 <section
   id="why"
-  className="pt-12 pb-10 bg-[#1e3a5f] -mt-1 z-10 relative text-center text-white"
+  className="pt-16 pb-10 bg-[#1e3a5f] relative z-10 text-center text-white"
 >
-  {/* Top gradient overlay to blend with BinaryRain */}
+  {/* Top overlay to hide the binary transition seam */}
   <div
-    className="absolute top-0 left-0 w-full h-16 pointer-events-none z-10"
+    className="absolute -top-10 left-0 w-full h-16 pointer-events-none z-20"
     style={{
       background:
-        "linear-gradient(to bottom, #1e3a5f 0%, rgba(30,58,95,0.85) 40%, rgba(30,58,95,0.6) 100%)",
+        "linear-gradient(to bottom, rgba(30,58,95,1), rgba(30,58,95,0.85), rgba(30,58,95,0))",
     }}
   />
 
-  <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+  <h2 className="text-5xl font-bold mb-14 relative z-30">Why Syfter</h2>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto relative z-30">
     <div>
       <h4 className="text-xl font-semibold mb-2">Syfter Certified</h4>
-      <p className="text-sm">
-        Screened for resilience, communication, and excellence.
-      </p>
+      <p className="text-sm">Screened for resilience, communication, and excellence.</p>
     </div>
     <div>
       <h4 className="text-xl font-semibold mb-2">AI-Proofed</h4>
-      <p className="text-sm">
-        Human-reviewed to avoid automation blind spots.
-      </p>
+      <p className="text-sm">Human-reviewed to avoid automation blind spots.</p>
     </div>
     <div>
       <h4 className="text-xl font-semibold mb-2">Fast Hiring</h4>
@@ -122,7 +118,6 @@ export default function Home() {
     </div>
   </div>
 </section>
-
 
         {/* Stats */}
         <section className="py-20 text-center px-6 fade-in transition-opacity duration-1000">
