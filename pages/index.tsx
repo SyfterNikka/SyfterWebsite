@@ -136,71 +136,78 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <section id="why" className="pt-12 pb-10 px-6 text-center">
-          <h2 className="text-5xl font-bold mb-14 text-white">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-            <div>
-              <h4 className="text-xl font-semibold text-white mb-2">Syfter Certified</h4>
-              <p className="text-sm text-gray-300">
-                Screened for resilience, communication, and excellence.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold text-white mb-2">AI-Proofed</h4>
-              <p className="text-sm text-gray-300">
-                Human-reviewed to avoid automation blind spots.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold text-white mb-2">Fast Hiring</h4>
-              <p className="text-sm text-gray-300">
-                Reduce time-to-hire to under 5 days.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold text-white mb-2">People First</h4>
-              <p className="text-sm text-gray-300">
-                We don’t fill seats — we grow teams.
-              </p>
-            </div>
-          </div>
-        </section>
+<section id="why" className="pt-16 pb-12 px-6 text-center bg-[#1f2c3e]">
+  <h2 className="text-5xl font-bold mb-14 text-white">Why Syfter</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto text-white">
+    <div className="flex flex-col items-center">
+      <svg className="w-8 h-8 text-syfterBlue mb-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+      <h4 className="text-xl font-semibold mb-2">Syfter Certified</h4>
+      <p className="text-sm text-gray-300">Screened for resilience, communication, and excellence.</p>
+    </div>
+    <div className="flex flex-col items-center">
+      <svg className="w-8 h-8 text-syfterBlue mb-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h4 className="text-xl font-semibold mb-2">AI-Proofed</h4>
+      <p className="text-sm text-gray-300">Human-reviewed to avoid automation blind spots.</p>
+    </div>
+    <div className="flex flex-col items-center">
+      <svg className="w-8 h-8 text-syfterBlue mb-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M9 12l2 2 4-4M3 12a9 9 0 1018 0 9 9 0 00-18 0z" />
+      </svg>
+      <h4 className="text-xl font-semibold mb-2">Fast Hiring</h4>
+      <p className="text-sm text-gray-300">Reduce time-to-hire to under 5 days.</p>
+    </div>
+    <div className="flex flex-col items-center">
+      <svg className="w-8 h-8 text-syfterBlue mb-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 00-3-3.87M12 12a4 4 0 100-8 4 4 0 000 8z" />
+      </svg>
+      <h4 className="text-xl font-semibold mb-2">People First</h4>
+      <p className="text-sm text-gray-300">We don’t fill seats — we grow teams.</p>
+    </div>
+  </div>
+</section>
 
-        {/* Stats */}
-        <section className="py-16 text-center px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-white">
-            <div>
-              <div id="counter1" className="text-4xl font-bold mb-2">0</div>
-              <p className="text-lg font-medium">hires placed</p>
-            </div>
-            <div>
-              <div id="counter2" className="text-4xl font-bold mb-2">0</div>
-              <p className="text-lg font-medium">average fill time</p>
-            </div>
-            <div>
-              <div id="counter3" className="text-4xl font-bold mb-2">0</div>
-              <p className="text-lg font-medium">retention rate</p>
-            </div>
-          </div>
-        </section>
+{/* Stats */}
+<section className="bg-[#22354a] py-16 text-center px-6 text-white">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+    <div>
+      <div id="counter1" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">hires placed</p>
+    </div>
+    <div>
+      <div id="counter2" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">average fill time</p>
+    </div>
+    <div>
+      <div id="counter3" className="text-4xl font-bold mb-2">0</div>
+      <p className="text-lg font-medium">retention rate</p>
+    </div>
+  </div>
+</section>
 
-        {/* Jobs */}
-        <section id="jobs" className="py-16 px-6">
-          <h2 className="text-3xl font-bold text-center mb-10 text-white">Featured Jobs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              { title: "Frontend Developer", loc: "NY, Full-Time" },
-              { title: "Product Manager", loc: "Remote, Contract" },
-              { title: "IT Project Manager", loc: "Chicago, Contract" },
-              { title: "Data Analyst", loc: "Stousburg, Full-Time" },
-            ].map((job, i) => (
-              <div key={i} className="bg-[#1e3a5f] p-4 rounded border border-gray-700">
-                <h4 className="font-semibold text-lg text-white">{job.title}</h4>
-                <p className="text-sm text-gray-300">{job.loc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+{/* Jobs */}
+<section id="jobs" className="py-16 px-6 bg-[#253e5b] text-white">
+  <h2 className="text-2xl font-bold text-center mb-10">Featured Jobs</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+    {[
+      { title: "Frontend Developer", loc: "NY, Full-Time" },
+      { title: "Product Manager", loc: "Remote, Contract" },
+      { title: "IT Project Manager", loc: "Chicago, Contract" },
+      { title: "Data Analyst", loc: "Stousburg, Full-Time" },
+    ].map((job, i) => (
+      <div key={i} className="bg-[#1f2c3e] p-4 rounded border border-blue-900">
+        <h4 className="font-semibold text-lg">{job.title}</h4>
+        <p className="text-sm text-gray-300">{job.loc}</p>
+      </div>
+    ))}
+  </div>
+  <div className="text-center mt-8">
+    <a href="#" className="text-syfterBlue hover:underline">View All Jobs →</a>
+  </div>
+</section>
 
         {/* Testimonials */}
         <section className="py-16 text-center px-6">
