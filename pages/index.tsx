@@ -1,3 +1,4 @@
+import BinaryRain from "../components/BinaryRain";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
