@@ -52,7 +52,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18);
+      }, 18); // smooth and slightly slowed
     };
 
     render();
@@ -67,7 +67,7 @@ const BinaryRain = () => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const fadeStart = 0;
-      const fadeEnd = 150; // fully faded by 150px scroll
+      const fadeEnd = 150;
 
       const opacity = Math.max(0, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
       fade.style.opacity = opacity.toString();
@@ -75,7 +75,7 @@ const BinaryRain = () => {
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // initialize once
+    handleScroll();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
@@ -85,20 +85,25 @@ const BinaryRain = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 z-0 overflow-hidden"
+      style={{ backgroundColor: "#1e3a5f" }}
+    >
       <canvas
         ref={canvasRef}
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-      {/* Mist overlay that fades on scroll */}
+      {/* Gradient mask that fades on scroll */}
       <div
         ref={fadeRef}
         className="absolute bottom-0 left-0 w-full h-40 z-10 pointer-events-none"
         style={{
-          background: "linear-gradient(to bottom, transparent, #1e3a5f)",
+          background:
+            "linear-gradient(to top, #1e3a5f, rgba(30,58,95,0.8), rgba(0,0,0,0))",
           opacity: 1,
-          transition: "opacity 0.1s ease-out",
+          transition: "opacity 0.2s ease-out",
         }}
       />
     </div>
