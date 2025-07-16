@@ -52,7 +52,7 @@ const BinaryRain = () => {
       draw();
       setTimeout(() => {
         animationFrameId = requestAnimationFrame(render);
-      }, 18); // smooth and slightly slowed
+      }, 18);
     };
 
     render();
@@ -68,7 +68,6 @@ const BinaryRain = () => {
       const scrollY = window.scrollY;
       const fadeStart = 0;
       const fadeEnd = 150;
-
       const opacity = Math.max(0, 1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
       fade.style.opacity = opacity.toString();
     };
@@ -95,13 +94,13 @@ const BinaryRain = () => {
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-      {/* Gradient mask that fades on scroll */}
+      {/* Gradient that fades into #1e3a5f, NOT black */}
       <div
         ref={fadeRef}
         className="absolute bottom-0 left-0 w-full h-40 z-10 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to top, #1e3a5f, rgba(30,58,95,0.8), rgba(0,0,0,0))",
+            "linear-gradient(to bottom, rgba(30,58,95,0), rgba(30,58,95,0.8), #1e3a5f)",
           opacity: 1,
           transition: "opacity 0.2s ease-out",
         }}
