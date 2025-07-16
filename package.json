@@ -9,11 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
     "framer-motion": "^12.23.6",
+=======
+>>>>>>> 3450a991891b8445a6e9e8b384f7cb50df421e8d
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
+<<<<<<< HEAD
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
@@ -23,4 +27,15 @@
     "tailwindcss": "^4.1.11",
     "typescript": "^5"
   }
+=======
+"devDependencies": {
+  "@types/node": "^20",
+  "@types/react": "^19",
+  "@types/react-dom": "^19",
+  "autoprefixer": "^10.4.21",
+  "postcss": "^8.4.31",
+  "tailwindcss": "3.4.1",
+  "typescript": "^5"
+}
+>>>>>>> 3450a991891b8445a6e9e8b384f7cb50df421e8d
 }
