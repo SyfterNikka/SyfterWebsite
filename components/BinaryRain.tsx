@@ -23,8 +23,16 @@ const BinaryRain = () => {
     const chars = ["0", "1"];
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, width, height);
+     // Slight trail darkening
+ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+ctx.fillRect(0, 0, width, height);
+
+// Apply fade mask at the bottom
+const gradient = ctx.createLinearGradient(0, height * 0.85, 0, height);
+gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
+ctx.fillStyle = gradient;
+ctx.fillRect(0, height * 0.85, width, height * 0.15);
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
