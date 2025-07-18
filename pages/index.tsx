@@ -3,17 +3,15 @@ import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
 import { motion, Variants } from "framer-motion";
 
-// Easing function
 const easeInOutCubic: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
-// Staggered animation for "Why Syfter" tiles
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.2,
+      delay: i * 0.3,
       duration: 0.6,
       ease: easeInOutCubic,
     },
@@ -51,7 +49,6 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  // Intersection-aware counter logic
   const [counts, setCounts] = useState([0, 0, 0]);
   const countersRef = useRef<HTMLDivElement | null>(null);
   const triggered = useRef(false);
@@ -115,8 +112,7 @@ export default function Home() {
         <title>Syfter — Precision Staffing Made Human</title>
       </Head>
 
-      {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-[#2c3a4a]/80 text-white py-4 px-6 flex justify-between items-center shadow-sm">
+      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-[#2c3a4a]/40 text-white py-4 px-6 flex justify-between items-center transition duration-300">
         <div className="text-xl font-bold text-white">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium">
           <a href="#why" className="hover:text-[#69bdff] transition">Why Syfter</a>
@@ -127,9 +123,7 @@ export default function Home() {
         <button className="bg-[#69bdff] text-black px-4 py-2 rounded hover:bg-white text-sm">Get Started</button>
       </header>
 
-      <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
-
-        {/* Hero Section */}
+      <main className="pt-20 text-white bg-gradient-to-b from-[#43494f] to-[#272e36]">
         <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
@@ -144,10 +138,9 @@ export default function Home() {
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
             </motion.div>
           </div>
-          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f)" }} />
+          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #272e36)" }} />
         </section>
 
-        {/* Why Syfter */}
         <motion.section id="why" className="pt-20 pb-10 text-center text-white" {...sectionMotion}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
@@ -157,14 +150,7 @@ export default function Home() {
               { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
               { title: "People First", text: "We don’t fill seats — we grow teams." },
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={itemVariants}
-              >
+              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: false }} variants={itemVariants}>
                 <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
                 <p className="text-sm">{item.text}</p>
               </motion.div>
@@ -172,7 +158,6 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...sectionMotion}>
           <div ref={countersRef}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
@@ -183,7 +168,6 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Jobs */}
         <motion.section id="jobs" className="py-20 px-6" {...sectionMotion}>
           <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -206,7 +190,6 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Testimonials */}
         <motion.section className="py-20 text-center px-6" {...sectionMotion}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <motion.blockquote
@@ -220,7 +203,6 @@ export default function Home() {
           </motion.blockquote>
         </motion.section>
 
-        {/* Footer */}
         <motion.section id="contact" className="text-white text-center py-20 bg-[#0b192f]" {...sectionMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
