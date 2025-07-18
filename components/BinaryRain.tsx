@@ -94,12 +94,12 @@ const BinaryRain = () => {
         style={{ pointerEvents: "none" }}
       />
       <div
-        className="absolute bottom-0 left-0 w-full h-[200px] pointer-events-none z-10"
-        style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0), #34414f)",
-        }}
-      />
-    </div> // ← THIS LINE FIXES YOUR ERROR
+  className="absolute bottom-0 left-0 w-full h-96 pointer-events-none z-10"
+  style={{
+    background: "linear-gradient(to bottom, rgba(0,0,0,0), #28303b)" // FADE TO CHARCOAL, NOT LIGHT GRAY
+  }}
+/>
+    </div> 
   );
 };
 
