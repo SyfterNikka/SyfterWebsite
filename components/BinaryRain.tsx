@@ -87,20 +87,19 @@ const BinaryRain = () => {
       ref={containerRef}
       className="absolute inset-0 z-0 overflow-hidden"
       style={{ backgroundColor: "#28303b" }}
-    />
+    >
       <canvas
         ref={canvasRef}
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-
-      {/* Mist Fade — matches site background */}
       <div
-  className="absolute bottom-0 left-0 w-full h-[200px] pointer-events-none z-10"
-  style={{
-    background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)", // fade *into* the lighter color
-  }}
-/>
+        className="absolute bottom-0 left-0 w-full h-[200px] pointer-events-none z-10"
+        style={{
+          background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)",
+        }}
+      />
+    </div> // ← THIS LINE FIXES YOUR ERROR
   );
 };
 
