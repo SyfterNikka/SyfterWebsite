@@ -96,7 +96,7 @@ const BinaryRain = () => {
       <div
         className="absolute bottom-0 left-0 w-full h-[200px] pointer-events-none z-10"
         style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0), #34414f)",
         }}
       />
     </div> // ← THIS LINE FIXES YOUR ERROR
