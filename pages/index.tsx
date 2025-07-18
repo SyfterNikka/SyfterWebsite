@@ -48,12 +48,15 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const fadeInProps = {
-    initial: { opacity: 0, y: 30, scale: 0.98 },
-    whileInView: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.7, ease: ['easeInOut', 'easeOut', 'easeIn'] as const },
-    viewport: { once: true, amount: 0.2 },
-  };
+ const fadeInProps = {
+  initial: { opacity: 0, y: 20, scale: 0.98 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  transition: {
+    duration: 0.6,
+    ease: "easeInOut" as const, 
+  },
+  viewport: { once: true, amount: 0.2 },
+};
 
   return (
     <>
