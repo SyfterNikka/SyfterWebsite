@@ -1,8 +1,7 @@
-// pages/index.tsx
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { motion, easeInOut } from "framer-motion";
 import BinaryRain from "../components/BinaryRain";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -13,7 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     const currentWord = words[wordIndex];
-    const typingSpeed = deleting ? 50 : 100;
+    const typingSpeed = deleting ? 40 : 100;
 
     const timeout = setTimeout(() => {
       if (!deleting) {
@@ -35,26 +34,26 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
+  const fadeInProps = {
+    initial: { opacity: 0, y: 60, scale: 0.95 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.8 },
+    viewport: { once: false, amount: 0.2 },
+  };
+
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
     "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
     "“Their candidate quality was unmatched.” — Healthcare Director",
   ];
-
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-const fadeInProps = {
-  initial: { opacity: 0, y: 80, scale: 0.95 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 1.1, ease: easeInOut },
-  viewport: { once: false, amount: 0.2 },
-};
 
   return (
     <>
@@ -63,46 +62,44 @@ const fadeInProps = {
       </Head>
 
       {/* Navbar */}
-     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-md shadow-sm py-4 px-6 flex justify-between items-center text-white transition-all duration-300">
-  <div className="text-xl font-bold text-syfterBlue">Syfter</div>
-  <nav className="space-x-6 hidden md:flex text-white">
-    <a href="#why" className="hover:text-syfterBlue">Why Syfter</a>
-    <a href="#jobs" className="hover:text-syfterBlue">Find Work</a>
-    <a href="#hire" className="hover:text-syfterBlue">Hire Talent</a>
-    <a href="#contact" className="hover:text-syfterBlue">Contact</a>
-  </nav>
-  <button className="bg-syfterBlue text-white px-4 py-2 rounded hover:bg-blue-700 text-sm shadow">
-    Get Started
-  </button>
-</header>
+      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm py-3 px-6 flex justify-between items-center">
+        <div className="text-xl font-bold text-blue-600">Syfter</div>
+        <nav className="space-x-6 hidden md:flex text-black text-sm font-medium">
+          <a href="#why" className="hover:text-blue-600">Why Syfter</a>
+          <a href="#jobs" className="hover:text-blue-600">Find Work</a>
+          <a href="#hire" className="hover:text-blue-600">Hire Talent</a>
+          <a href="#contact" className="hover:text-blue-600">Contact</a>
+        </nav>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
+      </header>
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
-        {/* Hero */}
-        <section className="relative min-h-screen overflow-hidden bg-black text-white">
+        {/* Hero Section */}
+        <section className="relative min-h-screen overflow-hidden bg-black text-white flex items-center justify-center text-center">
           <BinaryRain />
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-  <h1 className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-md animate-fadeIn">
-    Hire <span className="italic text-syfterBlue">{displayText}</span>
-  </h1>
-  <p className="text-xl md:text-2xl mb-10 font-medium drop-shadow-sm animate-fadeIn delay-200">
-    Syfter Certified talent delivered faster, smarter, better.
-  </p>
-  <div className="flex justify-center gap-6 animate-fadeIn delay-400">
-    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-200 shadow">
-      Find Talent
-    </button>
-    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-200 shadow">
-      Find Jobs
-    </button>
-  </div>
-</div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-4">
+            <h1 className="text-6xl font-extrabold mb-6">
+              Hire <span className="italic text-syfterBlue">{displayText}</span>
+            </h1>
+            <p className="text-xl mb-10">Syfter Certified talent delivered faster, smarter, better.</p>
+            <div className="flex justify-center gap-6">
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Talent
+              </button>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Jobs
+              </button>
+            </div>
           </div>
-          <div className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #1e3a5f)" }} />
+          <div
+            className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10"
+            style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #1e3a5f)" }}
+          />
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="why" className="pt-20 pb-10 bg-[#1e3a5f] text-center text-white" {...fadeInProps}>
+        <motion.section id="why" className="pt-24 pb-16 text-center text-white bg-[#1e3a5f]" {...fadeInProps}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             <div><h4 className="text-xl font-semibold mb-2">Syfter Certified</h4><p className="text-sm">Screened for resilience, communication, and excellence.</p></div>
@@ -113,16 +110,16 @@ const fadeInProps = {
         </motion.section>
 
         {/* Stats */}
-        <motion.section className="py-20 text-center px-6" {...fadeInProps}>
+        <motion.section className="py-20 text-center px-6 bg-[#1e3a5f]" {...fadeInProps}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            <div><div id="counter1" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
-            <div><div id="counter2" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">average fill time</p></div>
-            <div><div id="counter3" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">retention rate</p></div>
+            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
+            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">average fill time</p></div>
+            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">retention rate</p></div>
           </div>
         </motion.section>
 
-        {/* Jobs */}
-        <motion.section id="jobs" className="py-20 px-6" {...fadeInProps}>
+        {/* Featured Jobs */}
+        <motion.section id="jobs" className="py-20 px-6 bg-[#1e3a5f]" {...fadeInProps}>
           <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {[
@@ -147,9 +144,9 @@ const fadeInProps = {
           </blockquote>
         </motion.section>
 
-        {/* Footer */}
-        <motion.section className="relative text-white text-center py-20 bg-[#1e3a5f]" {...fadeInProps}>
-          <div className="relative z-10 max-w-3xl mx-auto px-6">
+        {/* CTA Footer */}
+        <motion.section id="contact" className="bg-[#1e3a5f] py-20 text-center px-6" {...fadeInProps}>
+          <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
             <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
@@ -157,7 +154,6 @@ const fadeInProps = {
             </button>
           </div>
         </motion.section>
-
       </main>
     </>
   );
