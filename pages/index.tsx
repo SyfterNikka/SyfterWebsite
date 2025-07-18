@@ -12,7 +12,7 @@ const fadeInMotion = {
     duration: 1.2,
     ease: easeInOutCubic as unknown as import("framer-motion").Easing,
   },
-  viewport: { once: false, amount: 0.3 },
+  viewport: { once: false, amount: 0.4 },
 };
 
 export default function Home() {
@@ -84,21 +84,22 @@ export default function Home() {
         <title>Syfter — Precision Staffing Made Human</title>
       </Head>
 
-      {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-[#2c3b4a]/40 text-white py-4 px-6 flex justify-between items-center transition-all duration-300">
-        <div className="text-xl font-bold">Syfter</div>
+      {/* Slim Blurred Navbar */}
+      <header className="fixed top-0 w-full z-50 backdrop-blur-sm bg-[#1e1f22]/60 text-white py-2 px-6 flex justify-between items-center transition-all duration-300">
+        <div className="text-lg font-bold">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium">
           {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
-            <a key={i} href={`#${t.toLowerCase().replace(" ", "")}`} className="hover:text-blue-300 transition">{t}</a>
+            <a key={i} href={`#${t.toLowerCase().replace(" ", "")}`} className="hover:text-[#69bdff] transition">{t}</a>
           ))}
         </nav>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">Get Started</button>
+        <button className="bg-[#69bdff] text-black px-4 py-1.5 rounded text-sm hover:bg-white transition">Get Started</button>
       </header>
 
-      <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
+      {/* Gradient Background Applied to All Sections */}
+      <main className="pt-16 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
 
-        {/* Hero */}
-        <section className="relative h-screen overflow-hidden">
+        {/* Hero Section */}
+        <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
             <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
@@ -112,6 +113,8 @@ export default function Home() {
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
             </motion.div>
           </div>
+
+          {/* Hero to Section Fade Overlay */}
           <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f)" }} />
         </section>
 
