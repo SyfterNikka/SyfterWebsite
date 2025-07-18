@@ -88,11 +88,11 @@ const sectionMotion = {
   return (
     <>
       <Head>
-        <title>Syfter — Precision Staffing Made Human</title>
+        <title>Syfter — Secure Hiring Made Human</title>
       </Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-[#2a3c4e]/90 shadow-sm py-4 px-6 flex justify-between items-center">
+      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-md text-white py-4 px-6 flex justify-between items-center transition">
         <div className="text-xl font-bold text-white">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
           <a href="#why" className="hover:text-syfterBlue transition">Why Syfter</a>
@@ -105,7 +105,7 @@ const sectionMotion = {
         </button>
       </header>
 
-      <main className="pt-20 bg-gradient-to-b from-[#556678] via-[#1e3a5f] to-[#0b192f] text-white">
+      <main className="pt-20 bg-gradient-to-b from-[#5a6673] via-[#38424d] to-[#1a1f27] text-white">
 
         {/* Hero */}
         <section className="relative h-screen overflow-hidden bg-black text-white">
