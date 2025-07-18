@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { motion } from "framer-motion";
+// Easing function for smooth fade-in
+const easeInOutCubic: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
 // Typing animation
 const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -72,11 +73,10 @@ const sectionMotion = {
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: easeInOutCubic as unknown as import("framer-motion").Easing, 
+    ease: easeInOutCubic as unknown as import("framer-motion").Easing,
   },
   viewport: { once: false, amount: 0.3 },
 };
-
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
