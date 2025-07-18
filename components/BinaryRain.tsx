@@ -83,11 +83,11 @@ const BinaryRain = () => {
   }, []);
 
   return (
-    <div>
+    <div
       ref={containerRef}
       className="absolute inset-0 z-0 overflow-hidden"
       style={{ backgroundColor: "#28303b" }}
-    >
+    />
       <canvas
         ref={canvasRef}
         className="w-full h-full"
