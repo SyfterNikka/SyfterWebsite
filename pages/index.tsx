@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { easeInOut } from "framer-motion";
+import { motion, easeInOut } from "framer-motion";
 
 // Typing animation
 const words = ["Smarter", "Faster", "Securely", "Syfter"];
