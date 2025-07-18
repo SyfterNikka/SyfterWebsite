@@ -1,4 +1,3 @@
-// pages/index.tsx
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
@@ -35,57 +34,6 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  // Stats counter
-  const [counts, setCounts] = useState([0, 0, 0]);
-  const countersRef = useRef<HTMLDivElement | null>(null);
-  const triggered = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !triggered.current) {
-          triggered.current = true;
-          const targetCounts = [128, 5, 98]; // Example data
-          const duration = 1000;
-          const steps = 30;
-
-          const stepTime = duration / steps;
-          let currentStep = 0;
-
-          const interval = setInterval(() => {
-            currentStep++;
-            setCounts(targetCounts.map((target) =>
-              Math.round((target * currentStep) / steps)
-            ));
-            if (currentStep === steps) clearInterval(interval);
-          }, stepTime);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (countersRef.current) observer.observe(countersRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Animation config for each section
-  const sectionMotion = {
-    initial: { opacity: 0, y: 40, scale: 0.98 },
-    whileInView: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.8 },
-    viewport: { once: true, amount: 0.2 },
-  };
-
-  // Staggered animation for "Why Syfter"
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.2 },
-    }),
-  };
-
   const testimonials = [
     "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
     "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
@@ -100,6 +48,52 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Stats logic
+  const [counts, setCounts] = useState([0, 0, 0]);
+  const countersRef = useRef<HTMLDivElement | null>(null);
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !triggered.current) {
+          triggered.current = true;
+          const targetCounts = [128, 5, 98];
+          const steps = 30;
+          let currentStep = 0;
+          const interval = setInterval(() => {
+            currentStep++;
+            setCounts(
+              targetCounts.map((target) =>
+                Math.round((target * currentStep) / steps)
+              )
+            );
+            if (currentStep === steps) clearInterval(interval);
+          }, 40);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (countersRef.current) observer.observe(countersRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const sectionMotion = {
+    initial: { opacity: 0, y: 40, scale: 0.98 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] },
+    viewport: { once: false, amount: 0.3 },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.2 },
+    }),
+  };
+
   return (
     <>
       <Head>
@@ -107,7 +101,7 @@ export default function Home() {
       </Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur shadow-sm py-4 px-6 flex justify-between items-center transition">
+      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur shadow-sm py-4 px-6 flex justify-between items-center">
         <div className="text-xl font-bold text-blue-600">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium">
           <a href="#why" className="hover:text-blue-600 transition">Why Syfter</a>
@@ -120,7 +114,7 @@ export default function Home() {
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
-        {/* Hero Section */}
+        {/* Hero */}
         <section className="relative h-screen overflow-hidden bg-black text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
@@ -155,7 +149,14 @@ export default function Home() {
               { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
               { title: "People First", text: "We don’t fill seats — we grow teams." },
             ].map((item, i) => (
-              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={itemVariants}>
+              <motion.div
+                key={i}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false }}
+                variants={itemVariants}
+              >
                 <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
                 <p className="text-sm">{item.text}</p>
               </motion.div>
@@ -199,11 +200,7 @@ export default function Home() {
         </motion.section>
 
         {/* Footer */}
-        <motion.section
-          id="contact"
-          className="text-white text-center py-20 bg-[#1e3a5f]"
-          {...sectionMotion}
-        >
+        <motion.section id="contact" className="text-white text-center py-20 bg-[#1e3a5f]" {...sectionMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
