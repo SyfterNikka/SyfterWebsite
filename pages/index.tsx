@@ -6,6 +6,20 @@ import { motion } from "framer-motion";
 // Easing function
 const easeInOutCubic: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
+// Variant for staggered reveal in "Why Syfter"
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.2,
+      duration: 0.6,
+      ease: easeInOutCubic,
+    },
+  }),
+};
+
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
   const [displayText, setDisplayText] = useState("");
@@ -50,15 +64,16 @@ export default function Home() {
           const targetCounts = [128, 5, 98];
           const duration = 1000;
           const steps = 30;
-
           const stepTime = duration / steps;
           let currentStep = 0;
 
           const interval = setInterval(() => {
             currentStep++;
-            setCounts(targetCounts.map((target) =>
-              Math.round((target * currentStep) / steps)
-            ));
+            setCounts(
+              targetCounts.map((target) =>
+                Math.round((target * currentStep) / steps)
+              )
+            );
             if (currentStep === steps) clearInterval(interval);
           }, stepTime);
         }
@@ -75,7 +90,7 @@ export default function Home() {
     whileInView: { opacity: 1, y: 0, scale: 1 },
     transition: {
       duration: 1.2,
-      ease: easeInOutCubic as unknown as import("framer-motion").Easing,
+      ease: easeInOutCubic,
     },
     viewport: { once: false, amount: 0.3 },
   };
@@ -100,113 +115,115 @@ export default function Home() {
         <title>Syfter — Precision Staffing Made Human</title>
       </Head>
 
-       {/* Navbar */}
-  <header className="fixed top-0 w-full z-50 bg-[#2c3a4a]/80 text-white py-4 px-6 flex justify-between items-center shadow-sm">
-    <div className="text-xl font-bold text-white">Syfter</div>
-    <nav className="space-x-6 hidden md:flex text-sm font-medium">
-      <a href="#why" className="hover:text-[#69bdff] transition">Why Syfter</a>
-      <a href="#jobs" className="hover:text-[#69bdff] transition">Find Work</a>
-      <a href="#hire" className="hover:text-[#69bdff] transition">Hire Talent</a>
-      <a href="#contact" className="hover:text-[#69bdff] transition">Contact</a>
-    </nav>
-    <button className="bg-[#69bdff] text-black px-4 py-2 rounded hover:bg-white text-sm">Get Started</button>
-  </header>
+      {/* Navbar */}
+      <header className="fixed top-0 w-full z-50 bg-[#2c3a4a]/80 text-white py-4 px-6 flex justify-between items-center shadow-sm">
+        <div className="text-xl font-bold text-white">Syfter</div>
+        <nav className="space-x-6 hidden md:flex text-sm font-medium">
+          <a href="#why" className="hover:text-[#69bdff] transition">Why Syfter</a>
+          <a href="#jobs" className="hover:text-[#69bdff] transition">Find Work</a>
+          <a href="#hire" className="hover:text-[#69bdff] transition">Hire Talent</a>
+          <a href="#contact" className="hover:text-[#69bdff] transition">Contact</a>
+        </nav>
+        <button className="bg-[#69bdff] text-black px-4 py-2 rounded hover:bg-white text-sm">Get Started</button>
+      </header>
 
-  <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
+      <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
 
-    {/* Hero Section */}
-    <section className="relative h-screen overflow-hidden text-white">
-      <BinaryRain />
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-        <motion.h1 className="text-6xl font-bold mb-4" {...sectionMotion}>
-          Hire <span className="italic text-[#69bdff]">{displayText}</span>
-        </motion.h1>
-        <motion.p className="text-xl mb-8 max-w-2xl mx-auto" {...sectionMotion}>
-          Syfter Certified talent delivered faster, smarter, better.
-        </motion.p>
-        <motion.div className="flex justify-center gap-6" {...sectionMotion}>
-          <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
-          <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
-        </motion.div>
-      </div>
-      <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f)" }} />
-    </section>
+        {/* Hero Section */}
+        <section className="relative h-screen overflow-hidden text-white">
+          <BinaryRain />
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+            <motion.h1 className="text-6xl font-bold mb-4" {...sectionMotion}>
+              Hire <span className="italic text-[#69bdff]">{displayText}</span>
+            </motion.h1>
+            <motion.p className="text-xl mb-8 max-w-2xl mx-auto" {...sectionMotion}>
+              Syfter Certified talent delivered faster, smarter, better.
+            </motion.p>
+            <motion.div className="flex justify-center gap-6" {...sectionMotion}>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
+            </motion.div>
+          </div>
+          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f)" }} />
+        </section>
 
-    {/* Why Syfter */}
-    <motion.section id="why" className="pt-20 pb-10 text-center text-white" {...sectionMotion}>
-      <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-        {[
-          { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
-          { title: "AI-Proofed", text: "Human-reviewed to avoid automation blind spots." },
-          { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
-          { title: "People First", text: "We don’t fill seats — we grow teams." },
-        ].map((item, i) => (
-          <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={itemVariants}>
-            <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-            <p className="text-sm">{item.text}</p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
+        {/* Why Syfter */}
+        <motion.section id="why" className="pt-20 pb-10 text-center text-white" {...sectionMotion}>
+          <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+            {[
+              { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
+              { title: "AI-Proofed", text: "Human-reviewed to avoid automation blind spots." },
+              { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
+              { title: "People First", text: "We don’t fill seats — we grow teams." },
+            ].map((item, i) => (
+              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={itemVariants}>
+                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+                <p className="text-sm">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
 
-    {/* Stats */}
-    <motion.section className="py-20 text-center px-6" {...sectionMotion} ref={countersRef}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-        <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
-        <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
-        <div><div className="text-4xl font-bold mb-2">{counts[2]}%</div><p className="text-lg font-medium">retention rate</p></div>
-      </div>
-    </motion.section>
+        {/* Stats */}
+        <motion.section className="py-20 text-center px-6" {...sectionMotion}>
+          <div ref={countersRef}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+              <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
+              <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
+              <div><div className="text-4xl font-bold mb-2">{counts[2]}%</div><p className="text-lg font-medium">retention rate</p></div>
+            </div>
+          </div>
+        </motion.section>
 
-    {/* Jobs */}
-    <motion.section id="jobs" className="py-20 px-6" {...sectionMotion}>
-      <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-        {[
-          { title: "Frontend Developer", loc: "NY, Full-Time" },
-          { title: "Product Manager", loc: "Remote, Contract" },
-          { title: "IT Project Manager", loc: "Chicago, Contract" },
-          { title: "Data Analyst", loc: "Stousburg, Full-Time" },
-        ].map((job, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="bg-[#1e3a5f] p-4 rounded border border-[#69bdff] text-white"
+        {/* Jobs */}
+        <motion.section id="jobs" className="py-20 px-6" {...sectionMotion}>
+          <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {[
+              { title: "Frontend Developer", loc: "NY, Full-Time" },
+              { title: "Product Manager", loc: "Remote, Contract" },
+              { title: "IT Project Manager", loc: "Chicago, Contract" },
+              { title: "Data Analyst", loc: "Stousburg, Full-Time" },
+            ].map((job, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 200 }}
+                className="bg-[#1e3a5f] p-4 rounded border border-[#69bdff] text-white"
+              >
+                <h4 className="font-semibold text-lg">{job.title}</h4>
+                <p className="text-sm">{job.loc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* Testimonials */}
+        <motion.section className="py-20 text-center px-6" {...sectionMotion}>
+          <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
+          <motion.blockquote
+            key={activeTestimonial}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="italic text-lg max-w-2xl mx-auto"
           >
-            <h4 className="font-semibold text-lg">{job.title}</h4>
-            <p className="text-sm">{job.loc}</p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
+            {testimonials[activeTestimonial]}
+          </motion.blockquote>
+        </motion.section>
 
-    {/* Testimonials */}
-    <motion.section className="py-20 text-center px-6" {...sectionMotion}>
-      <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
-      <motion.blockquote
-        key={activeTestimonial}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="italic text-lg max-w-2xl mx-auto"
-      >
-        {testimonials[activeTestimonial]}
-      </motion.blockquote>
-    </motion.section>
-
-    {/* Footer */}
-    <motion.section id="contact" className="text-white text-center py-20 bg-[#0b192f]" {...sectionMotion}>
-      <div className="max-w-3xl mx-auto px-6">
-        <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
-        <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
-        <button className="bg-[#69bdff] text-black font-semibold py-3 px-6 rounded hover:bg-white transition">
-          Contact Us
-        </button>
-      </div>
-    </motion.section>
-  </main>
-</>
-);
+        {/* Footer */}
+        <motion.section id="contact" className="text-white text-center py-20 bg-[#0b192f]" {...sectionMotion}>
+          <div className="max-w-3xl mx-auto px-6">
+            <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
+            <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
+            <button className="bg-[#69bdff] text-black font-semibold py-3 px-6 rounded hover:bg-white transition">
+              Contact Us
+            </button>
+          </div>
+        </motion.section>
+      </main>
+    </>
+  );
 }
