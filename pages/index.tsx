@@ -72,7 +72,7 @@ const sectionMotion = {
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: [0.42, 0, 0.58, 1], 
+    ease: easeInOutCubic as unknown as import("framer-motion").Easing, 
   },
   viewport: { once: false, amount: 0.3 },
 };
