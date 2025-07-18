@@ -22,7 +22,7 @@ const BinaryRain = () => {
     const drops = Array(columns).fill(1);
     const chars = ["0", "1"];
 
-    const fadeStartY = height * 0.75;
+    const fadeStartY = height * 0.6;
     const fadeEndY = height;
 
     const getAlpha = (y: number) => {
@@ -41,12 +41,12 @@ const BinaryRain = () => {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
-        const colorOptions = ["#3b82f6", "#69bdff", "#496070"];
+        const colorOptions = ["#3b82f6", "#69bdff", "#88aabb"];
         ctx.fillStyle = colorOptions[Math.floor(Math.random() * colorOptions.length)];
 
         ctx.globalAlpha = getAlpha(y);
         ctx.fillText(text, x, y);
-        ctx.globalAlpha = 1; // Reset for next draw
+        ctx.globalAlpha = 1;
 
         if (y > height && Math.random() > 0.975) {
           drops[i] = 0;
@@ -83,26 +83,26 @@ const BinaryRain = () => {
   }, []);
 
   return (
-  <div
-    ref={containerRef}
-    className="absolute inset-0 z-0 overflow-hidden"
-    style={{ backgroundColor: "#1e3a5f" }}
-  >
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      style={{ pointerEvents: "none" }}
-    />
-
-    {/* Mist fade layer at bottom */}
     <div
-      className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10"
-      style={{
-        background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,58,95,0.6) 50%, #496070 100%)",
-      }}
-    />
-  </div>
-);
+      ref={containerRef}
+      className="absolute inset-0 z-0 overflow-hidden"
+      style={{ backgroundColor: "#0b192f" }} // fallback
+    >
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ pointerEvents: "none" }}
+      />
+
+      {/* Seamless mist-like fade */}
+      <div
+        className="absolute bottom-0 left-0 w-full h-80 pointer-events-none z-10"
+        style={{
+          background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f 100%)",
+        }}
+      />
+    </div>
+  );
 };
 
 export default BinaryRain;
