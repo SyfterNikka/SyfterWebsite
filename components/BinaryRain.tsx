@@ -41,7 +41,7 @@ const BinaryRain = () => {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
-        const colorOptions = ["#3b82f6", "#69bdff", "#1e3a8a"];
+        const colorOptions = ["#3b82f6", "#69bdff", "#496070"];
         ctx.fillStyle = colorOptions[Math.floor(Math.random() * colorOptions.length)];
 
         ctx.globalAlpha = getAlpha(y);
@@ -98,7 +98,7 @@ const BinaryRain = () => {
     <div
       className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10"
       style={{
-        background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,58,95,0.6) 50%, #1e3a5f 100%)",
+        background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(30,58,95,0.6) 50%, #496070 100%)",
       }}
     />
   </div>
