@@ -63,35 +63,40 @@ const fadeInProps = {
       </Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <div className="text-xl font-bold text-blue-600">Syfter</div>
-        <nav className="space-x-6 hidden md:flex">
-          <a href="#why" className="hover:text-blue-600">Why Syfter</a>
-          <a href="#jobs" className="hover:text-blue-600">Find Work</a>
-          <a href="#hire" className="hover:text-blue-600">Hire Talent</a>
-          <a href="#contact" className="hover:text-blue-600">Contact</a>
-        </nav>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
-      </header>
+     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-md shadow-sm py-4 px-6 flex justify-between items-center text-white transition-all duration-300">
+  <div className="text-xl font-bold text-syfterBlue">Syfter</div>
+  <nav className="space-x-6 hidden md:flex text-white">
+    <a href="#why" className="hover:text-syfterBlue">Why Syfter</a>
+    <a href="#jobs" className="hover:text-syfterBlue">Find Work</a>
+    <a href="#hire" className="hover:text-syfterBlue">Hire Talent</a>
+    <a href="#contact" className="hover:text-syfterBlue">Contact</a>
+  </nav>
+  <button className="bg-syfterBlue text-white px-4 py-2 rounded hover:bg-blue-700 text-sm shadow">
+    Get Started
+  </button>
+</header>
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
         {/* Hero */}
         <section className="relative min-h-screen overflow-hidden bg-black text-white">
           <BinaryRain />
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-            <h1 className="text-5xl font-bold mb-4">
-              Hire <span className="italic text-syfterBlue">{displayText}</span>
-            </h1>
-            <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
-            <div className="flex justify-center gap-6">
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
-                Find Talent
-              </button>
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
-                Find Jobs
-              </button>
-            </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
+  <h1 className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-md animate-fadeIn">
+    Hire <span className="italic text-syfterBlue">{displayText}</span>
+  </h1>
+  <p className="text-xl md:text-2xl mb-10 font-medium drop-shadow-sm animate-fadeIn delay-200">
+    Syfter Certified talent delivered faster, smarter, better.
+  </p>
+  <div className="flex justify-center gap-6 animate-fadeIn delay-400">
+    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-200 shadow">
+      Find Talent
+    </button>
+    <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-200 shadow">
+      Find Jobs
+    </button>
+  </div>
+</div>
           </div>
           <div className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #1e3a5f)" }} />
         </section>
