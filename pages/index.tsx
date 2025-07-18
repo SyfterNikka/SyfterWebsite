@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <>
       <Head><title>Syfter — Precision Staffing Made Human</title></Head>
-      <header className="fixed top-0 w-full z-50 bg-[#1e1e1e]/80 backdrop-blur-sm shadow-sm py-3 px-6 flex justify-between items-center">
+      <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-md text-white py-3 px-6 flex justify-between items-center">
         <div className="text-xl font-bold text-white">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
           {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
@@ -88,7 +88,7 @@ export default function Home() {
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
-      <main className="pt-20 min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e, #28303b)" }}>
+      <main className="pt-10 min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e, #28303b)" }}>
         {/* Hero Section */}
         <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
