@@ -1,7 +1,9 @@
+// pages/index.tsx
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { motion, easeInOut } from "framer-motion"; 
+import { motion } from "framer-motion";
+import { easeInOut } from "framer-motion";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -34,24 +36,10 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, wordIndex]);
 
-  const testimonials = [
-    "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
-    "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
-    "“Their candidate quality was unmatched.” — Healthcare Director",
-  ];
-
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Stats logic
   const [counts, setCounts] = useState([0, 0, 0]);
   const countersRef = useRef<HTMLDivElement | null>(null);
   const triggered = useRef(false);
+  const [pulse, setPulse] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -59,44 +47,50 @@ export default function Home() {
         if (entry.isIntersecting && !triggered.current) {
           triggered.current = true;
           const targetCounts = [128, 5, 98];
+          const duration = 1000;
           const steps = 30;
+          const stepTime = duration / steps;
           let currentStep = 0;
+
           const interval = setInterval(() => {
             currentStep++;
-            setCounts(
-              targetCounts.map((target) =>
-                Math.round((target * currentStep) / steps)
-              )
-            );
-            if (currentStep === steps) clearInterval(interval);
-          }, 40);
+            setCounts(targetCounts.map(target =>
+              Math.round((target * currentStep) / steps)
+            ));
+            if (currentStep === steps) {
+              clearInterval(interval);
+              setPulse(true);
+              setTimeout(() => setPulse(false), 800);
+            }
+          }, stepTime);
         }
       },
       { threshold: 0.5 }
     );
+
     if (countersRef.current) observer.observe(countersRef.current);
     return () => observer.disconnect();
   }, []);
 
-const sectionMotion = {
-  initial: { opacity: 0, y: 40, scale: 0.98 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 0.8, ease: easeInOut }, 
-  viewport: { once: false, amount: 0.3 },
-};
+  const sectionMotion = {
+    initial: { opacity: 0, y: 40, scale: 0.98 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.8, ease: easeInOut },
+    viewport: { once: false, amount: 0.3 },
+  };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,       // ⬅️ slightly slower animation
-      delay: i * 0.4,       // ⬅️ longer stagger between each box
-      ease: easeInOut,      // ⬅️ smoother motion curve
-    },
-  }),
-};
+  const testimonials = [
+    "“Syfter delivered top candidates in days. I was blown away.” — SaaS Hiring Manager",
+    "“I've never seen recruiting move this fast. Total pros.” — Tech Startup CEO",
+    "“Their candidate quality was unmatched.” — Healthcare Director",
+  ];
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -118,7 +112,7 @@ const itemVariants = {
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
-        {/* Hero */}
+        {/* Hero Section */}
         <section className="relative h-screen overflow-hidden bg-black text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
@@ -145,7 +139,10 @@ const itemVariants = {
 
         {/* Why Syfter */}
         <motion.section id="why" className="pt-20 pb-10 bg-[#1e3a5f] text-center text-white" {...sectionMotion}>
-          <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+          <motion.h2 className="text-5xl font-bold mb-12 relative inline-block" {...sectionMotion}>
+            Why Syfter
+            <span className="block w-16 h-[3px] bg-blue-400 mx-auto mt-3 rounded-full"></span>
+          </motion.h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             {[
               { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
@@ -155,11 +152,10 @@ const itemVariants = {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: false }}
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 20, x: i % 2 === 0 ? -40 : 40 }}
+                whileInView={{ opacity: 1, y: 0, x: 0 }}
+                transition={{ duration: 0.8, delay: i * 0.2 }}
+                viewport={{ once: true }}
               >
                 <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
                 <p className="text-sm">{item.text}</p>
@@ -171,9 +167,18 @@ const itemVariants = {
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...sectionMotion} ref={countersRef}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
-            <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
-            <div><div className="text-4xl font-bold mb-2">{counts[2]}%</div><p className="text-lg font-medium">retention rate</p></div>
+            {["hires placed", "avg. fill time (days)", "retention rate"].map((label, i) => (
+              <motion.div
+                key={i}
+                animate={pulse ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="text-4xl font-bold mb-2">
+                  {i === 2 ? `${counts[i]}%` : counts[i]}
+                </div>
+                <p className="text-lg font-medium">{label}</p>
+              </motion.div>
+            ))}
           </div>
         </motion.section>
 
@@ -204,7 +209,11 @@ const itemVariants = {
         </motion.section>
 
         {/* Footer */}
-        <motion.section id="contact" className="text-white text-center py-20 bg-[#1e3a5f]" {...sectionMotion}>
+        <motion.section
+          id="contact"
+          className="text-white text-center py-20 bg-[#1e3a5f]"
+          {...sectionMotion}
+        >
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
