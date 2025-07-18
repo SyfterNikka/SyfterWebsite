@@ -96,7 +96,7 @@ const BinaryRain = () => {
 
       {/* Seamless mist-like fade into darker charcoal */}
       <div
-        className="absolute bottom-0 left-0 w-full h-96 pointer-events-none z-10"
+        className="absolute bottom-0 left-0 w-full h-160 pointer-events-none z-10"
         style={{
           background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)",
         }}
