@@ -106,34 +106,35 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Why Syfter */}
-        <motion.section
+       {/* Why Syfter */}
+<motion.section
   id="whysyfter"
-  className="pt-20 pb-10 text-center bg-transparent"
+  className="pt-20 pb-10 text-center bg-gradient-to-b from-transparent to-[#3e4e5e]"
   {...fadeInMotion}
 >
-          <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-            {[
-              { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
-              { title: "AI-Proofed", text: "Human-reviewed to avoid automation blind spots." },
-              { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
-              { title: "People First", text: "We don’t fill seats — we grow teams." },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.3, duration: 1, ease: [0.42, 0, 0.58, 1] as any }}
-                viewport={{ once: true }}
-                className="p-4"
-              >
-                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-                <p className="text-sm">{item.text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+  <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+    {[
+      { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
+      { title: "AI-Proofed", text: "Human-reviewed to avoid automation blind spots." },
+      { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
+      { title: "People First", text: "We don’t fill seats — we grow teams." },
+    ].map((item, i) => (
+      <motion.div
+        key={i}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: i * 0.3, duration: 1, ease: [0.42, 0, 0.58, 1] as any }}
+        viewport={{ once: true }}
+        className="p-4"
+      >
+        <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+        <p className="text-sm">{item.text}</p>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
+
 
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
