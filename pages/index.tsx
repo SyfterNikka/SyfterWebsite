@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 // Easing function
 const easeInOutCubic: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
-// Variant for staggered reveal in "Why Syfter"
-const itemVariants = {
+// Staggered animation for "Why Syfter" tiles
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
     opacity: 1,
@@ -157,7 +157,14 @@ export default function Home() {
               { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
               { title: "People First", text: "We don’t fill seats — we grow teams." },
             ].map((item, i) => (
-              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={itemVariants}>
+              <motion.div
+                key={i}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={itemVariants}
+              >
                 <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
                 <p className="text-sm">{item.text}</p>
               </motion.div>
