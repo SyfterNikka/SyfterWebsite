@@ -85,14 +85,18 @@ const sectionMotion = {
   viewport: { once: false, amount: 0.3 },
 };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.2 },
-    }),
-  };
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,       // ⬅️ slightly slower animation
+      delay: i * 0.4,       // ⬅️ longer stagger between each box
+      ease: easeInOut,      // ⬅️ smoother motion curve
+    },
+  }),
+};
 
   return (
     <>
