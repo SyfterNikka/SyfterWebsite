@@ -1,7 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
+
+const fadeInMotion = {
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  transition: {
+    duration: 1.2,
+    ease: "easeInOut",
+  },
+  viewport: { once: false, amount: 0.3 },
+};
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -55,7 +65,7 @@ export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days.” — SaaS Manager",
     "“Recruiting this fast? Unreal.” — Tech Startup CEO",
-    "“Candidate quality = unmatched.” — Healthcare Director"
+    "“Candidate quality = unmatched.” — Healthcare Director",
   ];
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   useEffect(() => {
@@ -70,7 +80,7 @@ export default function Home() {
       <Head><title>Syfter — Precision Staffing Made Human</title></Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/10 shadow-sm py-3 px-6 flex justify-between items-center transition">
+      <header className="fixed top-0 w-full z-50 backdrop-blur bg-black/30 py-3 px-6 flex justify-between items-center transition">
         <div className="text-xl font-bold text-white">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
           {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
@@ -83,34 +93,16 @@ export default function Home() {
       <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#28303b] text-white">
 
         {/* Hero */}
-        <section className="relative h-screen overflow-hidden text-white">
+        <section className="relative h-screen overflow-hidden">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              viewport={{ once: false, amount: 0.3 }}
-              className="text-6xl font-bold mb-4"
-            >
+            <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
               Hire <span className="italic text-[#69bdff]">{displayText}</span>
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              viewport={{ once: false, amount: 0.3 }}
-              className="text-xl mb-8 max-w-2xl mx-auto"
-            >
+            <motion.p className="text-xl mb-8 max-w-2xl mx-auto" {...fadeInMotion}>
               Syfter Certified talent delivered faster, smarter, better.
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
-              viewport={{ once: false, amount: 0.3 }}
-              className="flex justify-center gap-6"
-            >
+            <motion.div className="flex justify-center gap-6" {...fadeInMotion}>
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
             </motion.div>
@@ -118,32 +110,32 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-20 pb-10 text-center" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
+        <motion.section id="whysyfter" className="pt-20 pb-10 text-center bg-transparent" {...fadeInMotion}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-            {[
-              { title: "Syfter Certified", text: "Screened for resilience, communication, and excellence." },
-              { title: "AI-Proofed", text: "Human-reviewed to avoid automation blind spots." },
-              { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
-              { title: "People First", text: "We don’t fill seats — we grow teams." },
-            ].map((item, i) => (
+            {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2, duration: 1, ease: "easeInOut" }}
+                transition={{ delay: i * 0.3, duration: 1, ease: "easeInOut" }}
                 viewport={{ once: true }}
                 className="p-4"
               >
-                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-                <p className="text-sm">{item.text}</p>
+                <h4 className="text-xl font-semibold mb-2">{title}</h4>
+                <p className="text-sm">
+                  {i === 0 && "Screened for resilience, communication, and excellence."}
+                  {i === 1 && "Human-reviewed to avoid automation blind spots."}
+                  {i === 2 && "Reduce time-to-hire to under 5 days."}
+                  {i === 3 && "We don’t fill seats — we grow teams."}
+                </p>
               </motion.div>
             ))}
           </div>
         </motion.section>
 
         {/* Stats */}
-        <motion.section className="py-20 text-center px-6" ref={countersRef} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
+        <motion.section className="py-20 text-center px-6 bg-transparent" {...fadeInMotion} ref={countersRef}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
             <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
             <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
@@ -151,8 +143,25 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Jobs */}
+        <motion.section id="findwork" className="py-20 px-6 bg-transparent" {...fadeInMotion}>
+          <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {["Frontend Developer", "Product Manager", "IT Project Manager", "Data Analyst"].map((job, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.03 }}
+                className="bg-[#1e3a5f]/40 p-4 rounded border border-[#69bdff] text-white transition"
+              >
+                <h4 className="font-semibold text-lg">{job}</h4>
+                <p className="text-sm">{i % 2 === 0 ? "NY, Full-Time" : "Remote, Contract"}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
         {/* Testimonials */}
-        <motion.section className="py-20 text-center px-6" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
+        <motion.section className="py-20 text-center px-6 bg-transparent" {...fadeInMotion}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <motion.blockquote
             key={activeTestimonial}
@@ -166,7 +175,7 @@ export default function Home() {
         </motion.section>
 
         {/* Footer */}
-        <motion.section id="contact" className="text-white text-center py-20" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
+        <motion.section id="contact" className="text-white text-center py-20 bg-transparent" {...fadeInMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
