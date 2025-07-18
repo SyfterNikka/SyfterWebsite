@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { motion } from "framer-motion";
+import { easeInOut } from "framer-motion";
 
 // Typing animation
 const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -70,7 +70,7 @@ export default function Home() {
 const sectionMotion = {
   initial: { opacity: 0, y: 60, scale: 0.95 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 1.2, ease: "easeInOut" },
+  transition: { duration: 1.2, ease: easeInOut },
   viewport: { once: false, amount: 0.3 },
 };
 
