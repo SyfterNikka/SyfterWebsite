@@ -86,7 +86,7 @@ const BinaryRain = () => {
     <div
       ref={containerRef}
       className="absolute inset-0 z-0 overflow-hidden"
-      style={{ backgroundColor: "#28303b" }}
+      style={{ backgroundColor: "#3e4e5e" }} // matches the top of the index page
     >
       <canvas
         ref={canvasRef}
@@ -94,11 +94,11 @@ const BinaryRain = () => {
         style={{ pointerEvents: "none" }}
       />
 
-      {/* Seamless mist-like fade */}
+      {/* Seamless mist-like fade into darker charcoal */}
       <div
         className="absolute bottom-0 left-0 w-full h-96 pointer-events-none z-10"
         style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0), #28303b)",
         }}
       />
     </div>
