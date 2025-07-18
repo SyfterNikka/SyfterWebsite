@@ -81,10 +81,10 @@ export default function Home() {
     <>
       <Head><title>Syfter — Precision Staffing Made Human</title></Head>
 
-      {/* Slim, sleek nav with blur */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-sm bg-[#28303b]/60 text-white py-3 px-6 flex justify-between items-center shadow-sm transition-all">
-        <div className="text-xl font-bold">Syfter</div>
-        <nav className="space-x-6 hidden md:flex text-sm font-medium">
+      {/* Navbar */}
+      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-[#28303b]/70 shadow-sm py-3 px-6 flex justify-between items-center">
+        <div className="text-xl font-bold text-white">Syfter</div>
+        <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
           {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
             <a key={i} href={`#${t.toLowerCase().replace(" ", "")}`} className="hover:text-blue-300 transition">{t}</a>
           ))}
@@ -92,12 +92,16 @@ export default function Home() {
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
-      <main className="bg-[#28303b] text-white">
-
-        {/* Hero Section — true fullscreen */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <main
+        className="pt-20 text-white"
+        style={{
+          background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)",
+        }}
+      >
+        {/* Hero */}
+        <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4 pt-24">
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
             <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
               Hire <span className="italic text-syfterBlue">{displayText}</span>
             </motion.h1>
@@ -111,8 +115,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Why Syfter — fade starts behind BinaryRain */}
-        <motion.section id="whysyfter" className="pt-32 pb-20 text-center" {...fadeInMotion} style={{ background: "linear-gradient(to bottom, rgba(40,48,59,0) 0%, #28303b 60%, #28303b 100%)" }}>
+        {/* Why Syfter */}
+        <motion.section id="whysyfter" className="pt-20 pb-10 text-center" {...fadeInMotion}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             {[
@@ -137,7 +141,7 @@ export default function Home() {
         </motion.section>
 
         {/* Stats */}
-        <motion.section className="py-20 text-center px-6 bg-[#28303b]" {...fadeInMotion} ref={countersRef}>
+        <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
             <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
             <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
@@ -146,7 +150,7 @@ export default function Home() {
         </motion.section>
 
         {/* Jobs */}
-        <motion.section id="findwork" className="py-20 px-6 bg-[#28303b]" {...fadeInMotion}>
+        <motion.section id="findwork" className="py-20 px-6" {...fadeInMotion}>
           <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {[
@@ -155,7 +159,7 @@ export default function Home() {
               { title: "IT Project Manager", loc: "Chicago, Contract" },
               { title: "Data Analyst", loc: "Stousburg, Full-Time" },
             ].map((job, i) => (
-              <motion.div key={i} whileHover={{ scale: 1.03 }} className="bg-[#1e2a35] p-4 rounded border border-[#69bdff] text-white transition">
+              <motion.div key={i} whileHover={{ scale: 1.03 }} className="bg-[#28303b] p-4 rounded border border-[#69bdff] text-white transition">
                 <h4 className="font-semibold text-lg">{job.title}</h4>
                 <p className="text-sm">{job.loc}</p>
               </motion.div>
@@ -164,7 +168,7 @@ export default function Home() {
         </motion.section>
 
         {/* Testimonials */}
-        <motion.section className="py-20 text-center px-6 bg-[#28303b]" {...fadeInMotion}>
+        <motion.section className="py-20 text-center px-6" {...fadeInMotion}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <motion.blockquote
             key={activeTestimonial}
@@ -178,7 +182,7 @@ export default function Home() {
         </motion.section>
 
         {/* Footer */}
-        <motion.section id="contact" className="text-white text-center py-20 bg-[#28303b]" {...fadeInMotion}>
+        <motion.section id="contact" className="text-white text-center py-20" {...fadeInMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
