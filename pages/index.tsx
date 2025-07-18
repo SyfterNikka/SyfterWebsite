@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
-import { motion } from "framer-motion";
+import { motion, Transition } from "framer-motion";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -70,9 +70,9 @@ export default function Home() {
   }, []);
 
 const sectionMotion = {
-  initial: { opacity: 0, y: 50, scale: 0.96 },
+  initial: { opacity: 0, y: 40, scale: 0.95 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }, 
+  transition: { duration: 0.8, ease: "easeInOut" as Transition["ease"] },
   viewport: { once: false, amount: 0.2 },
 };
 
