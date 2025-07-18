@@ -86,7 +86,7 @@ const BinaryRain = () => {
     <div
       ref={containerRef}
       className="absolute inset-0 z-0 overflow-hidden"
-      style={{ backgroundColor: "#0b192f" }} // fallback
+      style={{ backgroundColor: "#28303b" }}
     >
       <canvas
         ref={canvasRef}
@@ -98,7 +98,7 @@ const BinaryRain = () => {
       <div
         className="absolute bottom-0 left-0 w-full h-80 pointer-events-none z-10"
         style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0), #28303b)",
         }}
       />
     </div>
