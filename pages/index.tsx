@@ -1,7 +1,7 @@
 import BinaryRain from "../components/BinaryRain";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useInView, easeInOut } from "framer-motion";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -48,10 +48,15 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
- const fadeInProps = {
+import { easeInOut } from "framer-motion";
+
+const fadeInProps = {
   initial: { opacity: 0, y: 40, scale: 0.98 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: { duration: 0.8, ease: "easeInOut" },
+  transition: {
+    duration: 0.8,
+    ease: easeInOut, // ✅ use imported easing function
+  },
   viewport: { once: false, amount: 0.2 },
 };
 
