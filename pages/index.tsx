@@ -1,7 +1,8 @@
-import BinaryRain from "../components/BinaryRain";
+// pages/index.tsx
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { motion, useInView, easeInOut } from "framer-motion";
+import { motion, easeInOut } from "framer-motion";
+import BinaryRain from "../components/BinaryRain";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -48,17 +49,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-import { easeInOut } from "framer-motion";
-
-const fadeInProps = {
-  initial: { opacity: 0, y: 40, scale: 0.98 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: {
-    duration: 0.8,
-    ease: easeInOut, // ✅ use imported easing function
-  },
-  viewport: { once: false, amount: 0.2 },
-};
+  const fadeInProps = {
+    initial: { opacity: 0, y: 40, scale: 0.98 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.8, ease: easeInOut },
+    viewport: { once: false, amount: 0.2 },
+  };
 
   return (
     <>
@@ -114,9 +110,9 @@ const fadeInProps = {
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInProps}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
-            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">average fill time</p></div>
-            <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">retention rate</p></div>
+            <div><div id="counter1" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
+            <div><div id="counter2" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">average fill time</p></div>
+            <div><div id="counter3" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">retention rate</p></div>
           </div>
         </motion.section>
 
@@ -147,11 +143,7 @@ const fadeInProps = {
         </motion.section>
 
         {/* Footer */}
-        <motion.section
-          id="contact"
-          className="relative text-white text-center py-20 bg-[#1e3a5f]"
-          {...fadeInProps}
-        >
+        <motion.section className="relative text-white text-center py-20 bg-[#1e3a5f]" {...fadeInProps}>
           <div className="relative z-10 max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
@@ -160,6 +152,7 @@ const fadeInProps = {
             </button>
           </div>
         </motion.section>
+
       </main>
     </>
   );
