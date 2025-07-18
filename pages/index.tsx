@@ -105,7 +105,7 @@ const sectionMotion = {
         </button>
       </header>
 
-      <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] via-[#1e3a5f] to-[#0b192f] text-white">
+      <main className="pt-20 bg-gradient-to-b from-[#556678] via-[#1e3a5f] to-[#0b192f] text-white">
 
         {/* Hero */}
         <section className="relative h-screen overflow-hidden bg-black text-white">
