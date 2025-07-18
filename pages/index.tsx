@@ -48,15 +48,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-const fadeInProps = {
-  initial: { opacity: 0, y: 50, scale: 0.95 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  transition: {
-    duration: 0.8,
-    ease: [0.25, 0.46, 0.45, 0.94], // more modern ease
-  },
-  viewport: { once: false, amount: 0.3 }, // animate both scroll directions
-};
+  const fadeInProps = {
+    initial: { opacity: 0, y: 40, scale: 0.98 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] },
+    viewport: { once: false, amount: 0.2 },
+  };
 
   return (
     <>
@@ -64,6 +61,7 @@ const fadeInProps = {
         <title>Syfter — Precision Staffing Made Human</title>
       </Head>
 
+      {/* Navbar */}
       <header className="fixed top-0 w-full z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center">
         <div className="text-xl font-bold text-blue-600">Syfter</div>
         <nav className="space-x-6 hidden md:flex">
@@ -76,6 +74,8 @@ const fadeInProps = {
       </header>
 
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
+
+        {/* Hero */}
         <section className="relative h-[600px] overflow-hidden bg-black text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
@@ -84,13 +84,18 @@ const fadeInProps = {
             </h1>
             <p className="text-lg mb-8">Syfter Certified talent delivered faster, smarter, better.</p>
             <div className="flex justify-center gap-6">
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
-              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Talent
+              </button>
+              <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">
+                Find Jobs
+              </button>
             </div>
           </div>
           <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #1e3a5f)" }} />
         </section>
 
+        {/* Why Syfter */}
         <motion.section id="why" className="pt-20 pb-10 bg-[#1e3a5f] text-center text-white" {...fadeInProps}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
@@ -101,6 +106,7 @@ const fadeInProps = {
           </div>
         </motion.section>
 
+        {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInProps}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
             <div><div className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
@@ -109,6 +115,7 @@ const fadeInProps = {
           </div>
         </motion.section>
 
+        {/* Jobs */}
         <motion.section id="jobs" className="py-20 px-6" {...fadeInProps}>
           <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
@@ -126,6 +133,7 @@ const fadeInProps = {
           </div>
         </motion.section>
 
+        {/* Testimonials */}
         <motion.section className="bg-[#1e3a5f] py-20 text-center px-6" {...fadeInProps}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <blockquote className="italic text-lg max-w-2xl mx-auto">
@@ -133,12 +141,18 @@ const fadeInProps = {
           </blockquote>
         </motion.section>
 
-        <motion.section className="relative text-white text-center py-20 bg-cover bg-center" style={{ backgroundImage: "url('/FooterImage1.png')", backgroundPosition: "center 15%" }} {...fadeInProps}>
-          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+        {/* Footer */}
+        <motion.section
+          id="contact"
+          className="relative text-white text-center py-20 bg-[#1e3a5f]"
+          {...fadeInProps}
+        >
           <div className="relative z-10 max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
-            <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Contact Us</button>
+            <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
+              Contact Us
+            </button>
           </div>
         </motion.section>
       </main>
