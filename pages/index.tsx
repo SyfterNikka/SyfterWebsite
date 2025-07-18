@@ -49,12 +49,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const fadeInProps = {
-    initial: { opacity: 0, y: 40, scale: 0.98 },
-    whileInView: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.8, ease: easeInOut },
-    viewport: { once: false, amount: 0.2 },
-  };
+const fadeInProps = {
+  initial: { opacity: 0, y: 80, scale: 0.95 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  transition: { duration: 1.1, ease: easeInOut },
+  viewport: { once: false, amount: 0.2 },
+};
 
   return (
     <>
@@ -77,7 +77,7 @@ export default function Home() {
       <main className="pt-20 bg-gradient-to-b from-[#0f172a] via-[#1e3a5f] to-[#2d3e50] text-white">
 
         {/* Hero */}
-        <section className="relative h-[600px] overflow-hidden bg-black text-white">
+        <section className="relative min-h-screen overflow-hidden bg-black text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
             <h1 className="text-5xl font-bold mb-4">
