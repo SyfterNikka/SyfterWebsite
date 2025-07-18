@@ -109,7 +109,8 @@ export default function Home() {
 {/* Why Syfter */}
 <motion.section
   id="whysyfter"
-  className="pt-20 pb-10 text-center bg-transparent"
+  className="pt-20 pb-10 text-center"
+  style={{ backgroundColor: "#3e4e5e" }}
   {...fadeInMotion}
 >
   <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
