@@ -69,12 +69,12 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  const sectionMotion = {
-    initial: { opacity: 0, y: 50, scale: 0.96 },
-    whileInView: { opacity: 1, y: 0, scale: 1 },
-    transition: { duration: 0.8, ease: "easeOut" },
-    viewport: { once: false, amount: 0.2 },
-  };
+const sectionMotion = {
+  initial: { opacity: 0, y: 50, scale: 0.96 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }, 
+  viewport: { once: false, amount: 0.2 },
+};
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
