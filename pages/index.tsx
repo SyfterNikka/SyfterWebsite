@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import BinaryRain from "../components/BinaryRain";
+import { motion } from "framer-motion";
+
 // Easing function for smooth fade-in
 const easeInOutCubic: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
