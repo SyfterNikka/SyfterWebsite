@@ -106,10 +106,10 @@ export default function Home() {
           </div>
         </section>
 
-       {/* Why Syfter */}
+{/* Why Syfter */}
 <motion.section
   id="whysyfter"
-  className="pt-20 pb-10 text-center bg-gradient-to-b from-transparent to-[#3e4e5e]"
+  className="pt-20 pb-10 text-center bg-transparent"
   {...fadeInMotion}
 >
   <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
@@ -134,7 +134,6 @@ export default function Home() {
     ))}
   </div>
 </motion.section>
-
 
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
