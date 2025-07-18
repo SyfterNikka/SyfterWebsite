@@ -1,19 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
-import BinaryRain from "../components/BinaryRain";
-
-const easeInOutCubic = [0.42, 0, 0.58, 1];
-
-const fadeInMotion = {
-  initial: { opacity: 0, y: 40 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: {
-    duration: 1.2,
-    ease: easeInOutCubic,
-  },
-  viewport: { once: false, amount: 0.3 },
-};
+import BinaryRain from "@/components/BinaryRain";
 
 export default function Home() {
   const words = ["Smarter", "Faster", "Securely", "Syfter"];
@@ -43,7 +31,7 @@ export default function Home() {
   }, [charIndex, deleting, wordIndex]);
 
   const [counts, setCounts] = useState([0, 0, 0]);
-  const countersRef = useRef(null);
+  const countersRef = useRef<HTMLDivElement | null>(null);
   const triggered = useRef(false);
 
   useEffect(() => {
@@ -79,38 +67,50 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Syfter — Precision Staffing Made Human</title>
-      </Head>
+      <Head><title>Syfter — Precision Staffing Made Human</title></Head>
 
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-black/40 text-white py-3 px-6 flex justify-between items-center shadow-sm">
+      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/10 shadow-sm py-3 px-6 flex justify-between items-center transition">
         <div className="text-xl font-bold text-white">Syfter</div>
-        <nav className="space-x-6 hidden md:flex text-sm font-medium">
-          {[
-            { label: "Why Syfter", href: "#whysyfter" },
-            { label: "Find Work", href: "#findwork" },
-            { label: "Hire Talent", href: "#hiretalent" },
-            { label: "Contact", href: "#contact" }
-          ].map((link, i) => (
-            <a key={i} href={link.href} className="hover:text-[#69bdff] transition">{link.label}</a>
+        <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
+          {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
+            <a key={i} href={`#${t.toLowerCase().replace(" ", "")}`} className="hover:text-blue-300 transition">{t}</a>
           ))}
         </nav>
-        <button className="bg-[#69bdff] text-black px-4 py-2 rounded hover:bg-white text-sm">Get Started</button>
+        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
       <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#28303b] text-white">
+
         {/* Hero */}
         <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-            <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              viewport={{ once: false, amount: 0.3 }}
+              className="text-6xl font-bold mb-4"
+            >
               Hire <span className="italic text-[#69bdff]">{displayText}</span>
             </motion.h1>
-            <motion.p className="text-xl mb-8 max-w-2xl mx-auto" {...fadeInMotion}>
+            <motion.p
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              viewport={{ once: false, amount: 0.3 }}
+              className="text-xl mb-8 max-w-2xl mx-auto"
+            >
               Syfter Certified talent delivered faster, smarter, better.
             </motion.p>
-            <motion.div className="flex justify-center gap-6" {...fadeInMotion}>
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              viewport={{ once: false, amount: 0.3 }}
+              className="flex justify-center gap-6"
+            >
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Talent</button>
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
             </motion.div>
@@ -118,7 +118,7 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-20 pb-10 text-center" {...fadeInMotion}>
+        <motion.section id="whysyfter" className="pt-20 pb-10 text-center" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             {[
@@ -131,7 +131,7 @@ export default function Home() {
                 key={i}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.3, duration: 1, ease: easeInOutCubic }}
+                transition={{ delay: i * 0.2, duration: 1, ease: "easeInOut" }}
                 viewport={{ once: true }}
                 className="p-4"
               >
@@ -143,7 +143,7 @@ export default function Home() {
         </motion.section>
 
         {/* Stats */}
-        <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
+        <motion.section className="py-20 text-center px-6" ref={countersRef} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
             <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
             <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
@@ -151,26 +151,8 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Jobs */}
-        <motion.section id="findwork" className="py-20 px-6" {...fadeInMotion}>
-          <h2 className="text-3xl font-bold text-center mb-10">Featured Jobs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            {[
-              { title: "Frontend Developer", loc: "NY, Full-Time" },
-              { title: "Product Manager", loc: "Remote, Contract" },
-              { title: "IT Project Manager", loc: "Chicago, Contract" },
-              { title: "Data Analyst", loc: "Stousburg, Full-Time" },
-            ].map((job, i) => (
-              <motion.div key={i} whileHover={{ scale: 1.03 }} className="bg-[#1e3a5f] p-4 rounded border border-[#69bdff] text-white transition">
-                <h4 className="font-semibold text-lg">{job.title}</h4>
-                <p className="text-sm">{job.loc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
         {/* Testimonials */}
-        <motion.section className="py-20 text-center px-6" {...fadeInMotion}>
+        <motion.section className="py-20 text-center px-6" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <motion.blockquote
             key={activeTestimonial}
@@ -184,13 +166,14 @@ export default function Home() {
         </motion.section>
 
         {/* Footer */}
-        <motion.section id="contact" className="text-white text-center py-20" {...fadeInMotion}>
+        <motion.section id="contact" className="text-white text-center py-20" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeInOut" }} viewport={{ once: true, amount: 0.3 }}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
-            <button className="bg-[#69bdff] text-black font-semibold py-3 px-6 rounded hover:bg-white transition">Contact Us</button>
+            <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Contact Us</button>
           </div>
         </motion.section>
+
       </main>
     </>
   );
