@@ -67,7 +67,7 @@ export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days.” — SaaS Manager",
     "“Recruiting this fast? Unreal.” — Tech Startup CEO",
-    "“Candidate quality = unmatched.” — Healthcare Director"
+    "“Candidate quality = unmatched.” — Healthcare Director",
   ];
 
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -95,7 +95,7 @@ export default function Home() {
         <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm">Get Started</button>
       </header>
 
-      <main className="pt-20 bg-gradient-to-b from-[#43494f] to-[#272e36] text-white">
+      <main className="pt-20 bg-gradient-to-b from-[#3e4e5e] to-[#0b192f] text-white">
 
         {/* Hero */}
         <section className="relative h-screen overflow-hidden">
@@ -112,14 +112,11 @@ export default function Home() {
               <button className="bg-white text-blue-600 font-semibold py-2 px-6 rounded hover:bg-gray-200">Find Jobs</button>
             </motion.div>
           </div>
-
-          {/* Smooth hero bottom fade */}
-          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10"
-            style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #272e36)" }} />
+          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #0b192f)" }} />
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-24 pb-14 text-center text-white" {...fadeInMotion}>
+        <motion.section id="whysyfter" className="pt-24 pb-14 text-center" {...fadeInMotion}>
           <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             {[
@@ -164,11 +161,7 @@ export default function Home() {
               { title: "IT Project Manager", loc: "Chicago, Contract" },
               { title: "Data Analyst", loc: "Stousburg, Full-Time" },
             ].map((job, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.03 }}
-                className="bg-[#1e3a5f] p-4 rounded border border-[#69bdff] text-white transition"
-              >
+              <motion.div key={i} whileHover={{ scale: 1.03 }} className="bg-[#1e3a5f] p-4 rounded border border-[#69bdff] text-white transition">
                 <h4 className="font-semibold text-lg">{job.title}</h4>
                 <p className="text-sm">{job.loc}</p>
               </motion.div>
@@ -177,7 +170,7 @@ export default function Home() {
         </motion.section>
 
         {/* Testimonials */}
-        <motion.section className="bg-[#1e3a5f] py-20 text-center px-6" {...fadeInMotion}>
+        <motion.section className="py-20 text-center px-6" {...fadeInMotion}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
           <motion.blockquote
             key={activeTestimonial}
@@ -191,7 +184,7 @@ export default function Home() {
         </motion.section>
 
         {/* Footer */}
-        <motion.section id="contact" className="text-white text-center py-20 bg-[#1e3a5f]" {...fadeInMotion}>
+        <motion.section id="contact" className="text-white text-center py-20" {...fadeInMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
