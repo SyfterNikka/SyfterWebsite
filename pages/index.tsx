@@ -138,7 +138,12 @@ export default function Home() {
               </button>
             </motion.div>
           </div>
-          <div className="absolute bottom-0 left-0 w-full h-40 pointer-events-none z-10" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), #496070)" }} />
+          <div
+  className="absolute bottom-0 left-0 w-full h-64 pointer-events-none z-10"
+  style={{
+    background: "linear-gradient(to bottom, rgba(0,0,0,0), #1c252b)",
+  }}
+/>
         </section>
 
         {/* Why Syfter */}
@@ -151,10 +156,15 @@ export default function Home() {
               { title: "Fast Hiring", text: "Reduce time-to-hire to under 5 days." },
               { title: "People First", text: "We don’t fill seats — we grow teams." },
             ].map((item, i) => (
-              <motion.div key={i} custom={i} initial="hidden" whileInView="visible" viewport={{ once: false }} variants={itemVariants}>
-                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
-                <p className="text-sm">{item.text}</p>
-              </motion.div>
+              <motion.div
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1, ease: "easeOut" }}
+  viewport={{ once: true }}
+>
+  <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
+</motion.div>
+
             ))}
           </div>
         </motion.section>
