@@ -49,12 +49,12 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const fadeInProps = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 },
-    viewport: { once: true, amount: 0.2 },
-  };
+const fadeInProps = {
+  initial: { opacity: 0, y: 80, scale: 0.96 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  transition: { duration: 0.8, ease: "easeOut" },
+  viewport: { once: false, amount: 0.2 },
+};
 
   return (
     <>
@@ -112,12 +112,19 @@ export default function Home() {
 
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInProps}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            <div><div id="counter1" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">hires placed</p></div>
-            <div><div id="counter2" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">average fill time</p></div>
-            <div><div id="counter3" className="text-4xl font-bold mb-2">0</div><p className="text-lg font-medium">retention rate</p></div>
-          </div>
-        </motion.section>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+    {[
+      { label: "hires placed", id: "counter1" },
+      { label: "average fill time", id: "counter2" },
+      { label: "retention rate", id: "counter3" },
+    ].map(({ label, id }, i) => (
+      <motion.div key={id} {...fadeInProps}>
+        <div id={id} className="text-4xl font-bold mb-2">0</div>
+        <p className="text-lg font-medium">{label}</p>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
 
         {/* Jobs */}
         <motion.section id="jobs" className="py-20 px-6" {...fadeInProps}>
