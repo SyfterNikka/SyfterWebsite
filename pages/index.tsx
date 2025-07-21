@@ -109,9 +109,9 @@ export default function Home() {
 {/* Why Syfter */}
 <motion.section
   id="whysyfter"
-  className="pt-20 pb-10 text-center"
-  style={{ backgroundColor: "#3e4e5e" }}
+  className="pb-10 text-center bg-[#3e4e5e]" // removed pt-20
   {...fadeInMotion}
+>
 >
   <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
