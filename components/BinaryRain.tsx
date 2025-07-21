@@ -102,3 +102,5 @@ const BinaryRain = () => {
     </div>
   );
 };
+
+export default BinaryRain;
