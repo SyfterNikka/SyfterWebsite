@@ -93,13 +93,12 @@ const BinaryRain = () => {
         className="w-full h-full"
         style={{ pointerEvents: "none" }}
       />
-      {/* Solid bottom bar to match Why Syfter section */}
-      <div
-        className="absolute bottom-0 left-0 w-full h-[90px] pointer-events-none z-10"
-        style={{ backgroundColor: "#3e4e5e" }}
-      />
+     <div
+  className="absolute bottom-0 left-0 w-full h-[90px] pointer-events-none z-10"
+  style={{
+    background: "linear-gradient(to bottom, rgba(0,0,0,0), #3e4e5e)",
+  }}
+/>
     </div>
   );
 };
-
-export default BinaryRain;
