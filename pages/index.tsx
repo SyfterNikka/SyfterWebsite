@@ -1,16 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
-import { motion, type MotionProps } from "framer-motion";
+import { motion } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-const fadeInMotion: MotionProps = {
+const fadeInMotion = {
   initial: { opacity: 0, y: 40, scale: 0.95 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
+    ease: [0.42, 0, 0.58, 1]
   },
-  viewport: { once: false, amount: 0.3 },
+  viewport: { once: false, amount: 0.3 }
 };
 
 export default function Home() {
@@ -88,7 +88,7 @@ export default function Home() {
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
-      <main className="pt-10 min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #0a0a0a 0%, #3e4e5e 40%, #28303b 100%)" }}>
+      <main className="pt-10 min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e, #28303b)" }}>
         {/* Hero Section */}
         <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
@@ -107,27 +107,19 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-28 pb-20 text-center bg-[#3e4e5e]" {...fadeInMotion}>
-          <h2 className="text-5xl font-bold mb-14 inline-block border-b-4 border-[#69bdff] pb-1">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto">
+        <motion.section id="whysyfter" className="pt-20 pb-10 text-center bg-[#3e4e5e]" {...fadeInMotion}>
+          <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff] underline-offset-8">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
             {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
               <motion.div
                 key={i}
-                className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                initial={{ opacity: 0, y: 40, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: i * 0.2, duration: 0.9 }}
+                transition={{ delay: i * 0.2, duration: 1.4, ease: [0.42, 0, 0.58, 1] }}
                 viewport={{ once: true }}
+                className="flex items-center justify-center h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 rounded-full bg-gray-200 text-black mx-auto shadow-md p-6"
               >
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-800 font-bold">
-                  {title.split(" ")[0]}
-                </div>
-                <p className="text-sm max-w-xs">{
-                  title === "Syfter Certified" ? "Screened for resilience, communication, and excellence." :
-                  title === "AI-Proofed" ? "Human-reviewed to avoid automation blind spots." :
-                  title === "Fast Hiring" ? "Reduce time-to-hire to under 5 days." :
-                  "We don’t fill seats — we grow teams."
-                }</p>
+                <span className="text-lg font-semibold text-center leading-tight">{title}</span>
               </motion.div>
             ))}
           </div>
