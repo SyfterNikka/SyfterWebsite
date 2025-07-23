@@ -8,9 +8,9 @@ const fadeInMotion = {
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: [0.42, 0, 0.58, 1]
+    ease: "easeInOut", 
   },
-  viewport: { once: false, amount: 0.3 }
+  viewport: { once: false, amount: 0.3 },
 };
 
 export default function Home() {
