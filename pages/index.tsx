@@ -143,21 +143,32 @@ export default function Home() {
   </div>
 </motion.section>
         
-        {/* Stats */}
-        <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
-            <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
-            <div><div className="text-4xl font-bold mb-2">{counts[2]}%</div><p className="text-lg font-medium">retention rate</p></div>
-          </div>
-        </motion.section>
+       {/* Stats */}
+<motion.section
+  className="py-12 px-6 bg-[#3e4e5e] text-white text-center"
+  {...fadeInMotion}
+  ref={countersRef}
+>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+    {[
+      { value: counts[0], label: "hires placed" },
+      { value: counts[1], label: "avg. fill time (days)" },
+      { value: `${counts[2]}%`, label: "retention rate" },
+    ].map((stat, i) => (
+      <div key={i} className="flex flex-col items-center justify-center">
+        <div className="text-5xl font-bold mb-1">{stat.value}</div>
+        <p className="text-md font-medium">{stat.label}</p>
+      </div>
+    ))}
+  </div>
+</motion.section>
 
        {/* Executive Team */}
 <motion.section id="exec" className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
   <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff]">Executive Team</h2>
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 max-w-4xl mx-auto">
     {[
-      { name: "Steve Perlman", title: "CEO", img: "/team/steve.jpg" },
+      { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
       { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
       { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
       { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
