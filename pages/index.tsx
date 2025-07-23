@@ -145,23 +145,40 @@ export default function Home() {
         
        {/* Stats */}
 <motion.section
-  className="py-12 px-6 bg-[#3e4e5e] text-white text-center"
-  {...fadeInMotion}
+  id="trusted"
+  className="py-20 px-6 text-center bg-[#3e4e5e] text-white"
+  initial={{ opacity: 0, y: 60 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1.2 }}
+  viewport={{ once: true, amount: 0.4 }}
   ref={countersRef}
 >
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+  <h2 className="text-5xl font-bold mb-16 underline decoration-[#69bdff]">Trusted Results</h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
     {[
-      { value: counts[0], label: "hires placed" },
-      { value: counts[1], label: "avg. fill time (days)" },
-      { value: `${counts[2]}%`, label: "retention rate" },
+      { target: 128, label: "hires placed" },
+      { target: 5, label: "avg. fill time (days)" },
+      { target: 98, label: "retention rate", suffix: "%" },
     ].map((stat, i) => (
-      <div key={i} className="flex flex-col items-center justify-center">
-        <div className="text-5xl font-bold mb-1">{stat.value}</div>
+      <motion.div
+        key={i}
+        className="flex flex-col items-center justify-center"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: i * 0.3, duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <div className="text-5xl font-extrabold mb-2">
+          {counts[i]}
+          {stat.suffix || ""}
+        </div>
         <p className="text-md font-medium">{stat.label}</p>
-      </div>
+      </motion.div>
     ))}
   </div>
 </motion.section>
+
 
        {/* Executive Team */}
 <motion.section id="exec" className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
