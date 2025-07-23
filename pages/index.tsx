@@ -164,7 +164,7 @@ export default function Home() {
     ].map((member, i) => (
       <motion.div
         key={i}
-        className="w-40 h-40 flip-card mx-auto"
+        className="w-48 h-48 flip-card mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
