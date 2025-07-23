@@ -112,26 +112,23 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto">
             {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
               <motion.div
-                key={i}
-                className="flex flex-col items-center"
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: i * 0.2, duration: 0.9 }}
-                viewport={{ once: true }}
-              >
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-800 font-bold">
-                  {title.split(" ")[0]}
-                </div>
-                <p className="text-sm max-w-xs">{
-                  title === "Syfter Certified" ? "Screened for resilience, communication, and excellence." :
-                  title === "AI-Proofed" ? "Human-reviewed to avoid automation blind spots." :
-                  title === "Fast Hiring" ? "Reduce time-to-hire to under 5 days." :
-                  "We don’t fill seats — we grow teams."
-                }</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+  key={i}
+  className="flex flex-col items-center min-h-[180px]"
+  initial={{ opacity: 0, y: 40, scale: 0.95 }}
+  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+  transition={{ delay: i * 0.2, duration: 0.9 }}
+  viewport={{ once: true }}
+>
+  <div className="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-center text-gray-800 font-bold px-2 text-sm leading-tight">
+    {title}
+  </div>
+  <p className="text-sm max-w-xs text-center">{
+    title === "Syfter Certified" ? "Screened for resilience, communication, and excellence." :
+    title === "AI-Proofed" ? "Human-reviewed to avoid automation blind spots." :
+    title === "Fast Hiring" ? "Reduce time-to-hire to under 5 days." :
+    "We don’t fill seats — we grow teams."
+  }</p>
+</motion.div>
 
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
