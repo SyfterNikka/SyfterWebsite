@@ -93,7 +93,13 @@ export default function Home() {
         <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
-            <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
+            <motion.h1
+  className="text-6xl font-bold mb-4"
+  initial={{ opacity: 0, y: 40, scale: 0.95 }}
+  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+  transition={{ duration: 1.2 }}
+  viewport={{ once: false, amount: 0.3 }}
+>
               Hire <span className="italic text-[#69bdff]">{displayText}</span>
             </motion.h1>
             <motion.p className="text-xl mb-8 max-w-2xl mx-auto" {...fadeInMotion}>
