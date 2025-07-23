@@ -1,13 +1,15 @@
-// Home.tsx
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
 const fadeInMotion = {
-  initial: { opacity: 0, y: 40 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 1.2, ease: [0.42, 0, 0.58, 1] as any },
+  initial: { opacity: 0, y: 80, scale: 0.98 },
+  whileInView: { opacity: 1, y: 0, scale: 1 },
+  transition: {
+    duration: 1.4,
+    ease: [0.25, 1, 0.5, 1],
+  },
   viewport: { once: false, amount: 0.3 },
 };
 
@@ -63,7 +65,7 @@ export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days.” — SaaS Manager",
     "“Recruiting this fast? Unreal.” — Tech Startup CEO",
-    "“Candidate quality = unmatched.” — Healthcare Director"
+    "“Candidate quality = unmatched.” — Healthcare Director",
   ];
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   useEffect(() => {
@@ -79,19 +81,16 @@ export default function Home() {
       <header className="fixed top-0 w-full z-50 bg-transparent backdrop-blur-md text-white py-3 px-6 flex justify-between items-center">
         <div className="text-xl font-bold text-white">Syfter</div>
         <nav className="space-x-6 hidden md:flex text-sm font-medium text-white">
-          {["Why Syfter", "Find Work", "Hire Talent", "Certify", "Executive Team", "Contact"].map((t, i) => (
-            <a key={i} href={`#${t.toLowerCase().replace(/ /g, "")}`} className="hover:text-blue-300 transition">{t}</a>
+          {["Why Syfter", "Find Work", "Hire Talent", "Contact"].map((t, i) => (
+            <a key={i} href={`#${t.toLowerCase().replace(" ", "")}`} className="hover:text-blue-300 transition">{t}</a>
           ))}
         </nav>
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Get Started</button>
       </header>
 
-      <main className="pt-10 min-h-screen text-white bg-[#28303b]">
+      <main className="pt-10 min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #0a0a0a 0%, #3e4e5e 40%, #28303b 100%)" }}>
         {/* Hero Section */}
-        <section
-          className="relative h-screen overflow-hidden text-white"
-          style={{ background: "linear-gradient(to bottom, #3e4e5e, #28303b)" }}
-        >
+        <section className="relative h-screen overflow-hidden text-white">
           <BinaryRain />
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4">
             <motion.h1 className="text-6xl font-bold mb-4" {...fadeInMotion}>
@@ -108,55 +107,76 @@ export default function Home() {
         </section>
 
         {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-20 pb-10 text-center bg-[#3e4e5e]" {...fadeInMotion}>
-          <h2 className="text-5xl font-bold mb-14">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
+        <motion.section id="whysyfter" className="pt-28 pb-20 text-center bg-[#3e4e5e]" {...fadeInMotion}>
+          <h2 className="text-5xl font-bold mb-14 inline-block border-b-4 border-[#69bdff] pb-1">Why Syfter</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto">
             {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.3, duration: 1 }} viewport={{ once: true }} className="p-4">
-                <h4 className="text-xl font-semibold mb-2">{title}</h4>
-                <p className="text-sm">{[
-                  "Screened for resilience, communication, and excellence.",
-                  "Human-reviewed to avoid automation blind spots.",
-                  "Reduce time-to-hire to under 5 days.",
+              <motion.div
+                key={i}
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.2, duration: 0.9 }}
+                viewport={{ once: true }}
+              >
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-800 font-bold">
+                  {title.split(" ")[0]}
+                </div>
+                <p className="text-sm max-w-xs">{
+                  title === "Syfter Certified" ? "Screened for resilience, communication, and excellence." :
+                  title === "AI-Proofed" ? "Human-reviewed to avoid automation blind spots." :
+                  title === "Fast Hiring" ? "Reduce time-to-hire to under 5 days." :
                   "We don’t fill seats — we grow teams."
-                ][i]}</p>
+                }</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* Stats */}
+        <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+            <div><div className="text-4xl font-bold mb-2">{counts[0]}</div><p className="text-lg font-medium">hires placed</p></div>
+            <div><div className="text-4xl font-bold mb-2">{counts[1]}</div><p className="text-lg font-medium">avg. fill time (days)</p></div>
+            <div><div className="text-4xl font-bold mb-2">{counts[2]}%</div><p className="text-lg font-medium">retention rate</p></div>
+          </div>
+        </motion.section>
+
+        {/* Executive Team */}
+        <motion.section className="py-20 text-center bg-[#3e4e5e]" {...fadeInMotion}>
+          <h2 className="text-4xl font-bold mb-12 inline-block border-b-4 border-[#69bdff] pb-1">Executive Team</h2>
+          <div className="flex flex-wrap justify-center gap-10 max-w-5xl mx-auto">
+            {["Steve Perlman, CEO", "Matt Hall, CRO", "Nikka Winchell, CRO", "Ira Plutner, CFO"].map((person, i) => (
+              <motion.div
+                key={i}
+                className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center text-center font-semibold text-gray-800 shadow-md"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.3, duration: 1 }}
+                viewport={{ once: true }}
+              >
+                <span className="text-sm px-2">{person}</span>
               </motion.div>
             ))}
           </div>
         </motion.section>
 
         {/* Syfter Certify */}
-        <motion.section id="certify" className="bg-[#28303b] py-20 text-center px-6" {...fadeInMotion}>
-          <h2 className="text-3xl font-bold mb-6">What is Syfter Certify?</h2>
-          <p className="max-w-3xl mx-auto text-lg mb-6">Our certified candidates are screened using a combination of technical interviews, transcript insights, and alignment with your JD. Every profile includes:</p>
-          <ul className="max-w-2xl mx-auto text-left space-y-3 list-disc list-inside">
-            <li>Core Strengths aligned to your stack</li>
-            <li>Unique insights from transcript & LinkedIn</li>
-            <li>Candidate Quote for culture fit</li>
-            <li>Why [Candidate] – our detailed recommendation</li>
-            <li>Two-bullet summaries of latest roles</li>
-            <li>Technical Q&A snapshot</li>
-          </ul>
-        </motion.section>
-
-        {/* Executive Team */}
-        <motion.section id="executiveteam" className="bg-[#3e4e5e] py-20 text-center px-6" {...fadeInMotion}>
-          <h2 className="text-3xl font-bold mb-10">Executive Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {["Steve Perlman", "Matt Hall", "Nikka Winchell", "Ira Plutner"].map((name, i) => (
-              <div key={i} className="bg-[#1e3a5f] p-6 rounded text-white shadow-md">
-                <h4 className="text-xl font-semibold mb-2">{name}</h4>
-                <p className="text-sm">{["Founder & CEO", "CRO", "CRO", "CFO"][i]}</p>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Stats */}
-        <motion.section className="bg-[#28303b] py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
-            {["hires placed", "avg. fill time (days)", "retention rate"].map((label, i) => (
-              <div key={i}><div className="text-4xl font-bold mb-2">{counts[i]}{i === 2 ? "%" : ""}</div><p className="text-lg font-medium">{label}</p></div>
+        <motion.section className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
+          <h2 className="text-4xl font-bold mb-10 inline-block border-b-4 border-[#69bdff] pb-1">Syfter Certify</h2>
+          <p className="mb-10 max-w-xl mx-auto text-lg">The Precheck of Hiring. We implement a 5-step trust protocol to ensure every candidate is real, qualified, and ready.</p>
+          <div className="flex flex-wrap justify-center gap-6">
+            {["AI Interview Detection", "Geo-Verification", "Communication Review", "Experience Verification", "Syfter Badge Approval"].map((step, i) => (
+              <motion.div
+                key={i}
+                className="bg-[#1e3a5f] text-white px-6 py-3 rounded-full border border-[#69bdff] shadow-md"
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.2, duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                {step}
+              </motion.div>
             ))}
           </div>
         </motion.section>
@@ -164,17 +184,23 @@ export default function Home() {
         {/* Testimonials */}
         <motion.section className="bg-transparent py-20 text-center px-6" {...fadeInMotion}>
           <h2 className="text-3xl font-bold mb-6">What Our Clients Say</h2>
-          <motion.blockquote key={activeTestimonial} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="italic text-lg max-w-2xl mx-auto">
+          <motion.blockquote
+            key={activeTestimonial}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="italic text-lg max-w-2xl mx-auto"
+          >
             {testimonials[activeTestimonial]}
           </motion.blockquote>
         </motion.section>
 
-        {/* Contact */}
-        <motion.section id="contact" className="text-white text-center py-20 bg-[#3e4e5e]" {...fadeInMotion}>
+        {/* Footer / Contact */}
+        <motion.section id="contact" className="text-white text-center py-20 bg-transparent" {...fadeInMotion}>
           <div className="max-w-3xl mx-auto px-6">
             <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
             <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
-            <p className="mb-6">NYC • Denver • Remote-First</p>
+            <p className="mb-4 text-md">New York, NY | Denver, CO | Remote Nationwide</p>
             <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Contact Us</button>
           </div>
         </motion.section>
