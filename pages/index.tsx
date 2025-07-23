@@ -152,32 +152,45 @@ export default function Home() {
           </div>
         </motion.section>
 
-       {/* Exec Team */}
-        <motion.section id="exec" className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
-          <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff]">Executive Team</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 max-w-6xl mx-auto">
-            {[
-              { name: "Steve Perlman", title: "CEO" },
-              { name: "Matt Hall", title: "CRO" },
-              { name: "Nikka Winchell", title: "CRO" },
-              { name: "Ira Plutner", title: "CFO" },
-            ].map((member, i) => (
-              <motion.div
-                key={i}
-                className="w-32 h-32 bg-gray-200 text-black rounded-full flex items-center justify-center text-sm font-semibold shadow-lg transform transition-transform duration-700 hover:rotate-y-180"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2 }}
-                viewport={{ once: true }}
-              >
-                <div className="text-center">
-                  <div>{member.name}</div>
-                  <div className="text-xs font-normal">{member.title}</div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+       {/* Executive Team */}
+<motion.section
+  id="exec"
+  className="py-20 text-center bg-[#28303b]"
+  {...fadeInMotion}
+>
+  <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff]">Executive Team</h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 max-w-4xl mx-auto">
+    {[
+      { name: "Steve Perlman", title: "CEO", img: "/team/steve.jpg" },
+      { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
+      { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
+      { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
+    ].map((member, i) => (
+      <motion.div
+        key={i}
+        className="w-40 h-40 perspective"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: i * 0.2 }}
+        viewport={{ once: true }}
+      >
+        <div className="relative w-full h-full transform-style-preserve-3d transition-transform duration-700 hover:rotate-y-180">
+          {/* Front - photo */}
+          <div className="absolute inset-0 bg-gray-200 rounded-full overflow-hidden backface-hidden">
+            <img src={member.img} alt={member.name} className="object-cover w-full h-full" />
+          </div>
+
+          {/* Back - name + title */}
+          <div className="absolute inset-0 bg-gray-100 rounded-full flex flex-col items-center justify-center text-black backface-hidden transform rotate-y-180 px-2">
+            <div className="text-sm font-semibold">{member.name}</div>
+            <div className="text-xs">{member.title}</div>
+          </div>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
 
         {/* Syfter Certify */}
         <motion.section className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
