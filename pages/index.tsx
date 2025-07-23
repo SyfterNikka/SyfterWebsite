@@ -153,13 +153,8 @@ export default function Home() {
         </motion.section>
 
        {/* Executive Team */}
-<motion.section
-  id="exec"
-  className="py-20 text-center bg-[#28303b]"
-  {...fadeInMotion}
->
+<motion.section id="exec" className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
   <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff]">Executive Team</h2>
-
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 max-w-4xl mx-auto">
     {[
       { name: "Steve Perlman", title: "CEO", img: "/team/steve.jpg" },
@@ -169,22 +164,26 @@ export default function Home() {
     ].map((member, i) => (
       <motion.div
         key={i}
-        className="w-40 h-40 perspective"
+        className="w-40 h-40 flip-card mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, delay: i * 0.2 }}
+        transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
-        <div className="relative w-full h-full transform-style-preserve-3d transition-transform duration-700 hover:rotate-y-180">
-          {/* Front - photo */}
-          <div className="absolute inset-0 bg-gray-200 rounded-full overflow-hidden backface-hidden">
-            <img src={member.img} alt={member.name} className="object-cover w-full h-full" />
-          </div>
-
-          {/* Back - name + title */}
-          <div className="absolute inset-0 bg-gray-100 rounded-full flex flex-col items-center justify-center text-black backface-hidden transform rotate-y-180 px-2">
-            <div className="text-sm font-semibold">{member.name}</div>
-            <div className="text-xs">{member.title}</div>
+        <div className="flip-card-inner w-full h-full rounded-full shadow-lg">
+          {/* Front Face with Image */}
+          <div
+            className="flip-card-front rounded-full"
+            style={{
+              backgroundImage: `url(${member.img})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          {/* Back Face with Info */}
+          <div className="flip-card-back rounded-full text-black">
+            <div className="text-base font-bold">{member.name}</div>
+            <div className="text-sm font-medium">{member.title}</div>
           </div>
         </div>
       </motion.div>
