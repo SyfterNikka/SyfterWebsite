@@ -106,30 +106,43 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Why Syfter */}
-        <motion.section id="whysyfter" className="pt-28 pb-20 text-center bg-[#3e4e5e]" {...fadeInMotion}>
-          <h2 className="text-5xl font-bold mb-14 inline-block border-b-4 border-[#69bdff] pb-1">Why Syfter</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 max-w-6xl mx-auto">
-            {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
-              <motion.div
-  key={i}
-  className="flex flex-col items-center min-h-[180px]"
-  initial={{ opacity: 0, y: 40, scale: 0.95 }}
-  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-  transition={{ delay: i * 0.2, duration: 0.9 }}
-  viewport={{ once: true }}
+       {/* Why Syfter */}
+<motion.section
+  id="whysyfter"
+  className="pt-28 pb-20 text-center bg-[#3e4e5e]"
+  {...fadeInMotion}
 >
-  <div className="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-center text-gray-800 font-bold px-2 text-sm leading-tight">
-    {title}
-  </div>
-  <p className="text-sm max-w-xs text-center">{
-    title === "Syfter Certified" ? "Screened for resilience, communication, and excellence." :
-    title === "AI-Proofed" ? "Human-reviewed to avoid automation blind spots." :
-    title === "Fast Hiring" ? "Reduce time-to-hire to under 5 days." :
-    "We don’t fill seats — we grow teams."
-  }</p>
-</motion.div>
+  <h2 className="text-5xl font-bold mb-14 inline-block border-b-4 border-[#69bdff] pb-1">
+    Why Syfter
+  </h2>
 
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center max-w-6xl mx-auto">
+    {["Syfter Certified", "AI-Proofed", "Fast Hiring", "People First"].map((title, i) => (
+      <motion.div
+        key={i}
+        className="flex flex-col items-center min-h-[180px]"
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: i * 0.2, duration: 0.9 }}
+        viewport={{ once: true }}
+      >
+        <div className="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-center text-gray-800 font-bold px-2 text-sm leading-tight">
+          {title}
+        </div>
+        <p className="text-sm max-w-xs text-center">
+          {title === "Syfter Certified"
+            ? "Screened for resilience, communication, and excellence."
+            : title === "AI-Proofed"
+            ? "Human-reviewed to avoid automation blind spots."
+            : title === "Fast Hiring"
+            ? "Reduce time-to-hire to under 5 days."
+            : "We don’t fill seats — we grow teams."}
+        </p>
+      </motion.div>
+    ))}
+  </div>
+</motion.section>
+        
         {/* Stats */}
         <motion.section className="py-20 text-center px-6" {...fadeInMotion} ref={countersRef}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
