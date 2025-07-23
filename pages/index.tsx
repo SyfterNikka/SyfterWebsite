@@ -3,12 +3,12 @@ import Head from "next/head";
 import { motion } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-const fadeInMotion: MotionProps = {
+const fadeInMotion = {
   initial: { opacity: 0, y: 40, scale: 0.95 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
+    ease: "easeInOut",
   },
   viewport: { once: false, amount: 0.3 },
 };
