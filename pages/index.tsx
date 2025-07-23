@@ -146,16 +146,16 @@ export default function Home() {
        {/* Stats */}
 <motion.section
   id="trusted"
-  className="py-20 px-6 text-center bg-[#3e4e5e] text-white"
+  className="py-24 px-6 text-center bg-[#3e4e5e] text-white"
   initial={{ opacity: 0, y: 60 }}
   whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1.2 }}
+  transition={{ duration: 1.6 }}
   viewport={{ once: true, amount: 0.4 }}
   ref={countersRef}
 >
   <h2 className="text-5xl font-bold mb-16 underline decoration-[#69bdff]">Trusted Results</h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-16 max-w-5xl mx-auto">
     {[
       { target: 128, label: "hires placed" },
       { target: 5, label: "avg. fill time (days)" },
@@ -164,12 +164,12 @@ export default function Home() {
       <motion.div
         key={i}
         className="flex flex-col items-center justify-center"
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: i * 0.3, duration: 1 }}
+        transition={{ duration: 1.2, delay: i * 0.6 }}
         viewport={{ once: true }}
       >
-        <div className="text-5xl font-extrabold mb-2">
+        <div className="text-5xl font-extrabold mb-3">
           {counts[i]}
           {stat.suffix || ""}
         </div>
