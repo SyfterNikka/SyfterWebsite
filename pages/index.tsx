@@ -1,14 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import Head from "next/head";
-import { motion } from "framer-motion";
+import { motion, type MotionProps } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-const fadeInMotion = {
+const fadeInMotion: MotionProps = {
   initial: { opacity: 0, y: 40, scale: 0.95 },
   whileInView: { opacity: 1, y: 0, scale: 1 },
   transition: {
     duration: 1.2,
-    ease: "easeInOut", 
+    ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
   },
   viewport: { once: false, amount: 0.3 },
 };
@@ -65,7 +65,7 @@ export default function Home() {
   const testimonials = [
     "“Syfter delivered top candidates in days.” — SaaS Manager",
     "“Recruiting this fast? Unreal.” — Tech Startup CEO",
-    "“Candidate quality = unmatched.” — Healthcare Director",
+    "“Candidate quality = unmatched.” — Healthcare Director"
   ];
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   useEffect(() => {
