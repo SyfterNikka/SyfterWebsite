@@ -148,6 +148,26 @@ export default function Home() {
           </div>
         </motion.section>
 
+         {/* Syfter Certify */}
+        <motion.section className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
+          <h2 className="text-4xl font-bold mb-10 inline-block border-b-4 border-[#69bdff] pb-1">Syfter Certify</h2>
+          <p className="mb-10 max-w-xl mx-auto text-lg">The Precheck of Hiring. We implement a 5-step trust protocol to ensure every candidate is real, qualified, and ready.</p>
+          <div className="flex flex-wrap justify-center gap-6">
+            {["AI Interview Detection", "Geo-Verification", "Communication Review", "Experience Verification", "Syfter Badge Approval"].map((step, i) => (
+              <motion.div
+                key={i}
+                className="bg-[#1e3a5f] text-white px-6 py-3 rounded-full border border-[#69bdff] shadow-md"
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ delay: i * 0.2, duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                {step}
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+        
             {/* Executive Team */}
 <motion.section id="exec" className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
   <h2 className="text-5xl font-bold mb-14 underline decoration-[#69bdff]">Executive Team</h2>
@@ -186,26 +206,6 @@ export default function Home() {
     ))}
   </div>
 </motion.section>
-
-        {/* Syfter Certify */}
-        <motion.section className="py-20 text-center bg-[#28303b]" {...fadeInMotion}>
-          <h2 className="text-4xl font-bold mb-10 inline-block border-b-4 border-[#69bdff] pb-1">Syfter Certify</h2>
-          <p className="mb-10 max-w-xl mx-auto text-lg">The Precheck of Hiring. We implement a 5-step trust protocol to ensure every candidate is real, qualified, and ready.</p>
-          <div className="flex flex-wrap justify-center gap-6">
-            {["AI Interview Detection", "Geo-Verification", "Communication Review", "Experience Verification", "Syfter Badge Approval"].map((step, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#1e3a5f] text-white px-6 py-3 rounded-full border border-[#69bdff] shadow-md"
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: i * 0.2, duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                {step}
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
 
         {/* Testimonials */}
         <motion.section className="bg-transparent py-20 text-center px-6" {...fadeInMotion}>
