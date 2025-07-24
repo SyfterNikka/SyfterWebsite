@@ -221,15 +221,43 @@ export default function Home() {
           </motion.blockquote>
         </motion.section>
 
-        {/* Footer / Contact */}
-        <motion.section id="contact" className="text-white text-center py-20 bg-transparent" {...fadeInMotion}>
-          <div className="max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl font-bold mb-4">Let's Build the Future of Work</h2>
-            <p className="mb-6 text-lg">Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.</p>
-            <p className="mb-4 text-md">New York, NY | Denver, CO | Remote Nationwide</p>
-            <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">Contact Us</button>
-          </div>
-        </motion.section>
+       {/* Footer / Contact */}
+<motion.section
+  id="contact"
+  className="text-white py-20 px-6 bg-transparent"
+  {...fadeInMotion}
+>
+  <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+    {/* Left: Text */}
+    <div className="text-center md:text-left">
+      <h2 className="text-3xl font-bold mb-4">
+        Let's Build the Future of Work
+      </h2>
+      <p className="mb-6 text-lg">
+        Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+      </p>
+      <p className="mb-4 text-md">
+        New York, NY | Denver, CO | Remote Nationwide
+      </p>
+      <button className="bg-white text-blue-600 font-semibold py-3 px-6 rounded hover:bg-gray-100 transition">
+        Contact Us
+      </button>
+    </div>
+
+    {/* Right: Map */}
+    <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg border border-[#69bdff]/40">
+      <img
+        src="/map.jpg"
+        alt="US Coverage Map"
+        className="w-full h-full object-cover"
+      />
+
+      {/* Future Interactive Elements */}
+      {/* Example Pin (to be dynamically generated later) */}
+      {/* <div className="absolute top-[40%] left-[60%] bg-[#69bdff] w-4 h-4 rounded-full animate-ping" /> */}
+    </div>
+  </div>
+</motion.section>
 
       </main>
     </>
