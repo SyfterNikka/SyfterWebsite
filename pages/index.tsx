@@ -247,7 +247,7 @@ export default function Home() {
     {/* Right: Map */}
     <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg border border-[#69bdff]/40">
       <img
-        src="/map.jpg"
+        src="/MAP.jpg"
         alt="US Coverage Map"
         className="w-full h-full object-cover"
       />
