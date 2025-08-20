@@ -12,16 +12,17 @@ import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
 // =====================
-// Variant A — Minimal + your requests
-// - Transparent, modern navbar (no bar background, keeps rain visible)
-// - Typewriter effect back in hero
-// - Remove hero CTAs
-// - Bolder "Why Syfter" visuals (2x2 feature cards with animated underline header)
-// - Tighter vertical rhythm (less empty space)
+// Variant A + B Flourishes — punchier drama, consistent centered headers
+// - Transparent navbar (no bar)
+// - Typewriter hero kept
+// - Centered headers with lift + underline grow (centered)
+// - Subtle parallax backplates behind sections
+// - Why Syfter: centered 2×2 feature tiles with depth
+// - Exec team: slow float-in on scroll + gentle idle bob
 // =====================
 
-// Easing tuples
-const easeOut = [0.22, 1, 0.36, 1] as const;
+// Typed easing tuples
+const easeOut = [0.22, 1, 0.36, 1] as const; // standard smooth easeOut
 const easeOutCubic = [0.2, 0, 0, 1] as const;
 
 // Motion presets
@@ -61,10 +62,10 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// Animated underline header
+// Centered animated section title with underline grow
 function SectionTitle({ children }: { children: string }) {
   return (
-    <div className="mx-auto max-w-6xl px-6">
+    <div className="px-6 text-center">
       <motion.h2
         className="text-5xl md:text-6xl font-extrabold tracking-tight"
         initial={{ opacity: 0, y: 12 }}
@@ -75,19 +76,19 @@ function SectionTitle({ children }: { children: string }) {
         {children}
       </motion.h2>
       <motion.div
-        className="h-[4px] w-24 bg-[#69bdff] rounded-full mt-3"
+        className="mx-auto h-[4px] w-28 bg-[#69bdff] rounded-full mt-3"
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 0.7, ease: easeOut }}
         viewport={{ once: true, amount: 0.6 }}
-        style={{ transformOrigin: "left" }}
+        style={{ transformOrigin: "center" }}
       />
     </div>
   );
 }
 
 export default function Home() {
-  // Typewriter effect — slow & clean
+  // Typewriter effect
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
   const [displayText, setDisplayText] = useState("");
   const [w, setW] = useState(0);
@@ -119,6 +120,12 @@ export default function Home() {
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
+
+  // Section parallax backplates
+  const plateRef = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress: plateProg } = useScroll({ target: plateRef, offset: ["start end", "end start"] });
+  const plateY = useTransform(plateProg, [0, 1], [40, -40]);
+  const plateOpacity = useTransform(plateProg, [0, 0.5, 1], [0.0, 0.15, 0.0]);
 
   // Stats trigger
   const statsRef = useRef<HTMLDivElement | null>(null);
@@ -154,13 +161,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAVBAR — transparent, minimal, no bar */}
+      {/* NAVBAR — transparent, minimal, consistent center alignment for headings only */}
       <header className="fixed top-0 inset-x-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="mt-4 flex h-12 items-center justify-between">
-            <a href="#top" className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors">
-              Syfter
-            </a>
+            <a href="#top" className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors">Syfter</a>
             <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
               {[
                 { t: "Why Syfter", id: "whysyfter" },
@@ -205,6 +210,22 @@ export default function Home() {
             }}
           />
 
+          {/* Floating background words for subtle drama */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
+            <motion.div
+              className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
+              style={{ y: plateY, opacity: plateOpacity }}
+            >
+              HIRE
+            </motion.div>
+            <motion.div
+              className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
+              style={{ y: useTransform(plateProg, [0, 1], [-30, 30]), opacity: plateOpacity }}
+            >
+              TALENT
+            </motion.div>
+          </div>
+
           {/* Hero Copy with typewriter */}
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6">
             <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
@@ -213,13 +234,20 @@ export default function Home() {
             <motion.p className="mt-5 text-xl max-w-2xl leading-relaxed text-white/90" {...fadeIn}>
               Syfter Certified talent delivered faster, smarter, better.
             </motion.p>
-            {/* CTAs removed by request */}
           </div>
         </section>
 
-        {/* WHY SYFTER — bold, minimal feature cards */}
-        <section id="whysyfter" className="py-24">
+        {/* WHY SYFTER — centered bold tiles with subtle depth and parallax plate */}
+        <section id="whysyfter" ref={plateRef} className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
+
+          {/* Parallax backplate */}
+          <motion.div
+            aria-hidden
+            className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
+            style={{ y: plateY, opacity: plateOpacity, background: "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)" }}
+          />
+
           <div className="mx-auto max-w-6xl px-6 mt-12">
             <motion.div
               variants={staggerContainer}
@@ -237,15 +265,15 @@ export default function Home() {
                 <motion.article
                   key={idx}
                   variants={itemUp}
-                  className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 hover:bg-white/7 transition"
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-8 hover:bg-white/7 transition"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="mt-1 h-10 w-10 rounded-xl bg-[#69bdff]/20 ring-1 ring-[#69bdff]/30 grid place-items-center font-bold text-white/90">
+                  <div className="flex items-start gap-5">
+                    <div className="mt-1 h-12 w-12 rounded-xl bg-[#69bdff]/20 ring-1 ring-[#69bdff]/30 grid place-items-center text-white/90 font-extrabold">
                       {idx + 1}
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold tracking-tight">{card.title}</h3>
-                      <p className="mt-2 text-white/80 leading-relaxed max-w-[52ch]">{card.body}</p>
+                    <div className="text-left md:text-center">
+                      <h3 className="text-2xl font-semibold tracking-tight">{card.title}</h3>
+                      <p className="mt-2 text-white/80 leading-relaxed md:max-w-[46ch]">{card.body}</p>
                     </div>
                   </div>
                 </motion.article>
@@ -254,11 +282,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* STATS — tighter spacing */}
+        {/* STATS */}
         <section id="trusted" ref={statsRef} className="py-24">
-          <div className="mx-auto max-w-5xl px-6 text-center">
-            <SectionTitle>Trusted Results</SectionTitle>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-12">
+          <SectionTitle>Trusted Results</SectionTitle>
+          <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
                 { val: c1, label: "hires placed", suffix: "" },
                 { val: c2, label: "avg. fill time (days)", suffix: "" },
@@ -269,16 +297,14 @@ export default function Home() {
                     {s.val}
                     {s.suffix}
                   </div>
-                  <p className="mt-2 text-sm uppercase tracking-wider text-white/70">
-                    {s.label}
-                  </p>
+                  <p className="mt-2 text-sm uppercase tracking-wider text-white/70">{s.label}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* EXEC TEAM — unchanged structure but tighter rhythm */}
+        {/* EXEC TEAM — float-in + gentle idle bob */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
           <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
@@ -295,10 +321,23 @@ export default function Home() {
                 { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
                 { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
               ].map((m, i) => (
-                <motion.figure key={i} variants={itemUp} className="flex flex-col items-center">
-                  <div className="w-40 h-40 rounded-full overflow-hidden shadow-xl border border-white/10">
+                <motion.figure
+                  key={i}
+                  variants={itemUp}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.08 }}
+                  viewport={{ once: true }}
+                  className="flex flex-col items-center"
+                >
+                  <motion.div
+                    className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  >
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </div>
+                  </motion.div>
                   <figcaption className="mt-4">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
@@ -309,7 +348,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIALS — tighter spacing */}
+        {/* TESTIMONIALS */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
           <div className="mx-auto max-w-3xl px-6 mt-10 text-center">
@@ -330,7 +369,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CONTACT / FOOTER — tighter spacing */}
+        {/* CONTACT / FOOTER */}
         <section id="contact" className="py-24">
           <SectionTitle>Let’s Build the Future of Work</SectionTitle>
           <div className="mx-auto max-w-6xl px-6 mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
@@ -350,3 +389,4 @@ export default function Home() {
     </>
   );
 }
+
