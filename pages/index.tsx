@@ -29,7 +29,7 @@ const staggerContainer: Variants = {
 
 const itemUp: Variants = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 /* ---------------------------------- */
@@ -54,12 +54,12 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
 }
 
 function SectionWrap({ children }: { children: React.ReactNode }) {
-  // Slightly further left than perfectly centered, but not flush
+  // Slight left bias (per your preference), not flush
   return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
 function SectionTitle({ children }: { children: string }) {
-  // Left-aligned title inside the same container, with animated underline
+  // Left-aligned title with animated underline (applies to all sections)
   return (
     <SectionWrap>
       <motion.h2
@@ -84,11 +84,11 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* OrbitBubbles: Why Syfter section   */
+/* SymmetricBubbles (Why Syfter)      */
 /* ---------------------------------- */
 type Feature = { key: string; title: string; desc: string };
 
-function OrbitBubbles() {
+function SymmetricBubbles() {
   const features: Feature[] = [
     {
       key: "certify",
@@ -103,34 +103,36 @@ function OrbitBubbles() {
 
   const [active, setActive] = useState<string>("certify");
 
-  // Layout (px) tuned for a ~6xl content width
-  const dominant = { x: 24, y: 24, r: 480 }; // big left bubble
-  const orbitSlots = [
-    { x: 560, y: 12, r: 230 },
-    { x: 770, y: 120, r: 250 },
-    { x: 560, y: 330, r: 230 },
-  ];
+  // Fixed 2×2 anchor positions (px) inside a 6xl-ish stage.
+  // These are symmetric and spaced to avoid overlap.
+  const R = 240; // base radius
+  const GAP_X = 540; // horizontal distance between left/right anchors
+  const GAP_Y = 300; // vertical distance between top/bottom anchors
+  const ORIGIN_X = 24; // left padding inside the stage
+  const ORIGIN_Y = 24; // top padding inside the stage
 
-  const layout = useMemo(() => {
-    const others = features.filter((f) => f.key !== active);
-    const map: Record<string, { x: number; y: number; r: number }> = {};
-    map[active] = dominant;
-    for (let i = 0; i < others.length; i++) map[others[i].key] = orbitSlots[i];
-    return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  const anchors: Record<string, { x: number; y: number; r: number }> = {
+    // top-left
+    certify: { x: ORIGIN_X, y: ORIGIN_Y, r: R },
+    // top-right
+    aiproofed: { x: ORIGIN_X + GAP_X, y: ORIGIN_Y, r: R },
+    // bottom-right
+    fast: { x: ORIGIN_X + GAP_X, y: ORIGIN_Y + GAP_Y, r: R },
+    // bottom-left
+    people: { x: ORIGIN_X, y: ORIGIN_Y + GAP_Y, r: R },
+  };
 
   return (
     <div
-      className="relative w-full h-[640px] rounded-3xl"
+      className="relative w-full h-[640px]"
       onMouseLeave={() => setActive("certify")}
       role="region"
-      aria-label="Why Syfter orbit"
+      aria-label="Why Syfter – features"
     >
-      {/* Desktop / tablet orbit */}
+      {/* Desktop / tablet */}
       <div className="hidden md:block">
         {features.map((f) => {
-          const pos = layout[f.key] || { x: 0, y: 0, r: 260 };
+          const a = anchors[f.key];
           const focused = active === f.key;
           return (
             <motion.button
@@ -143,32 +145,27 @@ function OrbitBubbles() {
               style={{ left: 0, top: 0 }}
               initial={false}
               animate={{
-                x: pos.x,
-                y: pos.y,
-                width: pos.r,
-                height: pos.r,
-                borderRadius: pos.r / 2,
+                x: a.x,
+                y: a.y,
+                width: a.r * (focused ? 1.12 : 1),
+                height: a.r * (focused ? 1.12 : 1),
+                borderRadius: (a.r * (focused ? 1.12 : 1)) / 2,
                 zIndex: focused ? 10 : 1,
-                boxShadow: focused ? "0 30px 80px rgba(0,0,0,0.35)" : "0 8px 24px rgba(0,0,0,0.25)",
+                boxShadow: focused ? "0 30px 80px rgba(0,0,0,0.35)" : "0 10px 28px rgba(0,0,0,0.25)",
               }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
-              {/* Title layer (fades out when focused so it doesn't overlap the description) */}
+              {/* Title (fades when focused to avoid overlap with description) */}
               <motion.div
                 className="absolute inset-0 grid place-items-center px-8"
                 initial={false}
                 animate={{
                   opacity: focused ? 0 : 1,
-                  scale: focused ? 0.95 : 1,
+                  scale: focused ? 0.96 : 1,
                 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <div
-                  className={
-                    "font-extrabold tracking-tight text-center" +
-                    (focused ? " text-3xl md:text-4xl" : " text-lg md:text-xl")
-                  }
-                >
+                <div className="font-extrabold tracking-tight text-center text-lg md:text-xl">
                   {f.title}
                 </div>
               </motion.div>
@@ -182,11 +179,13 @@ function OrbitBubbles() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                   >
                     <div className="absolute inset-0 bg-black/55" />
                     <div className="relative h-full w-full grid place-items-center p-8">
-                      <p className="text-white/95 text-lg leading-relaxed text-center max-w-[34ch]">{f.desc}</p>
+                      <p className="text-white/95 text-lg leading-relaxed text-center max-w-[34ch]">
+                        {f.desc}
+                      </p>
                     </div>
                   </motion.div>
                 )}
@@ -196,7 +195,7 @@ function OrbitBubbles() {
         })}
       </div>
 
-      {/* Mobile fallback: tap-to-reveal list */}
+      {/* Mobile fallback: tidy list */}
       <div className="md:hidden space-y-4">
         {features.map((f) => {
           const open = active === f.key;
@@ -352,12 +351,12 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER (Orbit bubbles) */}
+        {/* WHY SYFTER (Symmetrical bubbles — no overlap) */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
           <SectionWrap>
             <div className="mt-10">
-              <OrbitBubbles />
+              <SymmetricBubbles />
             </div>
           </SectionWrap>
         </section>
@@ -423,7 +422,7 @@ export default function Home() {
             <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
-                  key={displayText + "-t"} // small motion as the hero cycles
+                  key={displayText + "-t"} // tiny change over time keeps motion fresh
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
