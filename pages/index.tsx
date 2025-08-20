@@ -11,21 +11,11 @@ import {
 import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-// =====================
-// Variant A + B Flourishes — punchier drama, consistent centered headers
-// - Transparent navbar (no bar)
-// - Typewriter hero kept
-// - Centered headers with lift + underline grow (centered)
-// - Subtle parallax backplates behind sections
-// - Why Syfter: centered 2×2 feature tiles with depth
-// - Exec team: slow float-in on scroll + gentle idle bob
-// =====================
-
-// Typed easing tuples
-const easeOut = [0.22, 1, 0.36, 1] as const; // standard smooth easeOut
+// ---------- Easing (typed tuples to keep TS happy)
+const easeOut = [0.22, 1, 0.36, 1] as const;
 const easeOutCubic = [0.2, 0, 0, 1] as const;
 
-// Motion presets
+// ---------- Shared motion presets
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -43,7 +33,7 @@ const itemUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: easeOutCubic } },
 };
 
-// Count-up hook
+// ---------- Count-up hook
 function useCountUp(target: number, startOn = true, durationMs = 1600) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -62,10 +52,10 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// Centered animated section title with underline grow
+// ---------- Left-aligned section title with underline grow
 function SectionTitle({ children }: { children: string }) {
   return (
-    <div className="px-6 text-center">
+    <div className="px-6 text-left">
       <motion.h2
         className="text-5xl md:text-6xl font-extrabold tracking-tight"
         initial={{ opacity: 0, y: 12 }}
@@ -76,24 +66,25 @@ function SectionTitle({ children }: { children: string }) {
         {children}
       </motion.h2>
       <motion.div
-        className="mx-auto h-[4px] w-28 bg-[#69bdff] rounded-full mt-3"
+        className="h-[4px] w-28 bg-[#69bdff] rounded-full mt-3"
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 0.7, ease: easeOut }}
         viewport={{ once: true, amount: 0.6 }}
-        style={{ transformOrigin: "center" }}
+        style={{ transformOrigin: "left" }}
       />
     </div>
   );
 }
 
 export default function Home() {
-  // Typewriter effect
+  // ---------- Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
   const [displayText, setDisplayText] = useState("");
   const [w, setW] = useState(0);
   const [i, setI] = useState(0);
   const [del, setDel] = useState(false);
+
   useEffect(() => {
     const word = words[w];
     const delay = del ? 40 : 90;
@@ -114,20 +105,20 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [i, del, w, words]);
 
-  // Scroll-controlled BinaryRain blending
+  // ---------- Scroll-controlled BinaryRain blending
   const heroRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // Section parallax backplates
+  // ---------- Section parallax backplates (for subtle drama)
   const plateRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress: plateProg } = useScroll({ target: plateRef, offset: ["start end", "end start"] });
   const plateY = useTransform(plateProg, [0, 1], [40, -40]);
   const plateOpacity = useTransform(plateProg, [0, 0.5, 1], [0.0, 0.15, 0.0]);
 
-  // Stats trigger
+  // ---------- Stats trigger
   const statsRef = useRef<HTMLDivElement | null>(null);
   const [statsActive, setStatsActive] = useState(false);
   useEffect(() => {
@@ -139,7 +130,7 @@ export default function Home() {
   const c2 = useCountUp(5, statsActive);
   const c3 = useCountUp(98, statsActive);
 
-  // Testimonials
+  // ---------- Testimonials
   const testimonials = useMemo(
     () => [
       "“Syfter delivered top candidates in days.” — SaaS Manager",
@@ -161,11 +152,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAVBAR — transparent, minimal, consistent center alignment for headings only */}
+      {/* NAVBAR — transparent & minimal */}
       <header className="fixed top-0 inset-x-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="mt-4 flex h-12 items-center justify-between">
-            <a href="#top" className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors">Syfter</a>
+            <a
+              href="#top"
+              className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors"
+            >
+              Syfter
+            </a>
             <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
               {[
                 { t: "Why Syfter", id: "whysyfter" },
@@ -187,7 +183,11 @@ export default function Home() {
       </header>
 
       {/* PAGE BACKGROUND — unified gradient */}
-      <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
+      <main
+        id="top"
+        className="min-h-screen text-white"
+        style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
+      >
         {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
           {/* Binary layer with scroll fade */}
@@ -237,15 +237,20 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WHY SYFTER — centered bold tiles with subtle depth and parallax plate */}
+        {/* WHY SYFTER — left-aligned tiles */}
         <section id="whysyfter" ref={plateRef} className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
 
-          {/* Parallax backplate */}
+          {/* Parallax backplate (decorative) */}
           <motion.div
             aria-hidden
             className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
-            style={{ y: plateY, opacity: plateOpacity, background: "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)" }}
+            style={{
+              y: plateY,
+              opacity: plateOpacity,
+              background:
+                "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)",
+            }}
           />
 
           <div className="mx-auto max-w-6xl px-6 mt-12">
@@ -271,7 +276,7 @@ export default function Home() {
                     <div className="mt-1 h-12 w-12 rounded-xl bg-[#69bdff]/20 ring-1 ring-[#69bdff]/30 grid place-items-center text-white/90 font-extrabold">
                       {idx + 1}
                     </div>
-                    <div className="text-left md:text-center">
+                    <div className="text-left">
                       <h3 className="text-2xl font-semibold tracking-tight">{card.title}</h3>
                       <p className="mt-2 text-white/80 leading-relaxed md:max-w-[46ch]">{card.body}</p>
                     </div>
@@ -282,17 +287,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* STATS */}
+        {/* STATS — left aligned */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
-          <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
+          <div className="mx-auto max-w-5xl px-6 mt-10 text-left">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
                 { val: c1, label: "hires placed", suffix: "" },
                 { val: c2, label: "avg. fill time (days)", suffix: "" },
                 { val: c3, label: "retention rate", suffix: "%" },
               ].map((s, i) => (
-                <motion.div key={i} className="flex flex-col items-center" {...fadeIn}>
+                <motion.div key={i} className="flex flex-col items-start" {...fadeIn}>
                   <div className="text-[56px] leading-none font-extrabold tracking-tight">
                     {s.val}
                     {s.suffix}
@@ -304,16 +309,16 @@ export default function Home() {
           </div>
         </section>
 
-        {/* EXEC TEAM — float-in + gentle idle bob */}
+        {/* EXEC TEAM — float-in one-by-one (no idle bob) */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
-          <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
+          <div className="mx-auto max-w-5xl px-6 mt-10 text-left">
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-center"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10"
             >
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
@@ -324,21 +329,16 @@ export default function Home() {
                 <motion.figure
                   key={i}
                   variants={itemUp}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.08 }}
+                  initial="hidden"
+                  whileInView="show"
+                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.12 }}
                   viewport={{ once: true }}
                   className="flex flex-col items-center"
                 >
-                  <motion.div
-                    className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10"
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  >
+                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </motion.div>
-                  <figcaption className="mt-4">
+                  </div>
+                  <figcaption className="mt-4 text-center">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
                   </figcaption>
@@ -348,10 +348,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
+        {/* TESTIMONIALS — left header, centered quote block still feels nice */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
-          <div className="mx-auto max-w-3xl px-6 mt-10 text-center">
+          <div className="mx-auto max-w-3xl px-6 mt-10 text-left">
             <div className="min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
@@ -383,10 +383,11 @@ export default function Home() {
               <img src="/MAP.jpg" alt="US Coverage Map" className="w-full h-full object-cover" />
             </div>
           </div>
-          <div className="mt-12 text-center text-white/60 text-sm">© {new Date().getFullYear()} Syfter. All rights reserved.</div>
+          <div className="mt-12 text-center text-white/60 text-sm">
+            © {new Date().getFullYear()} Syfter. All rights reserved.
+          </div>
         </section>
       </main>
     </>
   );
 }
-
