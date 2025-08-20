@@ -80,7 +80,6 @@ function SectionTitle({ children }: { children: string }) {
 /* ---------------------------------- */
 /* WHY SYFTER: Kinetic Words (tabs)   */
 /* ---------------------------------- */
-// Replace your existing WordsTabs with this version
 type Feature = { key: string; title: string; desc: string; drift: number };
 
 function WordsTabs() {
@@ -97,103 +96,64 @@ function WordsTabs() {
     { key: "people", title: "People First", desc: "We don’t fill seats — we grow teams.", drift: 7 },
   ];
 
-  const [activeIdx, setActiveIdx] = useState(0);
-  const active = items[activeIdx];
-
-  // Arrow up/down keyboard support
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIdx((i) => (i + 1) % items.length);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIdx((i) => (i - 1 + items.length) % items.length);
-    }
-  };
+  const [active, setActive] = useState<string>("certify");
+  const activeItem = items.find((i) => i.key === active)!;
 
   return (
-    <div
-      className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start"
-      tabIndex={0}
-      onKeyDown={onKeyDown}
-      aria-label="Why Syfter features"
-    >
-      {/* LEFT: words column with subtle bottom fade */}
-      <div
-        className="md:col-span-3 relative"
-        style={{
-          WebkitMaskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%)",
-          maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%)",
-        }}
-      >
-        <ul className="space-y-5 md:space-y-6">
-          {items.map((it, idx) => {
-            const isActive = idx === activeIdx;
-            return (
-              <li key={it.key} className="relative">
-                {/* Active accent bar */}
+    <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start">
+      {/* LEFT: big floating words */}
+      <div className="md:col-span-3">
+        <ul className="space-y-6 md:space-y-8">
+          {items.map((it, idx) => (
+            <li key={it.key} className="relative">
+              <motion.button
+                type="button"
+                onMouseEnter={() => setActive(it.key)}
+                onFocus={() => setActive(it.key)}
+                onClick={() => setActive(it.key)}
+                className="block select-none text-left outline-none focus:ring-0"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
                 <motion.span
-                  className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 h-1 rounded-full bg-[#69bdff]"
-                  initial={false}
                   animate={{
-                    width: isActive ? 28 : 0,
-                    opacity: isActive ? 1 : 0,
+                    y: [0, -it.drift, 0, it.drift, 0],
+                    x: active === it.key ? 8 : 0,
+                    scale: active === it.key ? 1.06 : 1,
                   }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  aria-hidden
-                />
-                <motion.button
-                  type="button"
-                  onMouseEnter={() => setActiveIdx(idx)}
-                  onFocus={() => setActiveIdx(idx)}
-                  onClick={() => setActiveIdx(idx)}
-                  className="block select-none text-left outline-none focus:ring-0"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
+                    x: { duration: 0.25, ease: "easeOut" },
+                    scale: { duration: 0.25, ease: "easeOut" },
+                  }}
+                  className={
+                    "font-extrabold tracking-tight leading-none " +
+                    "text-5xl md:text-7xl " +
+                    (active === it.key ? "text-white" : "text-white/25 hover:text-white/60")
+                  }
                 >
-                  <motion.span
-                    animate={{
-                      y: [0, -it.drift, 0, it.drift, 0],
-                      x: isActive ? 8 : 0,
-                      scale: isActive ? 1.06 : 1,
-                    }}
-                    transition={{
-                      y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
-                      x: { duration: 0.25, ease: "easeOut" },
-                      scale: { duration: 0.25, ease: "easeOut" },
-                    }}
-                    className={
-                      "font-extrabold tracking-tight leading-none " +
-                      // sizes: slightly smaller inactive to increase focus
-                      (isActive ? "text-5xl md:text-7xl " : "text-5xl md:text-6xl ") +
-                      (isActive ? "text-white" : "text-white/40 hover:text-white/70")
-                    }
-                  >
-                    {it.title}
-                  </motion.span>
-                </motion.button>
-              </li>
-            );
-          })}
+                  {it.title}
+                </motion.span>
+              </motion.button>
+            </li>
+          ))}
         </ul>
       </div>
 
-      {/* RIGHT: sticky description, aligned to section heading */}
-      <div className="md:col-span-2 md:sticky md:top-24">
+      {/* RIGHT: description that swaps on hover */}
+      <div className="md:col-span-2 md:sticky md:top-28">
         <AnimatePresence mode="wait">
           <motion.div
-            key={active.key}
+            key={active}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
           >
             <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
-            <div className="mt-2 text-2xl font-semibold">{active.title}</div>
-            <p className="mt-3 text-white/90 leading-relaxed">{active.desc}</p>
+            <div className="mt-2 text-2xl font-semibold">{activeItem.title}</div>
+            <p className="mt-3 text-white/90 leading-relaxed">{activeItem.desc}</p>
           </motion.div>
         </AnimatePresence>
       </div>
