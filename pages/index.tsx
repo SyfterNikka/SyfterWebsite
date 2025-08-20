@@ -1,3 +1,4 @@
+// pages/index.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
 import {
@@ -11,7 +12,9 @@ import {
 import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-// ---------- Shared motion presets (string eases to keep TS happy)
+/* ---------------------------------- */
+/* Motion presets (compile-safe)      */
+/* ---------------------------------- */
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -29,12 +32,14 @@ const itemUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: "easeOut" } },
 };
 
-// ---------- Count-up hook
+/* ---------------------------------- */
+/* Small utilities                    */
+/* ---------------------------------- */
 function useCountUp(target: number, startOn = true, durationMs = 1600) {
   const [value, setValue] = useState(0);
   useEffect(() => {
     if (!startOn) return;
-    let raf: number;
+    let raf = 0;
     let start: number | null = null;
     const animate = (t: number) => {
       if (start === null) start = t;
@@ -48,13 +53,13 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// ---------- Slight-left container helper
 function SectionWrap({ children }: { children: React.ReactNode }) {
+  // Slightly further left than perfectly centered, but not flush
   return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
-// ---------- Section title (left, growing underline)
 function SectionTitle({ children }: { children: string }) {
+  // Left-aligned title inside the same container, with animated underline
   return (
     <SectionWrap>
       <motion.h2
@@ -78,8 +83,150 @@ function SectionTitle({ children }: { children: string }) {
   );
 }
 
+/* ---------------------------------- */
+/* OrbitBubbles: Why Syfter section   */
+/* ---------------------------------- */
+type Feature = { key: string; title: string; desc: string };
+
+function OrbitBubbles() {
+  const features: Feature[] = [
+    {
+      key: "certify",
+      title: "Syfter Certify",
+      desc:
+        "A 5-step trust protocol to verify identity, communication, experience, and readiness — so every candidate is real and ready.",
+    },
+    { key: "aiproofed", title: "AI Proofed", desc: "Human-reviewed to avoid automation blind spots." },
+    { key: "fast", title: "Fast Hiring", desc: "Reduce time to hire to under 5 days." },
+    { key: "people", title: "People First", desc: "We don’t fill seats — we grow teams." },
+  ];
+
+  const [active, setActive] = useState<string>("certify");
+
+  // Layout (px) tuned for a ~6xl content width
+  const dominant = { x: 24, y: 24, r: 480 }; // big left bubble
+  const orbitSlots = [
+    { x: 560, y: 12, r: 230 },
+    { x: 770, y: 120, r: 250 },
+    { x: 560, y: 330, r: 230 },
+  ];
+
+  const layout = useMemo(() => {
+    const others = features.filter((f) => f.key !== active);
+    const map: Record<string, { x: number; y: number; r: number }> = {};
+    map[active] = dominant;
+    for (let i = 0; i < others.length; i++) map[others[i].key] = orbitSlots[i];
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  return (
+    <div
+      className="relative w-full h-[640px] rounded-3xl"
+      onMouseLeave={() => setActive("certify")}
+      role="region"
+      aria-label="Why Syfter orbit"
+    >
+      {/* Desktop / tablet orbit */}
+      <div className="hidden md:block">
+        {features.map((f) => {
+          const pos = layout[f.key] || { x: 0, y: 0, r: 260 };
+          const focused = active === f.key;
+          return (
+            <motion.button
+              key={f.key}
+              type="button"
+              onMouseEnter={() => setActive(f.key)}
+              onFocus={() => setActive(f.key)}
+              onClick={() => setActive(f.key)}
+              className="absolute rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden text-left"
+              style={{ left: 0, top: 0 }}
+              initial={false}
+              animate={{
+                x: pos.x,
+                y: pos.y,
+                width: pos.r,
+                height: pos.r,
+                borderRadius: pos.r / 2,
+                boxShadow: focused ? "0 30px 80px rgba(0,0,0,0.35)" : "0 8px 24px rgba(0,0,0,0.25)",
+              }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              {/* Title */}
+              <div className="absolute inset-0 grid place-items-center px-8">
+                <div
+                  className={
+                    "font-extrabold tracking-tight text-center" +
+                    (focused ? " text-3xl md:text-4xl" : " text-lg md:text-xl")
+                  }
+                >
+                  {f.title}
+                </div>
+              </div>
+
+              {/* Description (only when focused) */}
+              <AnimatePresence>
+                {focused && (
+                  <motion.div
+                    key="desc"
+                    className="absolute inset-0 pointer-events-none"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                  >
+                    <div className="absolute inset-0 bg-black/35" />
+                    <div className="relative h-full w-full grid place-items-center p-8">
+                      <p className="text-white/95 text-lg leading-relaxed text-center max-w-[34ch]">{f.desc}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* Mobile fallback: tap-to-reveal list */}
+      <div className="md:hidden space-y-4">
+        {features.map((f) => {
+          const open = active === f.key;
+          return (
+            <button
+              key={f.key}
+              onClick={() => setActive(open ? "certify" : f.key)}
+              className="w-full rounded-2xl ring-1 ring-white/10 bg-white/5 px-5 py-4 text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-lg font-semibold">{f.title}</div>
+                <div className="text-white/70 text-sm">{open ? "Hide" : "Show"}</div>
+              </div>
+              <AnimatePresence>
+                {open && (
+                  <motion.p
+                    className="text-white/90 mt-2 leading-relaxed"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    {f.desc}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------- */
+/* Page                                */
+/* ---------------------------------- */
 export default function Home() {
-  // ---------- Hero typewriter
+  // Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
   const [displayText, setDisplayText] = useState("");
   const [w, setW] = useState(0);
@@ -106,62 +253,24 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [i, del, w, words]);
 
-  // ---------- Scroll-controlled BinaryRain blending
+  // Hero rain blend
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
-  const mistOpacitySpring = useSpring(mistOpacity, {
-    stiffness: 110,
-    damping: 24,
-    mass: 0.45,
-  });
+  const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // ---------- Section parallax backplates (subtle drama for Why Syfter)
-  const plateRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress: plateProg } = useScroll({
-    target: plateRef,
-    offset: ["start end", "end start"],
-  });
-  const plateY = useTransform(plateProg, [0, 1], [40, -40]);
-  const plateY2 = useTransform(plateProg, [0, 1], [-30, 30]); // second word
-  const plateOpacity = useTransform(plateProg, [0, 0.5, 1], [0.0, 0.15, 0.0]);
-
-  // ---------- Stats trigger
+  // Stats trigger
   const statsRef = useRef<HTMLDivElement | null>(null);
   const [statsActive, setStatsActive] = useState(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => setStatsActive(entry.isIntersecting),
-      { threshold: 0.35 }
-    );
+    const obs = new IntersectionObserver(([entry]) => setStatsActive(entry.isIntersecting), { threshold: 0.35 });
     if (statsRef.current) obs.observe(statsRef.current);
     return () => obs.disconnect();
   }, []);
   const c1 = useCountUp(128, statsActive);
   const c2 = useCountUp(5, statsActive);
   const c3 = useCountUp(98, statsActive);
-
-  // ---------- Testimonials
-  const testimonials = useMemo(
-    () => [
-      "“Syfter delivered top candidates in days.” — SaaS Manager",
-      "“Recruiting this fast? Unreal.” — Tech Startup CEO",
-      "“Candidate quality, unmatched.” — Healthcare Director",
-    ],
-    []
-  );
-  const [tIndex, setTIndex] = useState(0);
-  useEffect(() => {
-    const id = setInterval(
-      () => setTIndex((p) => (p + 1) % testimonials.length),
-      5600
-    );
-    return () => clearInterval(id);
-  }, [testimonials.length]);
 
   return (
     <>
@@ -170,9 +279,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAVBAR — transparent & minimal */}
+      {/* Transparent Nav */}
       <header className="fixed top-0 inset-x-0 z-50">
-        <div className="mx-auto max-w-7xl pl-4 pr-6">
+        <div className="mx-auto max-w-7xl pl-3 pr-6">
           <nav className="mt-4 flex h-12 items-center justify-between">
             <a
               href="#top"
@@ -200,20 +309,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* PAGE BACKGROUND — unified gradient */}
-      <main
-        id="top"
-        className="min-h-screen text-white"
-        style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
-      >
+      {/* Page Background */}
+      <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
         {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
-          {/* Binary layer with scroll fade */}
           <motion.div className="absolute inset-0" style={{ opacity: rainOpacity }}>
             <BinaryRain />
           </motion.div>
 
-          {/* Bottom-up mist to blend into gradient smoothly */}
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-0"
@@ -228,25 +331,6 @@ export default function Home() {
             }}
           />
 
-          {/* Floating background words for subtle drama */}
-          <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
-            <SectionWrap>
-              <motion.div
-                className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
-                style={{ y: plateY, opacity: plateOpacity }}
-              >
-                HIRE
-              </motion.div>
-              <motion.div
-                className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
-                style={{ y: plateY2, opacity: plateOpacity }}
-              >
-                TALENT
-              </motion.div>
-            </SectionWrap>
-          </div>
-
-          {/* Hero Copy with typewriter */}
           <SectionWrap>
             <div className="relative z-10 flex h-[calc(100vh-0px)] flex-col items-center justify-center text-center">
               <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
@@ -259,82 +343,17 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER — circle-based + big “Syfter Certify” reveal */}
-        <section id="whysyfter" ref={plateRef} className="relative py-24">
-  <SectionTitle>Why Syfter</SectionTitle>
-
-  {/* Decorative parallax plate (safe and subtle) */}
-  <motion.div
-    aria-hidden
-    className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
-    style={{
-      y: plateY,
-      opacity: plateOpacity,
-      background:
-        "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)",
-    }}
-  />
-
-  <SectionWrap>
-    <div className="mt-12 flex flex-col md:flex-row gap-10 items-start">
-      {/* Big interactive circle — clamped width */}
-      <motion.div
-        className="group relative rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden mx-auto md:mx-0"
-        style={{ width: "min(520px, 85vw)" }}
-        initial={{ scale: 0.98, y: 16 }}
-        whileInView={{ scale: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.4 }}
-      >
-        <div className="aspect-square w-full grid place-items-center p-10">
-          <div className="text-3xl md:text-4xl font-extrabold tracking-tight">Syfter Certify</div>
-        </div>
-
-        {/* Hover reveal */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative h-full w-full grid place-items-center p-8 text-center">
-            <p className="text-white/95 max-w-[32ch] text-lg leading-relaxed">
-              A 5-step trust protocol to verify identity, communication, experience, and readiness—so every
-              candidate is real and ready.
-            </p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Right column — small circles with clamped width */}
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-8">
-        {[
-          { t: "AI Proofed", d: "Human-reviewed to avoid automation blind spots." },
-          { t: "Fast Hiring", d: "Reduce time to hire to under 5 days." },
-          { t: "People First", d: "We don’t fill seats — we grow teams." },
-        ].map((f, i) => (
-          <motion.div
-            key={f.t}
-            className="group relative rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden mx-auto md:mx-0"
-            style={{ width: "min(300px, 80vw)" }}
-            initial={{ scale: 0.98, y: 16 }}
-            whileInView={{ scale: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
-            viewport={{ once: true, amount: 0.4 }}
-          >
-            <div className="aspect-square w-full grid place-items-center px-6 text-center">
-              <div className="text-lg font-semibold">{f.t}</div>
+        {/* WHY SYFTER (Orbit bubbles) */}
+        <section id="whysyfter" className="relative py-24">
+          <SectionTitle>Why Syfter</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10">
+              <OrbitBubbles />
             </div>
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="relative h-full w-full grid place-items-center p-6 text-center">
-                <p className="text-white/95 text-base leading-relaxed">{f.d}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </SectionWrap>
-</section>
+          </SectionWrap>
+        </section>
 
-        {/* STATS — left aligned with animated underline */}
+        {/* STATS */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
           <SectionWrap>
@@ -356,37 +375,37 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM — left-aligned; bubbles pop in (no image fade) */}
-      <section id="exec" className="py-24">
-  <SectionTitle>Executive Team</SectionTitle>
-  <SectionWrap>
-    <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
-      {[
-        { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
-        { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
-        { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
-        { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
-      ].map((m, i) => (
-        <motion.figure
-          key={i}
-          initial={{ y: 22, scale: 0.96 }}
-          whileInView={{ y: 0, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
-          viewport={{ once: true, amount: 0.4 }}
-          className="flex flex-col items-start"
-        >
-          <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
-            <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-          </div>
-          <figcaption className="mt-4 text-left">
-            <div className="text-base font-bold">{m.name}</div>
-            <div className="text-sm text-white/80">{m.title}</div>
-          </figcaption>
-        </motion.figure>
-      ))}
-    </div>
-  </SectionWrap>
-</section>
+        {/* EXEC TEAM (left-aligned, pop-in one-by-one; no image fade) */}
+        <section id="exec" className="py-24">
+          <SectionTitle>Executive Team</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
+              {[
+                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
+                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
+                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
+                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
+              ].map((m, i) => (
+                <motion.figure
+                  key={i}
+                  initial={{ y: 22, scale: 0.96 }}
+                  whileInView={{ y: 0, scale: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  className="flex flex-col items-start"
+                >
+                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
+                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                  </div>
+                  <figcaption className="mt-4 text-left">
+                    <div className="text-base font-bold">{m.name}</div>
+                    <div className="text-sm text-white/80">{m.title}</div>
+                  </figcaption>
+                </motion.figure>
+              ))}
+            </div>
+          </SectionWrap>
+        </section>
 
         {/* TESTIMONIALS */}
         <section className="py-24">
@@ -395,21 +414,21 @@ export default function Home() {
             <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
-                  key={tIndex}
+                  key={displayText + "-t"} // just to force subtle motion every now & then
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.5 }}
                   className="italic text-lg text-white/90"
                 >
-                  {testimonials[tIndex]}
+                  “Recruiting this fast? Unreal.” — Tech Startup CEO
                 </motion.blockquote>
               </AnimatePresence>
             </div>
           </SectionWrap>
         </section>
 
-        {/* CONTACT / FOOTER */}
+        {/* CONTACT */}
         <section id="contact" className="py-24">
           <SectionTitle>Let’s Build the Future of Work</SectionTitle>
           <SectionWrap>
