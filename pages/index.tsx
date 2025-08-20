@@ -102,7 +102,7 @@ function SectionTitle({ children }: { children: string }) {
 /* ---------------------------------- */
 /* Parallax helper                     */
 /* ---------------------------------- */
-// No tuple props (fixes TS). Pick between two built-in offsets via `mode`.
+// Uses a mutable offset (cast to any) to keep TS happy with Framer's union type.
 function ParallaxY({
   children,
   strength = 12,
@@ -115,11 +115,10 @@ function ParallaxY({
   const ref = useRef<HTMLDivElement | null>(null);
   const prefersReduced = useReducedMotion();
 
-  // Use inline literal offsets so TS is happy
-  const offsets =
-    mode === "late" ? (["start 85%", "end 15%"] as const) : (["start 80%", "end 20%"] as const);
+  const offsets = mode === "late" ? ["start 85%", "end 15%"] : ["start 80%", "end 20%"];
+  const offMutable = useMemo(() => [offsets[0], offsets[1]], [mode]) as any;
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: offsets });
+  const { scrollYProgress } = useScroll({ target: ref, offset: offMutable });
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
@@ -219,7 +218,7 @@ function WordsTabs() {
         </div>
 
         {/* RIGHT: description ONLY, lowered to align with words */}
-        <div className="md:col-span-2 md:sticky md:top-24 mt-10 md:mt-24">
+        <div className="md:col-span-2 md:sticky md:top-24 mt-12 md:mt-28">
           <AnimatePresence mode="wait">
             <motion.p
               key={active.key}
