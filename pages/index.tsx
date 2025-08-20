@@ -11,7 +11,7 @@ import {
 import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-// ---------- Easing (typed tuples to keep TS happy)
+// ---------- Easing (typed tuples so TS is happy)
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const easeOutCubic = [0.2, 0, 0, 1] as const;
 
@@ -52,7 +52,7 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// ---------- Left-aligned section title with underline grow
+// ---------- Left-aligned animated section title
 function SectionTitle({ children }: { children: string }) {
   return (
     <div className="px-6 text-left">
@@ -66,7 +66,7 @@ function SectionTitle({ children }: { children: string }) {
         {children}
       </motion.h2>
       <motion.div
-        className="h-[4px] w-28 bg-[#69bdff] rounded-full mt-3"
+        className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 0.7, ease: easeOut }}
@@ -112,7 +112,7 @@ export default function Home() {
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // ---------- Section parallax backplates (for subtle drama)
+  // ---------- Section parallax backplates (subtle drama for Why Syfter)
   const plateRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress: plateProg } = useScroll({ target: plateRef, offset: ["start end", "end start"] });
   const plateY = useTransform(plateProg, [0, 1], [40, -40]);
@@ -210,22 +210,6 @@ export default function Home() {
             }}
           />
 
-          {/* Floating background words for subtle drama */}
-          <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
-            <motion.div
-              className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
-              style={{ y: plateY, opacity: plateOpacity }}
-            >
-              HIRE
-            </motion.div>
-            <motion.div
-              className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
-              style={{ y: useTransform(plateProg, [0, 1], [-30, 30]), opacity: plateOpacity }}
-            >
-              TALENT
-            </motion.div>
-          </div>
-
           {/* Hero Copy with typewriter */}
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6">
             <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
@@ -237,7 +221,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WHY SYFTER — left-aligned tiles */}
+        {/* WHY SYFTER — left-aligned tiles + subtle backplate */}
         <section id="whysyfter" ref={plateRef} className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
 
@@ -309,16 +293,16 @@ export default function Home() {
           </div>
         </section>
 
-        {/* EXEC TEAM — float-in one-by-one (no idle bob) */}
+        {/* EXEC TEAM — EXACTLY like your snippet: left header, centered grid, float-in + gentle idle bob */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
-          <div className="mx-auto max-w-5xl px-6 mt-10 text-left">
+          <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-center"
             >
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
@@ -329,16 +313,21 @@ export default function Home() {
                 <motion.figure
                   key={i}
                   variants={itemUp}
-                  initial="hidden"
-                  whileInView="show"
-                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.08 }}
                   viewport={{ once: true }}
                   className="flex flex-col items-center"
                 >
-                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
+                  <motion.div
+                    className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  >
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </div>
-                  <figcaption className="mt-4 text-center">
+                  </motion.div>
+                  <figcaption className="mt-4">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
                   </figcaption>
@@ -348,7 +337,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIALS — left header, centered quote block still feels nice */}
+        {/* TESTIMONIALS — left header, simple crossfade */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
           <div className="mx-auto max-w-3xl px-6 mt-10 text-left">
