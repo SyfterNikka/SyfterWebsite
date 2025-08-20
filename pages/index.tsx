@@ -28,7 +28,7 @@ const itemUp: Variants = {
 };
 
 /* ---------------------------------- */
-/* Small utilities                    */
+/* Utilities                          */
 /* ---------------------------------- */
 function useCountUp(target: number, startOn = true, durationMs = 1600) {
   const [value, setValue] = useState(0);
@@ -48,12 +48,11 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-/* Shared container with slight-left bias for most sections */
 function SectionWrap({ children }: { children: React.ReactNode }) {
+  // Slight left bias for most sections
   return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
-/* Title with animated underline */
 function SectionTitle({ children }: { children: string }) {
   return (
     <SectionWrap>
@@ -79,47 +78,71 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* KineticWords (Why Syfter)          */
+/* WHY SYFTER: Kinetic Words (tabs)   */
 /* ---------------------------------- */
-type Feature = { key: string; title: string; desc: string; left: string; top: string; drift: number };
+type Feature = { key: string; title: string; desc: string; drift: number };
 
-function KineticWords() {
-  // Max-width centered stage (no left bias here so it feels “on-screen centered”)
-  // Stage is relative; words are absolutely positioned as large, floating type.
-  const features: Feature[] = [
+function WordsTabs() {
+  const items: Feature[] = [
     {
       key: "certify",
       title: "Syfter Certify",
       desc:
         "A 5-step trust protocol to verify identity, communication, experience, and readiness — so every candidate is real and ready.",
-      left: "10%", top: "18%", drift: 10,
+      drift: 10,
     },
-    {
-      key: "aiproofed",
-      title: "AI Proofed",
-      desc: "Human-reviewed to avoid automation blind spots.",
-      left: "62%", top: "14%", drift: 6,
-    },
-    {
-      key: "fast",
-      title: "Fast Hiring",
-      desc: "Reduce time to hire to under 5 days.",
-      left: "64%", top: "60%", drift: 8,
-    },
-    {
-      key: "people",
-      title: "People First",
-      desc: "We don’t fill seats — we grow teams.",
-      left: "12%", top: "64%", drift: 7,
-    },
+    { key: "aiproofed", title: "AI Proofed", desc: "Human-reviewed to avoid automation blind spots.", drift: 6 },
+    { key: "fast", title: "Fast Hiring", desc: "Reduce time to hire to under 5 days.", drift: 8 },
+    { key: "people", title: "People First", desc: "We don’t fill seats — we grow teams.", drift: 7 },
   ];
 
   const [active, setActive] = useState<string>("certify");
+  const activeItem = items.find((i) => i.key === active)!;
 
   return (
-    <div className="relative mx-auto max-w-6xl px-6 h-[520px] md:h-[560px]">
-      {/* Description panel (pins left and swaps text on hover) */}
-      <div className="absolute left-0 top-0 md:left-2 md:top-2">
+    <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start">
+      {/* LEFT: big floating words */}
+      <div className="md:col-span-3">
+        <ul className="space-y-6 md:space-y-8">
+          {items.map((it, idx) => (
+            <li key={it.key} className="relative">
+              <motion.button
+                type="button"
+                onMouseEnter={() => setActive(it.key)}
+                onFocus={() => setActive(it.key)}
+                onClick={() => setActive(it.key)}
+                className="block select-none text-left outline-none focus:ring-0"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
+                <motion.span
+                  animate={{
+                    y: [0, -it.drift, 0, it.drift, 0],
+                    x: active === it.key ? 8 : 0,
+                    scale: active === it.key ? 1.06 : 1,
+                  }}
+                  transition={{
+                    y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
+                    x: { duration: 0.25, ease: "easeOut" },
+                    scale: { duration: 0.25, ease: "easeOut" },
+                  }}
+                  className={
+                    "font-extrabold tracking-tight leading-none " +
+                    "text-5xl md:text-7xl " +
+                    (active === it.key ? "text-white" : "text-white/25 hover:text-white/60")
+                  }
+                >
+                  {it.title}
+                </motion.span>
+              </motion.button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* RIGHT: description that swaps on hover */}
+      <div className="md:col-span-2 md:sticky md:top-28">
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
@@ -127,83 +150,12 @@ function KineticWords() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
-            className="max-w-[420px] rounded-2xl bg-black/40 backdrop-blur-sm ring-1 ring-white/10 p-5 hidden md:block"
           >
             <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
-            <div className="mt-2 text-xl font-semibold">
-              {features.find(f => f.key === active)?.title}
-            </div>
-            <p className="mt-2 text-white/90 leading-relaxed">
-              {features.find(f => f.key === active)?.desc}
-            </p>
+            <div className="mt-2 text-2xl font-semibold">{activeItem.title}</div>
+            <p className="mt-3 text-white/90 leading-relaxed">{activeItem.desc}</p>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      {/* Words */}
-      {features.map((f, i) => (
-        <motion.button
-          key={f.key}
-          type="button"
-          onMouseEnter={() => setActive(f.key)}
-          onFocus={() => setActive(f.key)}
-          onClick={() => setActive(f.key)}
-          className="absolute select-none"
-          style={{ left: f.left, top: f.top }}
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          animate={{
-            scale: active === f.key ? 1.08 : 1,
-            filter: active === f.key ? "none" : "blur(0px)",
-          }}
-          transition={{ duration: 0.28 }}
-        >
-          <motion.span
-            // gentle perpetual drift (unique per word)
-            animate={{ y: [0, -f.drift, 0, f.drift, 0] }}
-            transition={{ duration: 8 + i, repeat: Infinity, ease: "easeInOut" }}
-            className={
-              "font-extrabold tracking-tight " +
-              "text-5xl md:text-7xl " +
-              (active === f.key ? "text-white" : "text-white/25 hover:text-white/70")
-            }
-          >
-            {f.title}
-          </motion.span>
-        </motion.button>
-      ))}
-
-      {/* Mobile: tap cards */}
-      <div className="md:hidden grid grid-cols-1 gap-3 absolute inset-x-6 bottom-0">
-        {features.map((f) => {
-          const open = active === f.key;
-          return (
-            <button
-              key={f.key}
-              onClick={() => setActive(open ? "certify" : f.key)}
-              className="rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3 text-left"
-            >
-              <div className="flex items-center justify-between">
-                <div className="font-semibold">{f.title}</div>
-                <div className="text-white/70 text-sm">{open ? "Hide" : "Show"}</div>
-              </div>
-              <AnimatePresence>
-                {open && (
-                  <motion.p
-                    className="text-white/90 mt-2 leading-relaxed text-sm"
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {f.desc}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </button>
-          );
-        })}
       </div>
     </div>
   );
@@ -247,15 +199,13 @@ export default function Home() {
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // Auto-hide / solidify navbar on scroll
+  // Navbar: transparent + auto-hide (no blur/film)
   const [navHidden, setNavHidden] = useState(false);
-  const [navSolid, setNavSolid] = useState(false);
   useEffect(() => {
     let last = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
       setNavHidden(y > last && y > 140); // hide when scrolling down past hero
-      setNavSolid(y > 80);               // add blur/film once you leave hero top
       last = y;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -281,20 +231,15 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* Transparent Nav that hides on scroll down + blurs after hero */}
+      {/* NAV — transparent, auto-hide on scroll down */}
       <header
         className={
           "fixed top-0 inset-x-0 z-50 transition-transform duration-300 " +
           (navHidden ? "-translate-y-full" : "translate-y-0")
         }
       >
-        <div
-          className={
-            "mx-auto max-w-7xl pl-3 pr-6 transition-colors duration-300 " +
-            (navSolid ? "backdrop-blur-md bg-black/10 ring-1 ring-white/10 rounded-b-xl" : "")
-          }
-        >
-          <nav className="mt-4 flex h-12 items-center justify-between">
+        <div className="mx-auto max-w-7xl pl-3 pr-6">
+          <nav className="mt-2 flex h-12 items-center justify-between">
             <a
               href="#top"
               className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors"
@@ -321,8 +266,12 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Page Background */}
-      <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
+      {/* PAGE */}
+      <main
+        id="top"
+        className="min-h-screen text-white"
+        style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
+      >
         {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
           <motion.div className="absolute inset-0" style={{ opacity: rainOpacity }}>
@@ -355,11 +304,11 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER — kinetic words (centered stage, hover-to-reveal) */}
+        {/* WHY SYFTER — Kinetic words left, description right */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
           <div className="mt-10">
-            <KineticWords />
+            <WordsTabs />
           </div>
         </section>
 
@@ -385,7 +334,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM (left-aligned, pop-in one-by-one; no image fade) */}
+        {/* EXEC TEAM */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
           <SectionWrap>
@@ -424,7 +373,7 @@ export default function Home() {
             <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
-                  key={displayText + "-t"} // tiny motion tied to hero typewriter
+                  key={displayText + "-t"}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
