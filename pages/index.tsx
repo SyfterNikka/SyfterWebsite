@@ -11,15 +11,11 @@ import {
 import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-// ---------- Easing (typed tuples so TS is happy)
-const easeOut = [0.22, 1, 0.36, 1] as const;
-const easeOutCubic = [0.2, 0, 0, 1] as const;
-
-// ---------- Shared motion presets
+// ---------- Shared motion presets (string eases to keep TS happy)
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.9, ease: easeOut },
+  transition: { duration: 0.9, ease: "easeOut" },
   viewport: { once: false, amount: 0.3 },
 };
 
@@ -30,7 +26,7 @@ const staggerContainer: Variants = {
 
 const itemUp: Variants = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: easeOutCubic } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: "easeOut" } },
 };
 
 // ---------- Count-up hook
@@ -52,42 +48,33 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// ---------- Section title (left or center inside a centered max-width)
-function SectionTitle({
-  children,
-  align = "left",
-}: {
-  children: string;
-  align?: "left" | "center";
-}) {
-  const isCenter = align === "center";
+// ---------- Slight-left container helper
+function SectionWrap({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto max-w-6xl pl-4 pr-6">{children}</div>;
+}
+
+// ---------- Section title (left, growing underline)
+function SectionTitle({ children }: { children: string }) {
   return (
-    <div
-      className={
-        "mx-auto max-w-6xl px-6 " + (isCenter ? "text-center" : "text-left")
-      }
-    >
+    <SectionWrap>
       <motion.h2
-        className="text-5xl md:text-6xl font-extrabold tracking-tight"
+        className="text-5xl md:text-6xl font-extrabold tracking-tight text-left"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: easeOut }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.5 }}
       >
         {children}
       </motion.h2>
       <motion.div
-        className={
-          (isCenter ? "mx-auto " : "") +
-          "h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
-        }
+        className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 0.7, ease: easeOut }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.6 }}
-        style={{ transformOrigin: isCenter ? "center" : "left" }}
+        style={{ transformOrigin: "left" }}
       />
-    </div>
+    </SectionWrap>
   );
 }
 
@@ -185,7 +172,7 @@ export default function Home() {
 
       {/* NAVBAR — transparent & minimal */}
       <header className="fixed top-0 inset-x-0 z-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl pl-4 pr-6">
           <nav className="mt-4 flex h-12 items-center justify-between">
             <a
               href="#top"
@@ -243,36 +230,40 @@ export default function Home() {
 
           {/* Floating background words for subtle drama */}
           <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
-            <motion.div
-              className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
-              style={{ y: plateY, opacity: plateOpacity }}
-            >
-              HIRE
-            </motion.div>
-            <motion.div
-              className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
-              style={{ y: plateY2, opacity: plateOpacity }}
-            >
-              TALENT
-            </motion.div>
+            <SectionWrap>
+              <motion.div
+                className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
+                style={{ y: plateY, opacity: plateOpacity }}
+              >
+                HIRE
+              </motion.div>
+              <motion.div
+                className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
+                style={{ y: plateY2, opacity: plateOpacity }}
+              >
+                TALENT
+              </motion.div>
+            </SectionWrap>
           </div>
 
           {/* Hero Copy with typewriter */}
-          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6">
-            <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
-              Hire <span className="italic text-[#69bdff]">{displayText}</span>
-            </motion.h1>
-            <motion.p className="mt-5 text-xl max-w-2xl leading-relaxed text-white/90" {...fadeIn}>
-              Syfter Certified talent delivered faster, smarter, better.
-            </motion.p>
-          </div>
+          <SectionWrap>
+            <div className="relative z-10 flex h-[calc(100vh-0px)] flex-col items-center justify-center text-center">
+              <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
+                Hire <span className="italic text-[#69bdff]">{displayText}</span>
+              </motion.h1>
+              <motion.p className="mt-5 text-xl max-w-2xl leading-relaxed text-white/90" {...fadeIn}>
+                Syfter Certified talent delivered faster, smarter, better.
+              </motion.p>
+            </div>
+          </SectionWrap>
         </section>
 
-        {/* WHY SYFTER — left-aligned tiles + subtle backplate */}
+        {/* WHY SYFTER — circle-based + big “Syfter Certify” reveal */}
         <section id="whysyfter" ref={plateRef} className="relative py-24">
-          <SectionTitle align="left">Why Syfter</SectionTitle>
+          <SectionTitle>Why Syfter</SectionTitle>
 
-          {/* Parallax backplate (decorative) */}
+          {/* Decorative parallax plate */}
           <motion.div
             aria-hidden
             className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
@@ -284,45 +275,67 @@ export default function Home() {
             }}
           />
 
-          <div className="mx-auto max-w-6xl px-6 mt-12">
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.35 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            >
-              {[
-                { title: "Syfter Certified", body: "Screened for resilience, communication, and excellence." },
-                { title: "AI Proofed", body: "Human reviewed to avoid automation blind spots." },
-                { title: "Fast Hiring", body: "Reduce time to hire to under 5 days." },
-                { title: "People First", body: "We don’t fill seats, we grow teams." },
-              ].map((card, idx) => (
-                <motion.article
-                  key={idx}
-                  variants={itemUp}
-                  className="group rounded-2xl border border-white/10 bg-white/5 p-8 hover:bg-white/7 transition"
-                >
-                  <div className="flex items-start gap-5">
-                    <div className="mt-1 h-12 w-12 rounded-xl bg-[#69bdff]/20 ring-1 ring-[#69bdff]/30 grid place-items-center text-white/90 font-extrabold">
-                      {idx + 1}
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-2xl font-semibold tracking-tight">{card.title}</h3>
-                      <p className="mt-2 text-white/80 leading-relaxed md:max-w-[46ch]">{card.body}</p>
-                    </div>
+          <SectionWrap>
+            {/* Top row: the big interactive circle */}
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+              <motion.div
+                className="group relative col-span-1 md:col-span-2 aspect-square rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden"
+                initial={{ scale: 0.98, y: 16 }}
+                whileInView={{ scale: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                viewport={{ once: true, amount: 0.4 }}
+              >
+                <div className="absolute inset-0 grid place-items-center">
+                  <div className="text-3xl md:text-4xl font-extrabold tracking-tight">Syfter Certify</div>
+                </div>
+                {/* Hover reveal overlay */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-black/40" />
+                  <div className="relative h-full w-full grid place-items-center p-8 text-center">
+                    <p className="text-white/95 max-w-[32ch] text-lg leading-relaxed">
+                      A 5-step trust protocol to verify identity, communication, experience, and readiness—so every
+                      candidate is real and ready.
+                    </p>
                   </div>
-                </motion.article>
-              ))}
-            </motion.div>
-          </div>
+                </div>
+              </motion.div>
+
+              {/* Side: smaller circles */}
+              <div className="grid grid-cols-1 gap-8">
+                {[
+                  { t: "AI Proofed", d: "Human-reviewed to avoid automation blind spots." },
+                  { t: "Fast Hiring", d: "Reduce time to hire to under 5 days." },
+                  { t: "People First", d: "We don’t fill seats — we grow teams." },
+                ].map((f, i) => (
+                  <motion.div
+                    key={f.t}
+                    className="group relative aspect-square rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden"
+                    initial={{ scale: 0.98, y: 16 }}
+                    whileInView={{ scale: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                  >
+                    <div className="absolute inset-0 grid place-items-center">
+                      <div className="px-6 text-center text-xl font-semibold">{f.t}</div>
+                    </div>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute inset-0 bg-black/40" />
+                      <div className="relative h-full w-full grid place-items-center p-6 text-center">
+                        <p className="text-white/95 text-base leading-relaxed">{f.d}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </SectionWrap>
         </section>
 
-        {/* STATS — left aligned */}
+        {/* STATS — left aligned with animated underline */}
         <section id="trusted" ref={statsRef} className="py-24">
-          <SectionTitle align="left">Trusted Results</SectionTitle>
-          <div className="mx-auto max-w-5xl px-6 mt-10 text-left">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <SectionTitle>Trusted Results</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
                 { val: c1, label: "hires placed", suffix: "" },
                 { val: c2, label: "avg. fill time (days)", suffix: "" },
@@ -337,20 +350,14 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
-          </div>
+          </SectionWrap>
         </section>
 
-        {/* EXEC TEAM — EXACT like your snippet: centered header + grid, float-in one-by-one + gentle bob */}
+        {/* EXEC TEAM — left-aligned; bubbles pop in (no image fade) */}
         <section id="exec" className="py-24">
-          <SectionTitle align="center">Executive Team</SectionTitle>
-          <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-center"
-            >
+          <SectionTitle>Executive Team</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
                 { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
@@ -359,36 +366,30 @@ export default function Home() {
               ].map((m, i) => (
                 <motion.figure
                   key={i}
-                  variants={itemUp}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: easeOut, delay: i * 0.08 }}
-                  viewport={{ once: true }}
-                  className="flex flex-col items-center"
+                  initial={{ y: 22, scale: 0.96 }}
+                  whileInView={{ y: 0, scale: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  className="flex flex-col items-start"
                 >
-                  <motion.div
-                    className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10"
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  >
+                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </motion.div>
-                  <figcaption className="mt-4">
+                  </div>
+                  <figcaption className="mt-4 text-left">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
                   </figcaption>
                 </motion.figure>
               ))}
-            </motion.div>
-          </div>
+            </div>
+          </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS — left header, simple crossfade */}
+        {/* TESTIMONIALS */}
         <section className="py-24">
-          <SectionTitle align="left">What Our Clients Say</SectionTitle>
-          <div className="mx-auto max-w-3xl px-6 mt-10 text-left">
-            <div className="min-h-[96px]">
+          <SectionTitle>What Our Clients Say</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
                   key={tIndex}
@@ -402,26 +403,28 @@ export default function Home() {
                 </motion.blockquote>
               </AnimatePresence>
             </div>
-          </div>
+          </SectionWrap>
         </section>
 
         {/* CONTACT / FOOTER */}
         <section id="contact" className="py-24">
-          <SectionTitle align="left">Let’s Build the Future of Work</SectionTitle>
-          <div className="mx-auto max-w-6xl px-6 mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-            <div>
-              <p className="mb-6 text-lg leading-relaxed text-white/90">
-                Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
-              </p>
-              <p className="mb-4 text-md text-white/80">New York, NY, Denver, CO, Remote Nationwide</p>
+          <SectionTitle>Let’s Build the Future of Work</SectionTitle>
+          <SectionWrap>
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+              <div>
+                <p className="mb-6 text-lg leading-relaxed text-white/90">
+                  Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+                </p>
+                <p className="mb-4 text-md text-white/80">New York, NY, Denver, CO, Remote Nationwide</p>
+              </div>
+              <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                <img src="/MAP.jpg" alt="US Coverage Map" className="w-full h-full object-cover" />
+              </div>
             </div>
-            <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg border border-white/10">
-              <img src="/MAP.jpg" alt="US Coverage Map" className="w-full h-full object-cover" />
+            <div className="mt-12 text-center text-white/60 text-sm">
+              © {new Date().getFullYear()} Syfter. All rights reserved.
             </div>
-          </div>
-          <div className="mt-12 text-center text-white/60 text-sm">
-            © {new Date().getFullYear()} Syfter. All rights reserved.
-          </div>
+          </SectionWrap>
         </section>
       </main>
     </>
