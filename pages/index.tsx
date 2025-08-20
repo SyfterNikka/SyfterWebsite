@@ -50,7 +50,7 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
 
 // ---------- Slight-left container helper
 function SectionWrap({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-6xl pl-4 pr-6">{children}</div>;
+  return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
 // ---------- Section title (left, growing underline)
@@ -261,75 +261,78 @@ export default function Home() {
 
         {/* WHY SYFTER — circle-based + big “Syfter Certify” reveal */}
         <section id="whysyfter" ref={plateRef} className="relative py-24">
-          <SectionTitle>Why Syfter</SectionTitle>
+  <SectionTitle>Why Syfter</SectionTitle>
 
-          {/* Decorative parallax plate */}
+  {/* Decorative parallax plate (safe and subtle) */}
+  <motion.div
+    aria-hidden
+    className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
+    style={{
+      y: plateY,
+      opacity: plateOpacity,
+      background:
+        "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)",
+    }}
+  />
+
+  <SectionWrap>
+    <div className="mt-12 flex flex-col md:flex-row gap-10 items-start">
+      {/* Big interactive circle — clamped width */}
+      <motion.div
+        className="group relative rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden mx-auto md:mx-0"
+        style={{ width: "min(520px, 85vw)" }}
+        initial={{ scale: 0.98, y: 16 }}
+        whileInView={{ scale: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        viewport={{ once: true, amount: 0.4 }}
+      >
+        <div className="aspect-square w-full grid place-items-center p-10">
+          <div className="text-3xl md:text-4xl font-extrabold tracking-tight">Syfter Certify</div>
+        </div>
+
+        {/* Hover reveal */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative h-full w-full grid place-items-center p-8 text-center">
+            <p className="text-white/95 max-w-[32ch] text-lg leading-relaxed">
+              A 5-step trust protocol to verify identity, communication, experience, and readiness—so every
+              candidate is real and ready.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Right column — small circles with clamped width */}
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-8">
+        {[
+          { t: "AI Proofed", d: "Human-reviewed to avoid automation blind spots." },
+          { t: "Fast Hiring", d: "Reduce time to hire to under 5 days." },
+          { t: "People First", d: "We don’t fill seats — we grow teams." },
+        ].map((f, i) => (
           <motion.div
-            aria-hidden
-            className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
-            style={{
-              y: plateY,
-              opacity: plateOpacity,
-              background:
-                "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)",
-            }}
-          />
-
-          <SectionWrap>
-            {/* Top row: the big interactive circle */}
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-              <motion.div
-                className="group relative col-span-1 md:col-span-2 aspect-square rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden"
-                initial={{ scale: 0.98, y: 16 }}
-                whileInView={{ scale: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                viewport={{ once: true, amount: 0.4 }}
-              >
-                <div className="absolute inset-0 grid place-items-center">
-                  <div className="text-3xl md:text-4xl font-extrabold tracking-tight">Syfter Certify</div>
-                </div>
-                {/* Hover reveal overlay */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-0 bg-black/40" />
-                  <div className="relative h-full w-full grid place-items-center p-8 text-center">
-                    <p className="text-white/95 max-w-[32ch] text-lg leading-relaxed">
-                      A 5-step trust protocol to verify identity, communication, experience, and readiness—so every
-                      candidate is real and ready.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Side: smaller circles */}
-              <div className="grid grid-cols-1 gap-8">
-                {[
-                  { t: "AI Proofed", d: "Human-reviewed to avoid automation blind spots." },
-                  { t: "Fast Hiring", d: "Reduce time to hire to under 5 days." },
-                  { t: "People First", d: "We don’t fill seats — we grow teams." },
-                ].map((f, i) => (
-                  <motion.div
-                    key={f.t}
-                    className="group relative aspect-square rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden"
-                    initial={{ scale: 0.98, y: 16 }}
-                    whileInView={{ scale: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
-                    viewport={{ once: true, amount: 0.4 }}
-                  >
-                    <div className="absolute inset-0 grid place-items-center">
-                      <div className="px-6 text-center text-xl font-semibold">{f.t}</div>
-                    </div>
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute inset-0 bg-black/40" />
-                      <div className="relative h-full w-full grid place-items-center p-6 text-center">
-                        <p className="text-white/95 text-base leading-relaxed">{f.d}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+            key={f.t}
+            className="group relative rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden mx-auto md:mx-0"
+            style={{ width: "min(300px, 80vw)" }}
+            initial={{ scale: 0.98, y: 16 }}
+            whileInView={{ scale: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
+            viewport={{ once: true, amount: 0.4 }}
+          >
+            <div className="aspect-square w-full grid place-items-center px-6 text-center">
+              <div className="text-lg font-semibold">{f.t}</div>
+            </div>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="relative h-full w-full grid place-items-center p-6 text-center">
+                <p className="text-white/95 text-base leading-relaxed">{f.d}</p>
               </div>
             </div>
-          </SectionWrap>
-        </section>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </SectionWrap>
+</section>
 
         {/* STATS — left aligned with animated underline */}
         <section id="trusted" ref={statsRef} className="py-24">
@@ -354,36 +357,36 @@ export default function Home() {
         </section>
 
         {/* EXEC TEAM — left-aligned; bubbles pop in (no image fade) */}
-        <section id="exec" className="py-24">
-          <SectionTitle>Executive Team</SectionTitle>
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
-              {[
-                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
-                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
-                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
-                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
-              ].map((m, i) => (
-                <motion.figure
-                  key={i}
-                  initial={{ y: 22, scale: 0.96 }}
-                  whileInView={{ y: 0, scale: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  className="flex flex-col items-start"
-                >
-                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
-                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </div>
-                  <figcaption className="mt-4 text-left">
-                    <div className="text-base font-bold">{m.name}</div>
-                    <div className="text-sm text-white/80">{m.title}</div>
-                  </figcaption>
-                </motion.figure>
-              ))}
-            </div>
-          </SectionWrap>
-        </section>
+      <section id="exec" className="py-24">
+  <SectionTitle>Executive Team</SectionTitle>
+  <SectionWrap>
+    <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
+      {[
+        { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
+        { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
+        { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
+        { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
+      ].map((m, i) => (
+        <motion.figure
+          key={i}
+          initial={{ y: 22, scale: 0.96 }}
+          whileInView={{ y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
+          viewport={{ once: true, amount: 0.4 }}
+          className="flex flex-col items-start"
+        >
+          <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
+            <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+          </div>
+          <figcaption className="mt-4 text-left">
+            <div className="text-base font-bold">{m.name}</div>
+            <div className="text-sm text-white/80">{m.title}</div>
+          </figcaption>
+        </motion.figure>
+      ))}
+    </div>
+  </SectionWrap>
+</section>
 
         {/* TESTIMONIALS */}
         <section className="py-24">
