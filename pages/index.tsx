@@ -22,6 +22,11 @@ const fadeIn: MotionProps = {
   viewport: { once: false, amount: 0.3 },
 };
 
+const staggerContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+};
+
 const itemUp: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
@@ -49,7 +54,7 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
 }
 
 function SectionWrap({ children }: { children: React.ReactNode }) {
-  // Slight left bias for most sections
+  // Slight left bias per your preference
   return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
@@ -78,7 +83,40 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* WHY SYFTER: Kinetic Words (tabs)   */
+/* Logo belt (auto-scrolling)         */
+/* ---------------------------------- */
+function LogoBelt() {
+  // Replace with your real logo paths
+  const logos = [
+    "/logos/logo1.svg",
+    "/logos/logo2.svg",
+    "/logos/logo3.svg",
+    "/logos/logo4.svg",
+    "/logos/logo5.svg",
+  ];
+  return (
+    <div className="overflow-hidden border-t border-b border-white/10 py-6">
+      <div className="flex gap-12 opacity-80 hover:opacity-100 animate-[marquee_28s_linear_infinite]">
+        {[...logos, ...logos].map((src, i) => (
+          <img key={i} src={src} alt="" className="h-8 w-auto object-contain" />
+        ))}
+      </div>
+      <style jsx>{`
+        @keyframes marquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ---------------------------------- */
+/* WHY SYFTER – Kinetic words/tabs    */
 /* ---------------------------------- */
 type Feature = { key: string; title: string; desc: string; drift: number };
 
@@ -96,64 +134,94 @@ function WordsTabs() {
     { key: "people", title: "People First", desc: "We don’t fill seats — we grow teams.", drift: 7 },
   ];
 
-  const [active, setActive] = useState<string>("certify");
-  const activeItem = items.find((i) => i.key === active)!;
+  const [activeIdx, setActiveIdx] = useState(0);
+  const active = items[activeIdx];
+
+  // Arrow up/down keyboard support
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIdx((i) => (i + 1) % items.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIdx((i) => (i - 1 + items.length) % items.length);
+    }
+  };
 
   return (
-    <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start">
-      {/* LEFT: big floating words */}
-      <div className="md:col-span-3">
-        <ul className="space-y-6 md:space-y-8">
-          {items.map((it, idx) => (
-            <li key={it.key} className="relative">
-              <motion.button
-                type="button"
-                onMouseEnter={() => setActive(it.key)}
-                onFocus={() => setActive(it.key)}
-                onClick={() => setActive(it.key)}
-                className="block select-none text-left outline-none focus:ring-0"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-              >
+    <div
+      className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start"
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      aria-label="Why Syfter features"
+    >
+      {/* LEFT: big words (floating) */}
+      <div className="md:col-span-3 relative">
+        <ul className="space-y-6 md:space-y-7">
+          {items.map((it, idx) => {
+            const isActive = idx === activeIdx;
+            return (
+              <li key={it.key} className="relative">
+                {/* Active accent bar (echoes your blue underline) */}
                 <motion.span
+                  className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 h-1 rounded-full bg-[#69bdff]"
+                  initial={false}
                   animate={{
-                    y: [0, -it.drift, 0, it.drift, 0],
-                    x: active === it.key ? 8 : 0,
-                    scale: active === it.key ? 1.06 : 1,
+                    width: isActive ? 28 : 0,
+                    opacity: isActive ? 1 : 0,
                   }}
-                  transition={{
-                    y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
-                    x: { duration: 0.25, ease: "easeOut" },
-                    scale: { duration: 0.25, ease: "easeOut" },
-                  }}
-                  className={
-                    "font-extrabold tracking-tight leading-none " +
-                    "text-5xl md:text-7xl " +
-                    (active === it.key ? "text-white" : "text-white/25 hover:text-white/60")
-                  }
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  aria-hidden
+                />
+                <motion.button
+                  type="button"
+                  onMouseEnter={() => setActiveIdx(idx)}
+                  onFocus={() => setActiveIdx(idx)}
+                  onClick={() => setActiveIdx(idx)}
+                  className="block select-none text-left outline-none focus:ring-0"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
                 >
-                  {it.title}
-                </motion.span>
-              </motion.button>
-            </li>
-          ))}
+                  <motion.span
+                    animate={{
+                      y: [0, -it.drift, 0, it.drift, 0],
+                      x: isActive ? 6 : 0,
+                      scale: isActive ? 1.06 : 1,
+                    }}
+                    transition={{
+                      y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
+                      x: { duration: 0.25, ease: "easeOut" },
+                      scale: { duration: 0.25, ease: "easeOut" },
+                    }}
+                    className={
+                      "font-extrabold tracking-tight leading-none " +
+                      (isActive ? "text-5xl md:text-7xl " : "text-5xl md:text-6xl ") +
+                      (isActive ? "text-white" : "text-white/40 hover:text-white/80")
+                    }
+                  >
+                    {it.title}
+                  </motion.span>
+                </motion.button>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
-      {/* RIGHT: description that swaps on hover */}
-      <div className="md:col-span-2 md:sticky md:top-28">
+      {/* RIGHT: sticky description */}
+      <div className="md:col-span-2 md:sticky md:top-24">
         <AnimatePresence mode="wait">
           <motion.div
-            key={active}
+            key={active.key}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
           >
             <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
-            <div className="mt-2 text-2xl font-semibold">{activeItem.title}</div>
-            <p className="mt-3 text-white/90 leading-relaxed">{activeItem.desc}</p>
+            <div className="mt-2 text-2xl font-semibold">{active.title}</div>
+            <p className="mt-3 text-white/90 leading-relaxed">{active.desc}</p>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -199,15 +267,20 @@ export default function Home() {
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // Navbar: transparent + auto-hide (no blur/film)
+  // Navbar: transparent + auto-hide on scroll down + compact height + bottom border after 80px
   const [navHidden, setNavHidden] = useState(false);
+  const [navCompact, setNavCompact] = useState(false);
+  const [navBorder, setNavBorder] = useState(false);
   useEffect(() => {
     let last = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
       setNavHidden(y > last && y > 140); // hide when scrolling down past hero
+      setNavCompact(y > 80);
+      setNavBorder(y > 80);
       last = y;
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -231,15 +304,22 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAV — transparent, auto-hide on scroll down */}
+      {/* NAV — transparent, shrinks, adds subtle bottom border after scroll; no blur */}
       <header
         className={
           "fixed top-0 inset-x-0 z-50 transition-transform duration-300 " +
           (navHidden ? "-translate-y-full" : "translate-y-0")
         }
       >
-        <div className="mx-auto max-w-7xl pl-3 pr-6">
-          <nav className="mt-2 flex h-12 items-center justify-between">
+        <div
+          className={
+            "mx-auto max-w-7xl pl-3 pr-6 " + (navBorder ? "border-b border-white/10" : "")
+          }
+        >
+          <nav
+            className="flex items-center justify-between transition-[height] duration-300"
+            style={{ height: navCompact ? 40 : 56 }}
+          >
             <a
               href="#top"
               className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors"
@@ -304,7 +384,10 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER — Kinetic words left, description right */}
+        {/* LOGO BELT */}
+        <LogoBelt />
+
+        {/* WHY SYFTER — words left, description right */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
           <div className="mt-10">
@@ -334,11 +417,17 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM */}
+        {/* EXEC TEAM — left-aligned, pop-in */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
           <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.35 }}
+              className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start"
+            >
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
                 { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
@@ -347,10 +436,7 @@ export default function Home() {
               ].map((m, i) => (
                 <motion.figure
                   key={i}
-                  initial={{ y: 22, scale: 0.96 }}
-                  whileInView={{ y: 0, scale: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.08 }}
-                  viewport={{ once: true, amount: 0.4 }}
+                  variants={itemUp}
                   className="flex flex-col items-start"
                 >
                   <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
@@ -362,7 +448,7 @@ export default function Home() {
                   </figcaption>
                 </motion.figure>
               ))}
-            </div>
+            </motion.div>
           </SectionWrap>
         </section>
 
