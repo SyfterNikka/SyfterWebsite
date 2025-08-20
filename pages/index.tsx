@@ -148,12 +148,21 @@ function OrbitBubbles() {
                 width: pos.r,
                 height: pos.r,
                 borderRadius: pos.r / 2,
+                zIndex: focused ? 10 : 1,
                 boxShadow: focused ? "0 30px 80px rgba(0,0,0,0.35)" : "0 8px 24px rgba(0,0,0,0.25)",
               }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              {/* Title */}
-              <div className="absolute inset-0 grid place-items-center px-8">
+              {/* Title layer (fades out when focused so it doesn't overlap the description) */}
+              <motion.div
+                className="absolute inset-0 grid place-items-center px-8"
+                initial={false}
+                animate={{
+                  opacity: focused ? 0 : 1,
+                  scale: focused ? 0.95 : 1,
+                }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
                 <div
                   className={
                     "font-extrabold tracking-tight text-center" +
@@ -162,9 +171,9 @@ function OrbitBubbles() {
                 >
                   {f.title}
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Description (only when focused) */}
+              {/* Description overlay (only when focused) */}
               <AnimatePresence>
                 {focused && (
                   <motion.div
@@ -175,7 +184,7 @@ function OrbitBubbles() {
                     exit={{ opacity: 0, y: -6 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
                   >
-                    <div className="absolute inset-0 bg-black/35" />
+                    <div className="absolute inset-0 bg-black/55" />
                     <div className="relative h-full w-full grid place-items-center p-8">
                       <p className="text-white/95 text-lg leading-relaxed text-center max-w-[34ch]">{f.desc}</p>
                     </div>
@@ -414,7 +423,7 @@ export default function Home() {
             <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
-                  key={displayText + "-t"} // just to force subtle motion every now & then
+                  key={displayText + "-t"} // small motion as the hero cycles
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
