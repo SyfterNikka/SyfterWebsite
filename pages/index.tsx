@@ -240,6 +240,88 @@ function WordsTabs() {
 /* ---------------------------------- */
 /* Page                                */
 /* ---------------------------------- */
+function TeamCard({
+  name,
+  title,
+  img,
+  delay = 0,
+  parallaxStrength = 12,
+}: {
+  name: string;
+  title: string;
+  img: string;
+  delay?: number;
+  parallaxStrength?: number;
+}) {
+  const prefersReduced = useReducedMotion();
+  const [mx, setMx] = useState(0);
+  const [my, setMy] = useState(0);
+  const [rx, setRx] = useState(0);
+  const [ry, setRy] = useState(0);
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMx(x);
+    setMy(y);
+    // tilt: -8..8 deg range
+    const px = x / rect.width - 0.5;
+    const py = y / rect.height - 0.5;
+    setRy(px * 10);
+    setRx(-py * 10);
+  };
+
+  const onLeave = () => {
+    setRx(0);
+    setRy(0);
+  };
+
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: 24, scale: 0.92 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 0.9, ease: "easeOut", delay }}
+      className="flex flex-col items-center text-center"
+    >
+      <ParallaxY strength={parallaxStrength} mode="late">
+        <motion.div
+          ref={cardRef}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          style={{
+            transform: prefersReduced ? undefined : `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg)`,
+          }}
+          className="group relative w-44 h-44 rounded-full"
+        >
+          {/* Soft outer glow */}
+          <div className="absolute -inset-2 rounded-full bg-[#69bdff]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+          {/* Avatar */}
+          <div className="relative w-full h-full rounded-full overflow-hidden border border-white/10 shadow-2xl">
+            <img src={img} alt={name} className="w-full h-full object-cover" />
+            {/* Cursor spotlight */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              style={{
+                background: `radial-gradient(160px 160px at ${mx}px ${my}px, rgba(105,189,255,0.22), transparent 60%)`,
+              }}
+            />
+          </div>
+        </motion.div>
+      </ParallaxY>
+
+      <figcaption className="mt-5">
+        <div className="text-base font-bold">{name}</div>
+        <div className="text-sm text-white/80">{title}</div>
+      </figcaption>
+    </motion.figure>
+  );
+}
 export default function Home() {
   // Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
@@ -434,38 +516,18 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM — slower stagger + gentle parallax drift */}
-        <section id="exec" className="py-24">
-          <SectionTitle>Executive Team</SectionTitle>
-          <SectionWrap>
-            <motion.div
-              variants={bubbleStagger}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.35 }}
-              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
-            >
-              {[
-                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg", strength: 12 },
-                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg", strength: 16 },
-                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg", strength: 14 },
-                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg", strength: 10 },
-              ].map((m, i) => (
-                <motion.figure key={i} variants={bubbleIn} className="flex flex-col items-center text-center">
-                  <ParallaxY strength={m.strength} mode="late">
-                    <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
-                      <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                    </div>
-                  </ParallaxY>
-                  <figcaption className="mt-5">
-                    <div className="text-base font-bold">{m.name}</div>
-                    <div className="text-sm text-white/80">{m.title}</div>
-                  </figcaption>
-                </motion.figure>
-              ))}
-            </motion.div>
-          </SectionWrap>
-        </section>
+      {/* EXEC TEAM — staggered, parallax, tilt + spotlight */}
+<section id="exec" className="py-24">
+  <SectionTitle>Executive Team</SectionTitle>
+  <SectionWrap>
+    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center">
+      <TeamCard name="Steven Perlman" title="CEO" img="/team/steve.jpg" delay={0.0} parallaxStrength={12} />
+      <TeamCard name="Matt Hall"     title="CRO" img="/team/matt.jpg"  delay={0.12} parallaxStrength={16} />
+      <TeamCard name="Nikka Winchell" title="CRO" img="/team/nikka.jpg" delay={0.24} parallaxStrength={14} />
+      <TeamCard name="Ira Plutner"    title="CFO" img="/team/ira.jpg"   delay={0.36} parallaxStrength={10} />
+    </div>
+  </SectionWrap>
+</section>
 
         {/* TESTIMONIALS */}
         <section className="py-24">
