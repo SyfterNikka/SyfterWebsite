@@ -63,15 +63,15 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-/* Centered container for section content */
+/* Section content centered */
 function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-/* Title row: left-aligned heading + animated underline (content below is centered) */
+/* Title row: left-aligned heading + underline (pushed a bit further left) */
 function SectionTitle({ children }: { children: string }) {
   return (
-    <div className="mx-auto max-w-6xl px-6">
+    <div className="mx-auto max-w-7xl pl-2 pr-6">
       <motion.h2
         className="text-5xl md:text-6xl font-extrabold tracking-tight text-left"
         initial={{ opacity: 0, y: 12 }}
@@ -135,20 +135,12 @@ function WordsTabs() {
         aria-label="Why Syfter features"
       >
         {/* LEFT: big words (floating) */}
-        <div className="md:col-span-3 relative">
+        <div className="md:col-span-3 relative mt-16">
           <ul className="space-y-6 md:space-y-7">
             {items.map((it, idx) => {
               const isActive = idx === activeIdx;
               return (
                 <li key={it.key} className="relative">
-                  {/* Active accent bar */}
-                  <motion.span
-                    className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 h-1 rounded-full bg-[#69bdff]"
-                    initial={false}
-                    animate={{ width: isActive ? 28 : 0, opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                    aria-hidden
-                  />
                   <motion.button
                     type="button"
                     onMouseEnter={() => setActiveIdx(idx)}
@@ -185,20 +177,19 @@ function WordsTabs() {
           </ul>
         </div>
 
-        {/* RIGHT: sticky description */}
+        {/* RIGHT: description ONLY, larger text */}
         <div className="md:col-span-2 md:sticky md:top-24">
           <AnimatePresence mode="wait">
-            <motion.div
+            <motion.p
               key={active.key}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.28, ease: "easeOut" }}
+              className="text-xl md:text-2xl leading-relaxed text-white/90"
             >
-              <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
-              <div className="mt-2 text-2xl font-semibold">{active.title}</div>
-              <p className="mt-3 text-white/90 leading-relaxed">{active.desc}</p>
-            </motion.div>
+              {active.desc}
+            </motion.p>
           </AnimatePresence>
         </div>
       </div>
@@ -288,11 +279,7 @@ export default function Home() {
           (navHidden ? "-translate-y-full" : "translate-y-0")
         }
       >
-        <div
-          className={
-            "mx-auto max-w-7xl px-6 " + (navBorder ? "border-b border-white/10" : "")
-          }
-        >
+        <div className={"mx-auto max-w-7xl px-6 " + (navBorder ? "border-b border-white/10" : "")}>
           <nav
             className="flex items-center justify-between transition-[height] duration-300"
             style={{ height: navCompact ? 40 : 56 }}
@@ -367,7 +354,7 @@ export default function Home() {
           <WordsTabs />
         </section>
 
-        {/* STATS — centered cards with sweep underline */}
+        {/* STATS — modern, minimal split (no rounded cards) */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
           <SectionWrap>
@@ -376,30 +363,25 @@ export default function Home() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.35 }}
-              className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center"
+              className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center"
             >
               {[
                 { val: c1, label: "HIRES PLACED", suffix: "" },
                 { val: c2, label: "AVG. FILL TIME (DAYS)", suffix: "" },
                 { val: c3, label: "RETENTION RATE", suffix: "%" },
               ].map((s, i) => (
-                <motion.div
-                  key={i}
-                  variants={statIn}
-                  className="w-full max-w-xs rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
-                >
-                  <div className="relative">
+                <motion.div key={i} variants={statIn} className="px-2 md:px-10">
+                  <div className="relative inline-block">
                     <div className="text-[56px] leading-none font-extrabold tracking-tight">
                       {s.val}
                       {s.suffix}
                     </div>
-                    {/* Sweep underline */}
                     <motion.div
                       className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full"
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 * i }}
+                      transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 * i }}
                       style={{ transformOrigin: "left" }}
                     />
                   </div>
@@ -410,7 +392,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM — heading left; content centered; staggered bubble pop-in */}
+        {/* EXEC TEAM — centered; staggered fade/pop in */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
           <SectionWrap>
@@ -419,7 +401,7 @@ export default function Home() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.35 }}
-              className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 justify-items-center"
+              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 justify-items-center"
             >
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
@@ -441,7 +423,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS (unchanged, content centered by SectionWrap) */}
+        {/* TESTIMONIALS (centered) */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
           <SectionWrap>
@@ -462,7 +444,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* CONTACT (content centered; heading left) */}
+        {/* CONTACT */}
         <section id="contact" className="py-24">
           <SectionTitle>Let’s Build the Future of Work</SectionTitle>
           <SectionWrap>
