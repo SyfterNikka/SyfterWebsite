@@ -11,10 +11,11 @@ import {
 import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-// Motion presets
+// ---------- Easing (typed tuples so TS is happy)
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const easeOutCubic = [0.2, 0, 0, 1] as const;
 
+// ---------- Shared motion presets
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -32,7 +33,7 @@ const itemUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: easeOutCubic } },
 };
 
-// Count-up hook
+// ---------- Count-up hook
 function useCountUp(target: number, startOn = true, durationMs = 1600) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -51,10 +52,21 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
-// Left-aligned animated section title
-function SectionTitle({ children }: { children: string }) {
+// ---------- Section title (left or center inside a centered max-width)
+function SectionTitle({
+  children,
+  align = "left",
+}: {
+  children: string;
+  align?: "left" | "center";
+}) {
+  const isCenter = align === "center";
   return (
-    <div className="mx-auto max-w-6xl px-6 text-left">
+    <div
+      className={
+        "mx-auto max-w-6xl px-6 " + (isCenter ? "text-center" : "text-left")
+      }
+    >
       <motion.h2
         className="text-5xl md:text-6xl font-extrabold tracking-tight"
         initial={{ opacity: 0, y: 12 }}
@@ -65,40 +77,28 @@ function SectionTitle({ children }: { children: string }) {
         {children}
       </motion.h2>
       <motion.div
-        className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
+        className={
+          (isCenter ? "mx-auto " : "") +
+          "h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
+        }
         initial={{ scaleX: 0, opacity: 0 }}
         whileInView={{ scaleX: 1, opacity: 1 }}
         transition={{ duration: 0.7, ease: easeOut }}
         viewport={{ once: true, amount: 0.6 }}
-        style={{ transformOrigin: "left" }}
-      />
-    </div>
-  );
-}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: easeOut }}
-        viewport={{ once: true, amount: 0.5 }}
-      >
-        {children}
-      </motion.h2>
-      <motion.div
-        className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
-        initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
-        transition={{ duration: 0.7, ease: easeOut }}
-        viewport={{ once: true, amount: 0.6 }}
-        style={{ transformOrigin: "left" }}
+        style={{ transformOrigin: isCenter ? "center" : "left" }}
       />
     </div>
   );
 }
 
 export default function Home() {
+  // ---------- Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
   const [displayText, setDisplayText] = useState("");
   const [w, setW] = useState(0);
   const [i, setI] = useState(0);
   const [del, setDel] = useState(false);
+
   useEffect(() => {
     const word = words[w];
     const delay = del ? 40 : 90;
@@ -119,21 +119,38 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [i, del, w, words]);
 
+  // ---------- Scroll-controlled BinaryRain blending
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
-  const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
+  const mistOpacitySpring = useSpring(mistOpacity, {
+    stiffness: 110,
+    damping: 24,
+    mass: 0.45,
+  });
 
+  // ---------- Section parallax backplates (subtle drama for Why Syfter)
   const plateRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress: plateProg } = useScroll({ target: plateRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: plateProg } = useScroll({
+    target: plateRef,
+    offset: ["start end", "end start"],
+  });
   const plateY = useTransform(plateProg, [0, 1], [40, -40]);
+  const plateY2 = useTransform(plateProg, [0, 1], [-30, 30]); // second word
   const plateOpacity = useTransform(plateProg, [0, 0.5, 1], [0.0, 0.15, 0.0]);
 
+  // ---------- Stats trigger
   const statsRef = useRef<HTMLDivElement | null>(null);
   const [statsActive, setStatsActive] = useState(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(([entry]) => setStatsActive(entry.isIntersecting), { threshold: 0.35 });
+    const obs = new IntersectionObserver(
+      ([entry]) => setStatsActive(entry.isIntersecting),
+      { threshold: 0.35 }
+    );
     if (statsRef.current) obs.observe(statsRef.current);
     return () => obs.disconnect();
   }, []);
@@ -141,6 +158,7 @@ export default function Home() {
   const c2 = useCountUp(5, statsActive);
   const c3 = useCountUp(98, statsActive);
 
+  // ---------- Testimonials
   const testimonials = useMemo(
     () => [
       "“Syfter delivered top candidates in days.” — SaaS Manager",
@@ -151,7 +169,10 @@ export default function Home() {
   );
   const [tIndex, setTIndex] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setTIndex((p) => (p + 1) % testimonials.length), 5600);
+    const id = setInterval(
+      () => setTIndex((p) => (p + 1) % testimonials.length),
+      5600
+    );
     return () => clearInterval(id);
   }, [testimonials.length]);
 
@@ -162,10 +183,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
+      {/* NAVBAR — transparent & minimal */}
       <header className="fixed top-0 inset-x-0 z-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="mt-4 flex h-12 items-center justify-between">
-            <a href="#top" className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors">Syfter</a>
+            <a
+              href="#top"
+              className="text-base md:text-lg font-semibold tracking-tight text-white/90 hover:text-white transition-colors"
+            >
+              Syfter
+            </a>
             <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
               {[
                 { t: "Why Syfter", id: "whysyfter" },
@@ -186,12 +213,20 @@ export default function Home() {
         </div>
       </header>
 
-      <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
+      {/* PAGE BACKGROUND — unified gradient */}
+      <main
+        id="top"
+        className="min-h-screen text-white"
+        style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
+      >
         {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
+          {/* Binary layer with scroll fade */}
           <motion.div className="absolute inset-0" style={{ opacity: rainOpacity }}>
             <BinaryRain />
           </motion.div>
+
+          {/* Bottom-up mist to blend into gradient smoothly */}
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-0"
@@ -205,6 +240,24 @@ export default function Home() {
                 "linear-gradient(to bottom, rgba(62,78,94,0) 0%, rgba(62,78,94,0.12) 35%, rgba(40,48,59,0.5) 70%, rgba(40,48,59,0.9) 100%)",
             }}
           />
+
+          {/* Floating background words for subtle drama */}
+          <div aria-hidden className="absolute inset-0 pointer-events-none select-none">
+            <motion.div
+              className="absolute left-6 top-24 text-7xl font-extrabold text-white/5"
+              style={{ y: plateY, opacity: plateOpacity }}
+            >
+              HIRE
+            </motion.div>
+            <motion.div
+              className="absolute right-8 bottom-20 text-7xl font-extrabold text-white/5"
+              style={{ y: plateY2, opacity: plateOpacity }}
+            >
+              TALENT
+            </motion.div>
+          </div>
+
+          {/* Hero Copy with typewriter */}
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6">
             <motion.h1 className="text-6xl md:text-7xl font-extrabold tracking-tight" {...fadeIn}>
               Hire <span className="italic text-[#69bdff]">{displayText}</span>
@@ -215,14 +268,22 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WHY SYFTER */}
+        {/* WHY SYFTER — left-aligned tiles + subtle backplate */}
         <section id="whysyfter" ref={plateRef} className="relative py-24">
-          <SectionTitle>Why Syfter</SectionTitle>
+          <SectionTitle align="left">Why Syfter</SectionTitle>
+
+          {/* Parallax backplate (decorative) */}
           <motion.div
             aria-hidden
             className="absolute left-1/2 top-12 -z-10 h-64 w-[70%] -translate-x-1/2 rounded-3xl"
-            style={{ y: plateY, opacity: plateOpacity, background: "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)" }}
+            style={{
+              y: plateY,
+              opacity: plateOpacity,
+              background:
+                "radial-gradient(60% 80% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%)",
+            }}
           />
+
           <div className="mx-auto max-w-6xl px-6 mt-12">
             <motion.div
               variants={staggerContainer}
@@ -257,9 +318,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* STATS */}
+        {/* STATS — left aligned */}
         <section id="trusted" ref={statsRef} className="py-24">
-          <SectionTitle>Trusted Results</SectionTitle>
+          <SectionTitle align="left">Trusted Results</SectionTitle>
           <div className="mx-auto max-w-5xl px-6 mt-10 text-left">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
@@ -279,9 +340,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* EXEC TEAM — float-in + gentle idle bob */}
+        {/* EXEC TEAM — EXACT like your snippet: centered header + grid, float-in one-by-one + gentle bob */}
         <section id="exec" className="py-24">
-          <SectionTitle>Executive Team</SectionTitle>
+          <SectionTitle align="center">Executive Team</SectionTitle>
           <div className="mx-auto max-w-5xl px-6 mt-10 text-center">
             <motion.div
               variants={staggerContainer}
@@ -323,9 +384,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TESTIMONIALS */}
+        {/* TESTIMONIALS — left header, simple crossfade */}
         <section className="py-24">
-          <SectionTitle>What Our Clients Say</SectionTitle>
+          <SectionTitle align="left">What Our Clients Say</SectionTitle>
           <div className="mx-auto max-w-3xl px-6 mt-10 text-left">
             <div className="min-h-[96px]">
               <AnimatePresence mode="wait">
@@ -346,7 +407,7 @@ export default function Home() {
 
         {/* CONTACT / FOOTER */}
         <section id="contact" className="py-24">
-          <SectionTitle>Let’s Build the Future of Work</SectionTitle>
+          <SectionTitle align="left">Let’s Build the Future of Work</SectionTitle>
           <div className="mx-auto max-w-6xl px-6 mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
             <div>
               <p className="mb-6 text-lg leading-relaxed text-white/90">
