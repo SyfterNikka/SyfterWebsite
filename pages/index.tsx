@@ -27,9 +27,19 @@ const staggerContainer: Variants = {
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
 
-const itemUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+const bubbleStagger: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.18 } },
+};
+
+const bubbleIn: Variants = {
+  hidden: { opacity: 0, y: 12, scale: 0.88 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
+};
+
+const statIn: Variants = {
+  hidden: { opacity: 0, y: 12, scale: 0.96 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
 };
 
 /* ---------------------------------- */
@@ -53,14 +63,15 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
+/* Centered container for section content */
 function SectionWrap({ children }: { children: React.ReactNode }) {
-  // Slight left bias per your preference
-  return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
+  return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
+/* Title row: left-aligned heading + animated underline (content below is centered) */
 function SectionTitle({ children }: { children: string }) {
   return (
-    <SectionWrap>
+    <div className="mx-auto max-w-6xl px-6">
       <motion.h2
         className="text-5xl md:text-6xl font-extrabold tracking-tight text-left"
         initial={{ opacity: 0, y: 12 }}
@@ -78,39 +89,6 @@ function SectionTitle({ children }: { children: string }) {
         viewport={{ once: true, amount: 0.6 }}
         style={{ transformOrigin: "left" }}
       />
-    </SectionWrap>
-  );
-}
-
-/* ---------------------------------- */
-/* Logo belt (auto-scrolling)         */
-/* ---------------------------------- */
-function LogoBelt() {
-  // Replace with your real logo paths
-  const logos = [
-    "/logos/logo1.svg",
-    "/logos/logo2.svg",
-    "/logos/logo3.svg",
-    "/logos/logo4.svg",
-    "/logos/logo5.svg",
-  ];
-  return (
-    <div className="overflow-hidden border-t border-b border-white/10 py-6">
-      <div className="flex gap-12 opacity-80 hover:opacity-100 animate-[marquee_28s_linear_infinite]">
-        {[...logos, ...logos].map((src, i) => (
-          <img key={i} src={src} alt="" className="h-8 w-auto object-contain" />
-        ))}
-      </div>
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -149,83 +127,82 @@ function WordsTabs() {
   };
 
   return (
-    <div
-      className="mx-auto max-w-7xl px-6 grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start"
-      tabIndex={0}
-      onKeyDown={onKeyDown}
-      aria-label="Why Syfter features"
-    >
-      {/* LEFT: big words (floating) */}
-      <div className="md:col-span-3 relative">
-        <ul className="space-y-6 md:space-y-7">
-          {items.map((it, idx) => {
-            const isActive = idx === activeIdx;
-            return (
-              <li key={it.key} className="relative">
-                {/* Active accent bar (echoes your blue underline) */}
-                <motion.span
-                  className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 h-1 rounded-full bg-[#69bdff]"
-                  initial={false}
-                  animate={{
-                    width: isActive ? 28 : 0,
-                    opacity: isActive ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  aria-hidden
-                />
-                <motion.button
-                  type="button"
-                  onMouseEnter={() => setActiveIdx(idx)}
-                  onFocus={() => setActiveIdx(idx)}
-                  onClick={() => setActiveIdx(idx)}
-                  className="block select-none text-left outline-none focus:ring-0"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                >
+    <SectionWrap>
+      <div
+        className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-12 items-start"
+        tabIndex={0}
+        onKeyDown={onKeyDown}
+        aria-label="Why Syfter features"
+      >
+        {/* LEFT: big words (floating) */}
+        <div className="md:col-span-3 relative">
+          <ul className="space-y-6 md:space-y-7">
+            {items.map((it, idx) => {
+              const isActive = idx === activeIdx;
+              return (
+                <li key={it.key} className="relative">
+                  {/* Active accent bar */}
                   <motion.span
-                    animate={{
-                      y: [0, -it.drift, 0, it.drift, 0],
-                      x: isActive ? 6 : 0,
-                      scale: isActive ? 1.06 : 1,
-                    }}
-                    transition={{
-                      y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
-                      x: { duration: 0.25, ease: "easeOut" },
-                      scale: { duration: 0.25, ease: "easeOut" },
-                    }}
-                    className={
-                      "font-extrabold tracking-tight leading-none " +
-                      (isActive ? "text-5xl md:text-7xl " : "text-5xl md:text-6xl ") +
-                      (isActive ? "text-white" : "text-white/40 hover:text-white/80")
-                    }
+                    className="absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 h-1 rounded-full bg-[#69bdff]"
+                    initial={false}
+                    animate={{ width: isActive ? 28 : 0, opacity: isActive ? 1 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    aria-hidden
+                  />
+                  <motion.button
+                    type="button"
+                    onMouseEnter={() => setActiveIdx(idx)}
+                    onFocus={() => setActiveIdx(idx)}
+                    onClick={() => setActiveIdx(idx)}
+                    className="block select-none text-left outline-none focus:ring-0"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
                   >
-                    {it.title}
-                  </motion.span>
-                </motion.button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+                    <motion.span
+                      animate={{
+                        y: [0, -it.drift, 0, it.drift, 0],
+                        x: isActive ? 6 : 0,
+                        scale: isActive ? 1.06 : 1,
+                      }}
+                      transition={{
+                        y: { duration: 9 + idx, repeat: Infinity, ease: "easeInOut" },
+                        x: { duration: 0.25, ease: "easeOut" },
+                        scale: { duration: 0.25, ease: "easeOut" },
+                      }}
+                      className={
+                        "font-extrabold tracking-tight leading-none " +
+                        (isActive ? "text-5xl md:text-7xl " : "text-5xl md:text-6xl ") +
+                        (isActive ? "text-white" : "text-white/40 hover:text-white/80")
+                      }
+                    >
+                      {it.title}
+                    </motion.span>
+                  </motion.button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
-      {/* RIGHT: sticky description */}
-      <div className="md:col-span-2 md:sticky md:top-24">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active.key}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-          >
-            <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
-            <div className="mt-2 text-2xl font-semibold">{active.title}</div>
-            <p className="mt-3 text-white/90 leading-relaxed">{active.desc}</p>
-          </motion.div>
-        </AnimatePresence>
+        {/* RIGHT: sticky description */}
+        <div className="md:col-span-2 md:sticky md:top-24">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.key}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+            >
+              <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
+              <div className="mt-2 text-2xl font-semibold">{active.title}</div>
+              <p className="mt-3 text-white/90 leading-relaxed">{active.desc}</p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </SectionWrap>
   );
 }
 
@@ -313,7 +290,7 @@ export default function Home() {
       >
         <div
           className={
-            "mx-auto max-w-7xl pl-3 pr-6 " + (navBorder ? "border-b border-white/10" : "")
+            "mx-auto max-w-7xl px-6 " + (navBorder ? "border-b border-white/10" : "")
           }
         >
           <nav
@@ -384,49 +361,65 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* LOGO BELT */}
-        <LogoBelt />
-
-        {/* WHY SYFTER — words left, description right */}
+        {/* WHY SYFTER — words left, description right (content centered; heading left) */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
-          <div className="mt-10">
-            <WordsTabs />
-          </div>
+          <WordsTabs />
         </section>
 
-        {/* STATS */}
+        {/* STATS — centered cards with sweep underline */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                { val: c1, label: "hires placed", suffix: "" },
-                { val: c2, label: "avg. fill time (days)", suffix: "" },
-                { val: c3, label: "retention rate", suffix: "%" },
-              ].map((s, i) => (
-                <motion.div key={i} className="flex flex-col items-start" {...fadeIn}>
-                  <div className="text-[56px] leading-none font-extrabold tracking-tight">
-                    {s.val}
-                    {s.suffix}
-                  </div>
-                  <p className="mt-2 text-sm uppercase tracking-wider text-white/70">{s.label}</p>
-                </motion.div>
-              ))}
-            </div>
-          </SectionWrap>
-        </section>
-
-        {/* EXEC TEAM — left-aligned, pop-in */}
-        <section id="exec" className="py-24">
-          <SectionTitle>Executive Team</SectionTitle>
           <SectionWrap>
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.35 }}
-              className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 place-items-start"
+              className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center"
+            >
+              {[
+                { val: c1, label: "HIRES PLACED", suffix: "" },
+                { val: c2, label: "AVG. FILL TIME (DAYS)", suffix: "" },
+                { val: c3, label: "RETENTION RATE", suffix: "%" },
+              ].map((s, i) => (
+                <motion.div
+                  key={i}
+                  variants={statIn}
+                  className="w-full max-w-xs rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
+                >
+                  <div className="relative">
+                    <div className="text-[56px] leading-none font-extrabold tracking-tight">
+                      {s.val}
+                      {s.suffix}
+                    </div>
+                    {/* Sweep underline */}
+                    <motion.div
+                      className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full"
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 * i }}
+                      style={{ transformOrigin: "left" }}
+                    />
+                  </div>
+                  <p className="mt-4 text-xs tracking-widest text-white/70">{s.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </SectionWrap>
+        </section>
+
+        {/* EXEC TEAM — heading left; content centered; staggered bubble pop-in */}
+        <section id="exec" className="py-24">
+          <SectionTitle>Executive Team</SectionTitle>
+          <SectionWrap>
+            <motion.div
+              variants={bubbleStagger}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.35 }}
+              className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 justify-items-center"
             >
               {[
                 { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
@@ -434,15 +427,11 @@ export default function Home() {
                 { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
                 { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
               ].map((m, i) => (
-                <motion.figure
-                  key={i}
-                  variants={itemUp}
-                  className="flex flex-col items-start"
-                >
+                <motion.figure key={i} variants={bubbleIn} className="flex flex-col items-center text-center">
                   <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
                     <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                   </div>
-                  <figcaption className="mt-4 text-left">
+                  <figcaption className="mt-4">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
                   </figcaption>
@@ -452,11 +441,11 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS */}
+        {/* TESTIMONIALS (unchanged, content centered by SectionWrap) */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
           <SectionWrap>
-            <div className="mt-10 min-h-[96px]">
+            <div className="mt-10 min-h-[96px] text-center">
               <AnimatePresence mode="wait">
                 <motion.blockquote
                   key={displayText + "-t"}
@@ -473,12 +462,12 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* CONTACT */}
+        {/* CONTACT (content centered; heading left) */}
         <section id="contact" className="py-24">
           <SectionTitle>Let’s Build the Future of Work</SectionTitle>
           <SectionWrap>
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-              <div>
+              <div className="text-center md:text-left">
                 <p className="mb-6 text-lg leading-relaxed text-white/90">
                   Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
                 </p>
