@@ -22,11 +22,6 @@ const fadeIn: MotionProps = {
   viewport: { once: false, amount: 0.3 },
 };
 
-const staggerContainer: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-};
-
 const itemUp: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
@@ -53,13 +48,13 @@ function useCountUp(target: number, startOn = true, durationMs = 1600) {
   return value;
 }
 
+/* Shared container with slight-left bias for most sections */
 function SectionWrap({ children }: { children: React.ReactNode }) {
-  // Slight left bias (per your preference), not flush
   return <div className="mx-auto max-w-6xl pl-3 pr-6">{children}</div>;
 }
 
+/* Title with animated underline */
 function SectionTitle({ children }: { children: string }) {
-  // Left-aligned title with animated underline (applies to all sections)
   return (
     <SectionWrap>
       <motion.h2
@@ -84,139 +79,123 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* SymmetricBubbles (Why Syfter)      */
+/* KineticWords (Why Syfter)          */
 /* ---------------------------------- */
-type Feature = { key: string; title: string; desc: string };
+type Feature = { key: string; title: string; desc: string; left: string; top: string; drift: number };
 
-function SymmetricBubbles() {
+function KineticWords() {
+  // Max-width centered stage (no left bias here so it feels “on-screen centered”)
+  // Stage is relative; words are absolutely positioned as large, floating type.
   const features: Feature[] = [
     {
       key: "certify",
       title: "Syfter Certify",
       desc:
         "A 5-step trust protocol to verify identity, communication, experience, and readiness — so every candidate is real and ready.",
+      left: "10%", top: "18%", drift: 10,
     },
-    { key: "aiproofed", title: "AI Proofed", desc: "Human-reviewed to avoid automation blind spots." },
-    { key: "fast", title: "Fast Hiring", desc: "Reduce time to hire to under 5 days." },
-    { key: "people", title: "People First", desc: "We don’t fill seats — we grow teams." },
+    {
+      key: "aiproofed",
+      title: "AI Proofed",
+      desc: "Human-reviewed to avoid automation blind spots.",
+      left: "62%", top: "14%", drift: 6,
+    },
+    {
+      key: "fast",
+      title: "Fast Hiring",
+      desc: "Reduce time to hire to under 5 days.",
+      left: "64%", top: "60%", drift: 8,
+    },
+    {
+      key: "people",
+      title: "People First",
+      desc: "We don’t fill seats — we grow teams.",
+      left: "12%", top: "64%", drift: 7,
+    },
   ];
 
   const [active, setActive] = useState<string>("certify");
 
-  // Fixed 2×2 anchor positions (px) inside a 6xl-ish stage.
-  // These are symmetric and spaced to avoid overlap.
-  const R = 240; // base radius
-  const GAP_X = 540; // horizontal distance between left/right anchors
-  const GAP_Y = 300; // vertical distance between top/bottom anchors
-  const ORIGIN_X = 24; // left padding inside the stage
-  const ORIGIN_Y = 24; // top padding inside the stage
-
-  const anchors: Record<string, { x: number; y: number; r: number }> = {
-    // top-left
-    certify: { x: ORIGIN_X, y: ORIGIN_Y, r: R },
-    // top-right
-    aiproofed: { x: ORIGIN_X + GAP_X, y: ORIGIN_Y, r: R },
-    // bottom-right
-    fast: { x: ORIGIN_X + GAP_X, y: ORIGIN_Y + GAP_Y, r: R },
-    // bottom-left
-    people: { x: ORIGIN_X, y: ORIGIN_Y + GAP_Y, r: R },
-  };
-
   return (
-    <div
-      className="relative w-full h-[640px]"
-      onMouseLeave={() => setActive("certify")}
-      role="region"
-      aria-label="Why Syfter – features"
-    >
-      {/* Desktop / tablet */}
-      <div className="hidden md:block">
-        {features.map((f) => {
-          const a = anchors[f.key];
-          const focused = active === f.key;
-          return (
-            <motion.button
-              key={f.key}
-              type="button"
-              onMouseEnter={() => setActive(f.key)}
-              onFocus={() => setActive(f.key)}
-              onClick={() => setActive(f.key)}
-              className="absolute rounded-full ring-1 ring-white/10 bg-white/5 overflow-hidden text-left"
-              style={{ left: 0, top: 0 }}
-              initial={false}
-              animate={{
-                x: a.x,
-                y: a.y,
-                width: a.r * (focused ? 1.12 : 1),
-                height: a.r * (focused ? 1.12 : 1),
-                borderRadius: (a.r * (focused ? 1.12 : 1)) / 2,
-                zIndex: focused ? 10 : 1,
-                boxShadow: focused ? "0 30px 80px rgba(0,0,0,0.35)" : "0 10px 28px rgba(0,0,0,0.25)",
-              }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            >
-              {/* Title (fades when focused to avoid overlap with description) */}
-              <motion.div
-                className="absolute inset-0 grid place-items-center px-8"
-                initial={false}
-                animate={{
-                  opacity: focused ? 0 : 1,
-                  scale: focused ? 0.96 : 1,
-                }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <div className="font-extrabold tracking-tight text-center text-lg md:text-xl">
-                  {f.title}
-                </div>
-              </motion.div>
-
-              {/* Description overlay (only when focused) */}
-              <AnimatePresence>
-                {focused && (
-                  <motion.div
-                    key="desc"
-                    className="absolute inset-0 pointer-events-none"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                  >
-                    <div className="absolute inset-0 bg-black/55" />
-                    <div className="relative h-full w-full grid place-items-center p-8">
-                      <p className="text-white/95 text-lg leading-relaxed text-center max-w-[34ch]">
-                        {f.desc}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          );
-        })}
+    <div className="relative mx-auto max-w-6xl px-6 h-[520px] md:h-[560px]">
+      {/* Description panel (pins left and swaps text on hover) */}
+      <div className="absolute left-0 top-0 md:left-2 md:top-2">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="max-w-[420px] rounded-2xl bg-black/40 backdrop-blur-sm ring-1 ring-white/10 p-5 hidden md:block"
+          >
+            <div className="text-sm uppercase tracking-wider text-white/70">Why Syfter</div>
+            <div className="mt-2 text-xl font-semibold">
+              {features.find(f => f.key === active)?.title}
+            </div>
+            <p className="mt-2 text-white/90 leading-relaxed">
+              {features.find(f => f.key === active)?.desc}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Mobile fallback: tidy list */}
-      <div className="md:hidden space-y-4">
+      {/* Words */}
+      {features.map((f, i) => (
+        <motion.button
+          key={f.key}
+          type="button"
+          onMouseEnter={() => setActive(f.key)}
+          onFocus={() => setActive(f.key)}
+          onClick={() => setActive(f.key)}
+          className="absolute select-none"
+          style={{ left: f.left, top: f.top }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          animate={{
+            scale: active === f.key ? 1.08 : 1,
+            filter: active === f.key ? "none" : "blur(0px)",
+          }}
+          transition={{ duration: 0.28 }}
+        >
+          <motion.span
+            // gentle perpetual drift (unique per word)
+            animate={{ y: [0, -f.drift, 0, f.drift, 0] }}
+            transition={{ duration: 8 + i, repeat: Infinity, ease: "easeInOut" }}
+            className={
+              "font-extrabold tracking-tight " +
+              "text-5xl md:text-7xl " +
+              (active === f.key ? "text-white" : "text-white/25 hover:text-white/70")
+            }
+          >
+            {f.title}
+          </motion.span>
+        </motion.button>
+      ))}
+
+      {/* Mobile: tap cards */}
+      <div className="md:hidden grid grid-cols-1 gap-3 absolute inset-x-6 bottom-0">
         {features.map((f) => {
           const open = active === f.key;
           return (
             <button
               key={f.key}
               onClick={() => setActive(open ? "certify" : f.key)}
-              className="w-full rounded-2xl ring-1 ring-white/10 bg-white/5 px-5 py-4 text-left"
+              className="rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3 text-left"
             >
               <div className="flex items-center justify-between">
-                <div className="text-lg font-semibold">{f.title}</div>
+                <div className="font-semibold">{f.title}</div>
                 <div className="text-white/70 text-sm">{open ? "Hide" : "Show"}</div>
               </div>
               <AnimatePresence>
                 {open && (
                   <motion.p
-                    className="text-white/90 mt-2 leading-relaxed"
+                    className="text-white/90 mt-2 leading-relaxed text-sm"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.2 }}
                   >
                     {f.desc}
                   </motion.p>
@@ -268,6 +247,21 @@ export default function Home() {
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
+  // Auto-hide / solidify navbar on scroll
+  const [navHidden, setNavHidden] = useState(false);
+  const [navSolid, setNavSolid] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setNavHidden(y > last && y > 140); // hide when scrolling down past hero
+      setNavSolid(y > 80);               // add blur/film once you leave hero top
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Stats trigger
   const statsRef = useRef<HTMLDivElement | null>(null);
   const [statsActive, setStatsActive] = useState(false);
@@ -287,9 +281,19 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* Transparent Nav */}
-      <header className="fixed top-0 inset-x-0 z-50">
-        <div className="mx-auto max-w-7xl pl-3 pr-6">
+      {/* Transparent Nav that hides on scroll down + blurs after hero */}
+      <header
+        className={
+          "fixed top-0 inset-x-0 z-50 transition-transform duration-300 " +
+          (navHidden ? "-translate-y-full" : "translate-y-0")
+        }
+      >
+        <div
+          className={
+            "mx-auto max-w-7xl pl-3 pr-6 transition-colors duration-300 " +
+            (navSolid ? "backdrop-blur-md bg-black/10 ring-1 ring-white/10 rounded-b-xl" : "")
+          }
+        >
           <nav className="mt-4 flex h-12 items-center justify-between">
             <a
               href="#top"
@@ -351,14 +355,12 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER (Symmetrical bubbles — no overlap) */}
+        {/* WHY SYFTER — kinetic words (centered stage, hover-to-reveal) */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
-          <SectionWrap>
-            <div className="mt-10">
-              <SymmetricBubbles />
-            </div>
-          </SectionWrap>
+          <div className="mt-10">
+            <KineticWords />
+          </div>
         </section>
 
         {/* STATS */}
@@ -422,7 +424,7 @@ export default function Home() {
             <div className="mt-10 min-h-[96px]">
               <AnimatePresence mode="wait">
                 <motion.blockquote
-                  key={displayText + "-t"} // tiny change over time keeps motion fresh
+                  key={displayText + "-t"} // tiny motion tied to hero typewriter
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
