@@ -14,7 +14,7 @@ import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
 /* ---------------------------------- */
-/* Motion presets (compile-safe)      */
+/* Motion presets                      */
 /* ---------------------------------- */
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
@@ -30,16 +30,16 @@ const staggerContainer: Variants = {
 
 const bubbleStagger: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.22, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.28, delayChildren: 0.15 } }, // slower
 };
 
 const bubbleIn: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.88 },
+  hidden: { opacity: 0, y: 18, scale: 0.88 },
   show: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.85, ease: "easeOut" },
+    transition: { duration: 1.1, ease: "easeOut" }, // slower
   },
 };
 
@@ -49,7 +49,7 @@ const statIn: Variants = {
 };
 
 /* ---------------------------------- */
-/* Utilities                          */
+/* Utilities                           */
 /* ---------------------------------- */
 function useCountUp(target: number, startOn = true, durationMs = 1600) {
   const [value, setValue] = useState(0);
@@ -74,7 +74,7 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-/* Title row: left-aligned heading + underline (pushed a bit further left) */
+/* Title row: left-aligned heading + underline */
 function SectionTitle({ children }: { children: string }) {
   return (
     <div className="mx-auto max-w-7xl pl-2 pr-6">
@@ -102,22 +102,24 @@ function SectionTitle({ children }: { children: string }) {
 /* ---------------------------------- */
 /* Parallax helper                     */
 /* ---------------------------------- */
+// No tuple props (fixes TS). Pick between two built-in offsets via `mode`.
 function ParallaxY({
   children,
   strength = 12,
-  offset = ["start 80%", "end 20%"] as [string, string],
+  mode = "default",
 }: {
   children: React.ReactNode;
   strength?: number;
-  offset?: [string, string];
+  mode?: "default" | "late";
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const prefersReduced = useReducedMotion();
 
-  // Normalize to a mutable array for Framer Motion's type
-  const off = useMemo(() => [offset[0], offset[1]] as (string | number)[], [offset]);
+  // Use inline literal offsets so TS is happy
+  const offsets =
+    mode === "late" ? (["start 85%", "end 15%"] as const) : (["start 80%", "end 20%"] as const);
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: off });
+  const { scrollYProgress } = useScroll({ target: ref, offset: offsets });
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
@@ -133,7 +135,7 @@ function ParallaxY({
 }
 
 /* ---------------------------------- */
-/* WHY SYFTER – Kinetic words/tabs    */
+/* WHY SYFTER – Kinetic words/tabs     */
 /* ---------------------------------- */
 type Feature = { key: string; title: string; desc: string; drift: number };
 
@@ -216,8 +218,8 @@ function WordsTabs() {
           </ul>
         </div>
 
-        {/* RIGHT: description ONLY, larger text */}
-        <div className="md:col-span-2 md:sticky md:top-24">
+        {/* RIGHT: description ONLY, lowered to align with words */}
+        <div className="md:col-span-2 md:sticky md:top-24 mt-10 md:mt-24">
           <AnimatePresence mode="wait">
             <motion.p
               key={active.key}
@@ -274,7 +276,7 @@ export default function Home() {
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
 
-  // Navbar: transparent + auto-hide on scroll down + compact height + bottom border after 80px
+  // Navbar behavior
   const [navHidden, setNavHidden] = useState(false);
   const [navCompact, setNavCompact] = useState(false);
   const [navBorder, setNavBorder] = useState(false);
@@ -282,7 +284,7 @@ export default function Home() {
     let last = window.scrollY;
     const onScroll = () => {
       const y = window.scrollY;
-      setNavHidden(y > last && y > 140); // hide when scrolling down past hero
+      setNavHidden(y > last && y > 140);
       setNavCompact(y > 80);
       setNavBorder(y > 80);
       last = y;
@@ -451,7 +453,7 @@ export default function Home() {
                 { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg", strength: 10 },
               ].map((m, i) => (
                 <motion.figure key={i} variants={bubbleIn} className="flex flex-col items-center text-center">
-                  <ParallaxY strength={m.strength} offset={["start 85%", "end 15%"]}>
+                  <ParallaxY strength={m.strength} mode="late">
                     <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
                       <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                     </div>
