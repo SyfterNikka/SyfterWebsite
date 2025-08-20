@@ -7,6 +7,7 @@ import {
   useScroll,
   useTransform,
   useSpring,
+  useReducedMotion,
   type MotionProps,
 } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -29,12 +30,17 @@ const staggerContainer: Variants = {
 
 const bubbleStagger: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.18 } },
+  show: { transition: { staggerChildren: 0.22, delayChildren: 0.1 } },
 };
 
 const bubbleIn: Variants = {
-  hidden: { opacity: 0, y: 12, scale: 0.88 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 16, scale: 0.88 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.85, ease: "easeOut" },
+  },
 };
 
 const statIn: Variants = {
@@ -89,6 +95,34 @@ function SectionTitle({ children }: { children: string }) {
         viewport={{ once: true, amount: 0.6 }}
         style={{ transformOrigin: "left" }}
       />
+    </div>
+  );
+}
+
+/* ---------------------------------- */
+/* Parallax helpers                    */
+/* ---------------------------------- */
+function ParallaxY({
+  children,
+  strength = 12,
+  offset = ["start 80%", "end 20%"] as [string, string],
+}: {
+  children: React.ReactNode;
+  strength?: number;
+  offset?: [string, string];
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const prefersReduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset });
+  const yRaw = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [prefersReduced ? 0 : strength, prefersReduced ? 0 : -strength]
+  );
+  const y = useSpring(yRaw, { stiffness: 120, damping: 18, mass: 0.4 });
+  return (
+    <div ref={ref}>
+      <motion.div style={{ y }}>{children}</motion.div>
     </div>
   );
 }
@@ -348,13 +382,13 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER — words left, description right (content centered; heading left) */}
+        {/* WHY SYFTER */}
         <section id="whysyfter" className="relative py-24">
           <SectionTitle>Why Syfter</SectionTitle>
           <WordsTabs />
         </section>
 
-        {/* STATS — modern, minimal split (no rounded cards) */}
+        {/* TRUSTED RESULTS – minimal + parallax numbers */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
           <SectionWrap>
@@ -366,16 +400,18 @@ export default function Home() {
               className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center"
             >
               {[
-                { val: c1, label: "HIRES PLACED", suffix: "" },
-                { val: c2, label: "AVG. FILL TIME (DAYS)", suffix: "" },
-                { val: c3, label: "RETENTION RATE", suffix: "%" },
+                { val: c1, label: "HIRES PLACED", suffix: "", strength: 10 },
+                { val: c2, label: "AVG. FILL TIME (DAYS)", suffix: "", strength: 14 },
+                { val: c3, label: "RETENTION RATE", suffix: "%", strength: 12 },
               ].map((s, i) => (
                 <motion.div key={i} variants={statIn} className="px-2 md:px-10">
                   <div className="relative inline-block">
-                    <div className="text-[56px] leading-none font-extrabold tracking-tight">
-                      {s.val}
-                      {s.suffix}
-                    </div>
+                    <ParallaxY strength={s.strength}>
+                      <div className="text-[56px] leading-none font-extrabold tracking-tight">
+                        {s.val}
+                        {s.suffix}
+                      </div>
+                    </ParallaxY>
                     <motion.div
                       className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full"
                       initial={{ scaleX: 0 }}
@@ -392,7 +428,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* EXEC TEAM — centered; staggered fade/pop in */}
+        {/* EXEC TEAM — slower stagger + gentle parallax drift */}
         <section id="exec" className="py-24">
           <SectionTitle>Executive Team</SectionTitle>
           <SectionWrap>
@@ -401,19 +437,21 @@ export default function Home() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true, amount: 0.35 }}
-              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 justify-items-center"
+              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
             >
               {[
-                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg" },
-                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg" },
-                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg" },
-                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg" },
+                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg", strength: 12 },
+                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg", strength: 16 },
+                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg", strength: 14 },
+                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg", strength: 10 },
               ].map((m, i) => (
                 <motion.figure key={i} variants={bubbleIn} className="flex flex-col items-center text-center">
-                  <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
-                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </div>
-                  <figcaption className="mt-4">
+                  <ParallaxY strength={m.strength} offset={["start 85%", "end 15%"]}>
+                    <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
+                      <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                    </div>
+                  </ParallaxY>
+                  <figcaption className="mt-5">
                     <div className="text-base font-bold">{m.name}</div>
                     <div className="text-sm text-white/80">{m.title}</div>
                   </figcaption>
@@ -423,7 +461,7 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS (centered) */}
+        {/* TESTIMONIALS */}
         <section className="py-24">
           <SectionTitle>What Our Clients Say</SectionTitle>
           <SectionWrap>
