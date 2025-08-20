@@ -100,26 +100,31 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* Parallax helpers                    */
+/* Parallax helper                     */
 /* ---------------------------------- */
 function ParallaxY({
   children,
   strength = 12,
-  offset = ["start 80%", "end 20%"] as const, // ⬅️ literal tuple
+  offset = ["start 80%", "end 20%"] as [string, string],
 }: {
   children: React.ReactNode;
   strength?: number;
-  offset?: readonly [string, string]; // ⬅️ readonly tuple type
+  offset?: [string, string];
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const prefersReduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset }); // TS OK
+
+  // Normalize to a mutable array for Framer Motion's type
+  const off = useMemo(() => [offset[0], offset[1]] as (string | number)[], [offset]);
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: off });
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
     [prefersReduced ? 0 : strength, prefersReduced ? 0 : -strength]
   );
   const y = useSpring(yRaw, { stiffness: 120, damping: 18, mass: 0.4 });
+
   return (
     <div ref={ref}>
       <motion.div style={{ y }}>{children}</motion.div>
@@ -446,7 +451,7 @@ export default function Home() {
                 { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg", strength: 10 },
               ].map((m, i) => (
                 <motion.figure key={i} variants={bubbleIn} className="flex flex-col items-center text-center">
-                  <ParallaxY strength={m.strength} offset={["start 85%", "end 15%"] as const}>
+                  <ParallaxY strength={m.strength} offset={["start 85%", "end 15%"]}>
                     <div className="w-44 h-44 rounded-full overflow-hidden shadow-2xl border border-white/10">
                       <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                     </div>
