@@ -338,7 +338,7 @@ function ExecCard({
 /** Solid darker section with hard edges (no gradient). */
 function DarkBanner({ children }: { children: React.ReactNode }) {
   return (
-    <section className="relative py-24 bg-[#212D37]">
+    <section className="relative py-24 bg-[#202833]">
   {children}
 </section>
   );
