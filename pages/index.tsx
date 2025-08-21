@@ -337,7 +337,7 @@ function ExecCard({
 /* ---------------------------- Map with heat overlay ---------------------- */
 
 function MapWithHeat() {
-  // Rough % positions for major markets (tweak to fit your /MAP.jpg)
+  // Major markets. Tweak positions to match your /MAP.jpg.
   const heatpoints = [
     { top: "42%", left: "78%" }, // NYC
     { top: "38%", left: "81%" }, // Boston
@@ -357,34 +357,65 @@ function MapWithHeat() {
 
   return (
     <>
+      {/* soft, slow pulse */}
       <style jsx global>{`
         @keyframes pulseHeat {
-          0% { transform: translate(-50%, -50%) scale(0.95); opacity: .35; }
-          50% { transform: translate(-50%, -50%) scale(1.1); opacity: .55; }
-          100% { transform: translate(-50%, -50%) scale(0.95); opacity: .35; }
+          0% { transform: translate(-50%, -50%) scale(0.96); opacity: .35; }
+          50% { transform: translate(-50%, -50%) scale(1.08); opacity: .55; }
+          100% { transform: translate(-50%, -50%) scale(0.96); opacity: .35; }
         }
       `}</style>
-      {/* No border, no shadow, just image + overlays */}
+
+      {/* No border/shadow — just image + overlays */}
       <div className="relative w-full h-96 overflow-hidden">
-        <img src="/MAP.jpg" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
-        {/* heat spots */}
-        {heatpoints.map((p, i) => (
-          <span
-            key={i}
-            className="absolute"
-            style={{
-              top: p.top,
-              left: p.left,
-              width: 180,
-              height: 180,
-              transform: "translate(-50%, -50%)",
-              background:
-                "radial-gradient(circle, rgba(255,72,0,0.28) 0%, rgba(255,154,0,0.22) 35%, rgba(255,255,0,0.12) 60%, rgba(255,255,255,0) 75%)",
-              filter: "blur(6px)",
-              animation: "pulseHeat 3.2s ease-in-out infinite",
-            }}
-          />
-        ))}
+        <img
+          src="/MAP.jpg"
+          alt="US Coverage Map"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Heat overlay wrapper — global intensity knob via opacity */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ opacity: 0.75 }}
+        >
+          {heatpoints.map((p, i) => (
+            <div key={i}>
+              {/* Core (small, a bit brighter) */}
+              <span
+                className="absolute"
+                style={{
+                  top: p.top,
+                  left: p.left,
+                  width: 70,
+                  height: 70,
+                  transform: "translate(-50%, -50%)",
+                  background:
+                    "radial-gradient(circle, rgba(105,189,255,0.18) 0%, rgba(105,189,255,0.00) 70%)",
+                  filter: "blur(6px)",
+                  animation: "pulseHeat 5.2s ease-in-out infinite",
+                  animationDelay: `${i * 0.25}s`,
+                }}
+              />
+              {/* Halo (larger, very soft) */}
+              <span
+                className="absolute"
+                style={{
+                  top: p.top,
+                  left: p.left,
+                  width: 150,
+                  height: 150,
+                  transform: "translate(-50%, -50%)",
+                  background:
+                    "radial-gradient(circle, rgba(105,189,255,0.12) 0%, rgba(105,189,255,0.05) 45%, rgba(255,255,255,0) 70%)",
+                  filter: "blur(14px)",
+                  animation: "pulseHeat 6.2s ease-in-out infinite",
+                  animationDelay: `${0.8 + i * 0.25}s`,
+                }}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
@@ -460,10 +491,10 @@ export default function Home() {
   /* Exec bio quote (shared bar, no layout jump) */
   const [execQuote, setExecQuote] = useState("");
   const execQuotes = [
-    "Built high-scale hiring ops. Ex-Oracle.",
-    "Enterprise GTM leader across SaaS & FinTech.",
+    "Built high-scale hiring teams. Exec Coach. LinkedIn aficionado.",
+    "Enterprise GTM leader across SaaS & FinTech. Recruiting expert.",
     "Brand + revenue architect. Ops-obsessed.",
-    "Finance & FP&A at growth-stage companies.",
+    "Finance & FP&A at growth-stage companies. Numbers guru.",
   ];
 
   return (
