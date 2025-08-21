@@ -30,7 +30,7 @@ const staggerContainer: Variants = {
 
 const bubbleStagger: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.28, delayChildren: 0.15 } }, // slower
+  show: { transition: { staggerChildren: 0.28, delayChildren: 0.15 } },
 };
 
 const bubbleIn: Variants = {
@@ -39,7 +39,7 @@ const bubbleIn: Variants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 1.1, ease: "easeOut" }, // slower
+    transition: { duration: 1.1, ease: "easeOut" },
   },
 };
 
@@ -100,9 +100,8 @@ function SectionTitle({ children }: { children: string }) {
 }
 
 /* ---------------------------------- */
-/* Parallax helper                     */
+/* Parallax helper (TS-safe via any)   */
 /* ---------------------------------- */
-// Uses a mutable offset (cast to any) to keep TS happy with Framer's union type.
 function ParallaxY({
   children,
   strength = 12,
@@ -116,9 +115,8 @@ function ParallaxY({
   const prefersReduced = useReducedMotion();
 
   const offsets = mode === "late" ? ["start 85%", "end 15%"] : ["start 80%", "end 20%"];
-  const offMutable = useMemo(() => [offsets[0], offsets[1]], [mode]) as any;
+  const { scrollYProgress } = useScroll({ target: ref, offset: offsets as any });
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: offMutable });
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
@@ -130,6 +128,161 @@ function ParallaxY({
     <div ref={ref}>
       <motion.div style={{ y }}>{children}</motion.div>
     </div>
+  );
+}
+
+/* ---------------------------------- */
+/* Ocean extras for Exec Team          */
+/* ---------------------------------- */
+function OceanRippleDefs() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
+      <filter id="ripple">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.015 0.02"
+          numOctaves="2"
+          seed="3"
+          result="noise"
+        >
+          <animate
+            attributeName="baseFrequency"
+            dur="4s"
+            values="0.012 0.016;0.02 0.024;0.012 0.016"
+            repeatCount="indefinite"
+          />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6">
+          <animate attributeName="scale" dur="3.6s" values="3;7;3" repeatCount="indefinite" />
+        </feDisplacementMap>
+      </filter>
+    </svg>
+  );
+}
+
+function OceanBackgroundBubbles() {
+  return (
+    <>
+      <style jsx global>{`
+        @keyframes rise {
+          0% {
+            transform: translateY(40px) scale(0.9);
+            opacity: 0;
+          }
+          40% {
+            opacity: 0.14;
+          }
+          100% {
+            transform: translateY(-260px) scale(1.04);
+            opacity: 0;
+          }
+        }
+      `}</style>
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        {[
+          { left: "12%", size: 120, dur: 18, delay: 0 },
+          { left: "28%", size: 70, dur: 14, delay: 3 },
+          { left: "46%", size: 90, dur: 20, delay: 1.2 },
+          { left: "62%", size: 110, dur: 17, delay: 2.6 },
+          { left: "78%", size: 80, dur: 15, delay: 4.2 },
+        ].map((b, i) => (
+          <span
+            key={i}
+            style={{
+              left: b.left,
+              width: b.size,
+              height: b.size,
+              animation: `rise ${b.dur}s linear ${b.delay}s infinite`,
+            }}
+            className="absolute bottom-0 rounded-full bg-white/6 blur-md"
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function TeamCardOcean({
+  name,
+  title,
+  img,
+  delay = 0,
+  parallaxStrength = 12,
+}: {
+  name: string;
+  title: string;
+  img: string;
+  delay?: number;
+  parallaxStrength?: number;
+}) {
+  const prefersReduced = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+  const [rx, setRx] = useState(0);
+  const [ry, setRy] = useState(0);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setRy(px * 6);
+    setRx(-py * 6);
+  };
+
+  const onLeave = () => {
+    setHovered(false);
+    setRx(0);
+    setRy(0);
+  };
+
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: 28, scale: 0.94 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 1.0, ease: "easeOut", delay }}
+      className="flex flex-col items-center text-center"
+    >
+      <motion.div
+        animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
+        transition={prefersReduced ? undefined : { duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <ParallaxY strength={parallaxStrength} mode="late">
+          <div
+            ref={ref}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={onLeave}
+            onMouseMove={onMove}
+            style={{
+              transform: prefersReduced ? undefined : `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`,
+              willChange: "transform, filter",
+            }}
+            className="relative w-44 h-44 rounded-full overflow-hidden border border-white/10 shadow-2xl"
+          >
+            <img
+              src={img}
+              alt={name}
+              className={"w-full h-full object-cover transition-all duration-300 " + (hovered ? "grayscale-0" : "grayscale")}
+              style={{ filter: hovered ? "url(#ripple)" : undefined }}
+            />
+            <motion.div
+              initial={false}
+              animate={{ x: hovered ? "120%" : "-60%" }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+              className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              style={{ mixBlendMode: "screen" }}
+            />
+          </div>
+        </ParallaxY>
+      </motion.div>
+
+      <figcaption className="mt-5">
+        <div className="text-base font-bold">{name}</div>
+        <div className="text-sm text-white/80">{title}</div>
+      </figcaption>
+    </motion.figure>
   );
 }
 
@@ -155,7 +308,6 @@ function WordsTabs() {
   const [activeIdx, setActiveIdx] = useState(0);
   const active = items[activeIdx];
 
-  // Arrow up/down keyboard support
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -217,7 +369,7 @@ function WordsTabs() {
           </ul>
         </div>
 
-        {/* RIGHT: description ONLY, lowered to align with words */}
+        {/* RIGHT: description ONLY, lowered for alignment with words */}
         <div className="md:col-span-2 md:sticky md:top-24 mt-12 md:mt-28">
           <AnimatePresence mode="wait">
             <motion.p
@@ -240,308 +392,6 @@ function WordsTabs() {
 /* ---------------------------------- */
 /* Page                                */
 /* ---------------------------------- */
-
-/** SVG filter defs — lightweight water ripple */
-function RippleFilterDefs() {
-  return (
-    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
-      <filter id="ripple">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.015 0.02"
-          numOctaves="2"
-          seed="3"
-          result="noise"
-        >
-          <animate attributeName="baseFrequency" dur="4s" values="0.012 0.016;0.02 0.024;0.012 0.016" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6">
-          <animate attributeName="scale" dur="3.6s" values="3;7;3" repeatCount="indefinite" />
-        </feDisplacementMap>
-      </filter>
-    </svg>
-  );
-}
-
-/** Soft, background “bubbles” rising slowly (very faint) */
-function ExecBackgroundBubbles() {
-  return (
-    <>
-      <style jsx global>{`
-        @keyframes rise {
-          0% { transform: translateY(40px) scale(0.9); opacity: 0; }
-          40% { opacity: .14; }
-          100% { transform: translateY(-260px) scale(1.04); opacity: 0; }
-        }
-      `}</style>
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        {[
-          { left: "12%", size: 120, dur: 18, delay: 0 },
-          { left: "28%", size: 70, dur: 14, delay: 3 },
-          { left: "46%", size: 90, dur: 20, delay: 1.2 },
-          { left: "62%", size: 110, dur: 17, delay: 2.6 },
-          { left: "78%", size: 80, dur: 15, delay: 4.2 },
-        ].map((b, i) => (
-          <span
-            key={i}
-            style={{
-              left: b.left,
-              width: b.size,
-              height: b.size,
-              animation: `rise ${b.dur}s linear ${b.delay}s infinite`,
-            }}
-            className="absolute bottom-0 rounded-full bg-white/6 blur-md"
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** Ocean-style team card: slow bob, grayscale→color, water ripple on hover, tiny tilt */
-function TeamCardOcean({
-  name,
-  title,
-  img,
-  delay = 0,
-  parallaxStrength = 12,
-}: {
-  name: string;
-  title: string;
-  img: string;
-  delay?: number;
-  parallaxStrength?: number;
-}) {
-  const prefersReduced = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
-  const [rx, setRx] = useState(0);
-  const [ry, setRy] = useState(0);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    // small tilt
-    setRy(px * 6);
-    setRx(-py * 6);
-  };
-
-  const onLeave = () => {
-    setHovered(false);
-    setRx(0);
-    setRy(0);
-  };
-
-  return (
-    <motion.figure
-      initial={{ opacity: 0, y: 28, scale: 0.94 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 1.0, ease: "easeOut", delay }}
-      className="flex flex-col items-center text-center"
-    >
-      {/* subtle up-down bobbing */}
-      <motion.div
-        animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
-        transition={prefersReduced ? undefined : { duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {/* parallax drift on scroll (you already have ParallaxY) */}
-        <ParallaxY strength={parallaxStrength} mode="late">
-          <div
-            ref={ref}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={onLeave}
-            onMouseMove={onMove}
-            style={{
-              transform: prefersReduced ? undefined : `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`,
-              willChange: "transform, filter",
-            }}
-            className="relative w-44 h-44 rounded-full overflow-hidden border border-white/10 shadow-2xl"
-          >
-            {/* avatar with grayscale→color and ripple on hover */}
-            <img
-              src={img}
-              alt={name}
-              className={
-                "w-full h-full object-cover transition-all duration-400 " +
-                (hovered ? "grayscale-0" : "grayscale")
-              }
-              style={{ filter: hovered ? "url(#ripple)" : undefined }}
-            />
-
-            {/* light sweep highlight (very subtle) */}
-            <motion.div
-              initial={false}
-              animate={{ x: hovered ? "120%" : "-60%" }}
-              transition={{ duration: 1.1, ease: "easeOut" }}
-              className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              style={{ mixBlendMode: "screen" }}
-            />
-          </div>
-        </ParallaxY>
-      </motion.div>
-
-      <figcaption className="mt-5">
-        <div className="text-base font-bold">{name}</div>
-        <div className="text-sm text-white/80">{title}</div>
-      </figcaption>
-    </motion.figure>
-  );
-}
-
-/** SVG filter defs — lightweight water ripple */
-function RippleFilterDefs() {
-  return (
-    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
-      <filter id="ripple">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.015 0.02"
-          numOctaves="2"
-          seed="3"
-          result="noise"
-        >
-          <animate attributeName="baseFrequency" dur="4s" values="0.012 0.016;0.02 0.024;0.012 0.016" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6">
-          <animate attributeName="scale" dur="3.6s" values="3;7;3" repeatCount="indefinite" />
-        </feDisplacementMap>
-      </filter>
-    </svg>
-  );
-}
-
-/** Soft, background “bubbles” rising slowly (very faint) */
-function ExecBackgroundBubbles() {
-  return (
-    <>
-      <style jsx global>{`
-        @keyframes rise {
-          0% { transform: translateY(40px) scale(0.9); opacity: 0; }
-          40% { opacity: .14; }
-          100% { transform: translateY(-260px) scale(1.04); opacity: 0; }
-        }
-      `}</style>
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        {[
-          { left: "12%", size: 120, dur: 18, delay: 0 },
-          { left: "28%", size: 70, dur: 14, delay: 3 },
-          { left: "46%", size: 90, dur: 20, delay: 1.2 },
-          { left: "62%", size: 110, dur: 17, delay: 2.6 },
-          { left: "78%", size: 80, dur: 15, delay: 4.2 },
-        ].map((b, i) => (
-          <span
-            key={i}
-            style={{
-              left: b.left,
-              width: b.size,
-              height: b.size,
-              animation: `rise ${b.dur}s linear ${b.delay}s infinite`,
-            }}
-            className="absolute bottom-0 rounded-full bg-white/6 blur-md"
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** Ocean-style team card: slow bob, grayscale→color, water ripple on hover, tiny tilt */
-function TeamCardOcean({
-  name,
-  title,
-  img,
-  delay = 0,
-  parallaxStrength = 12,
-}: {
-  name: string;
-  title: string;
-  img: string;
-  delay?: number;
-  parallaxStrength?: number;
-}) {
-  const prefersReduced = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
-  const [rx, setRx] = useState(0);
-  const [ry, setRy] = useState(0);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    // small tilt
-    setRy(px * 6);
-    setRx(-py * 6);
-  };
-
-  const onLeave = () => {
-    setHovered(false);
-    setRx(0);
-    setRy(0);
-  };
-
-  return (
-    <motion.figure
-      initial={{ opacity: 0, y: 28, scale: 0.94 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 1.0, ease: "easeOut", delay }}
-      className="flex flex-col items-center text-center"
-    >
-      {/* subtle up-down bobbing */}
-      <motion.div
-        animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
-        transition={prefersReduced ? undefined : { duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {/* parallax drift on scroll (you already have ParallaxY) */}
-        <ParallaxY strength={parallaxStrength} mode="late">
-          <div
-            ref={ref}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={onLeave}
-            onMouseMove={onMove}
-            style={{
-              transform: prefersReduced ? undefined : `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`,
-              willChange: "transform, filter",
-            }}
-            className="relative w-44 h-44 rounded-full overflow-hidden border border-white/10 shadow-2xl"
-          >
-            {/* avatar with grayscale→color and ripple on hover */}
-            <img
-              src={img}
-              alt={name}
-              className={
-                "w-full h-full object-cover transition-all duration-400 " +
-                (hovered ? "grayscale-0" : "grayscale")
-              }
-              style={{ filter: hovered ? "url(#ripple)" : undefined }}
-            />
-
-            {/* light sweep highlight (very subtle) */}
-            <motion.div
-              initial={false}
-              animate={{ x: hovered ? "120%" : "-60%" }}
-              transition={{ duration: 1.1, ease: "easeOut" }}
-              className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-              style={{ mixBlendMode: "screen" }}
-            />
-          </div>
-        </ParallaxY>
-      </motion.div>
-
-      <figcaption className="mt-5">
-        <div className="text-base font-bold">{name}</div>
-        <div className="text-sm text-white/80">{title}</div>
-      </figcaption>
-    </motion.figure>
-  );
-}
 export default function Home() {
   // Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
@@ -572,7 +422,7 @@ export default function Home() {
 
   // Hero rain blend
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] as any });
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
   const mistOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.05, 0.55, 1]);
   const mistOpacitySpring = useSpring(mistOpacity, { stiffness: 110, damping: 24, mass: 0.45 });
@@ -614,7 +464,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAV — transparent, shrinks, adds subtle bottom border after scroll; no blur */}
+      {/* NAV — transparent, shrinks, bottom border after scroll; no blur */}
       <header
         className={
           "fixed top-0 inset-x-0 z-50 transition-transform duration-300 " +
@@ -696,7 +546,7 @@ export default function Home() {
           <WordsTabs />
         </section>
 
-        {/* TRUSTED RESULTS – minimal + parallax numbers */}
+        {/* TRUSTED RESULTS */}
         <section id="trusted" ref={statsRef} className="py-24">
           <SectionTitle>Trusted Results</SectionTitle>
           <SectionWrap>
@@ -736,21 +586,21 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-  {/* EXEC TEAM — ocean vibe (no glow) */}
-<section id="exec" className="py-24 relative">
-  <SectionTitle>Executive Team</SectionTitle>
-  <RippleFilterDefs />
-  <ExecBackgroundBubbles />
+        {/* EXEC TEAM — ocean vibe */}
+        <section id="exec" className="py-24 relative">
+          <SectionTitle>Executive Team</SectionTitle>
+          <OceanRippleDefs />
+          <OceanBackgroundBubbles />
 
-  <SectionWrap>
-    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center">
-      <TeamCardOcean name="Steven Perlman"  title="CEO" img="/team/steve.jpg" delay={0.00} parallaxStrength={12} />
-      <TeamCardOcean name="Matt Hall"       title="CRO" img="/team/matt.jpg"  delay={0.12} parallaxStrength={16} />
-      <TeamCardOcean name="Nikka Winchell"  title="CRO" img="/team/nikka.jpg" delay={0.24} parallaxStrength={14} />
-      <TeamCardOcean name="Ira Plutner"     title="CFO" img="/team/ira.jpg"   delay={0.36} parallaxStrength={10} />
-    </div>
-  </SectionWrap>
-</section>
+          <SectionWrap>
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center">
+              <TeamCardOcean name="Steven Perlman" title="CEO" img="/team/steve.jpg" delay={0.0} parallaxStrength={12} />
+              <TeamCardOcean name="Matt Hall" title="CRO" img="/team/matt.jpg" delay={0.12} parallaxStrength={16} />
+              <TeamCardOcean name="Nikka Winchell" title="CRO" img="/team/nikka.jpg" delay={0.24} parallaxStrength={14} />
+              <TeamCardOcean name="Ira Plutner" title="CFO" img="/team/ira.jpg" delay={0.36} parallaxStrength={10} />
+            </div>
+          </SectionWrap>
+        </section>
 
         {/* TESTIMONIALS */}
         <section className="py-24">
