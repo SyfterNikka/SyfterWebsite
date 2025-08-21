@@ -334,38 +334,39 @@ function ExecCard({
   );
 }
 
-/* ---------------------------- Map with heat overlay ---------------------- */
-
+/* ---------------------------- Map with PIN overlay ----------------------- */
+/* Keeping the function name MapWithHeat to avoid changing your usage. */
 function MapWithHeat() {
-  // Major markets. Tweak positions to match your /MAP.jpg.
- const pins = [
-  { top: "42%", left: "78%", label: "New York", tier: 1 },
-  { top: "56%", left: "18%", label: "Los Angeles", tier: 1 },
-  { top: "40%", left: "64%", label: "Chicago", tier: 1 },
-  { top: "36%", left: "16%", label: "Seattle", tier: 2 },
-  { top: "44%", left: "20%", label: "San Francisco", tier: 2 },
-  { top: "48%", left: "50%", label: "Denver", tier: 2 },
-  { top: "60%", left: "55%", label: "Houston", tier: 2 },
-  { top: "55%", left: "57%", label: "Dallas", tier: 2 },
-  { top: "56%", left: "70%", label: "Atlanta", tier: 2 },
-  { top: "60%", left: "81%", label: "Miami", tier: 2 },
-  { top: "46%", left: "75%", label: "DC", tier: 2 },
-  { top: "38%", left: "81%", label: "Boston", tier: 2 },
-  // …add ~12–24 more lightweight pins to imply “everywhere”
-];
+  const prefersReduced = useReducedMotion();
+
+  // Major markets (adjust to match your /MAP.jpg positioning)
+  const pins = [
+    { top: "42%", left: "78%", label: "New York", tier: 1 },
+    { top: "56%", left: "18%", label: "Los Angeles", tier: 1 },
+    { top: "40%", left: "64%", label: "Chicago", tier: 1 },
+    { top: "36%", left: "16%", label: "Seattle", tier: 2 },
+    { top: "44%", left: "20%", label: "San Francisco", tier: 2 },
+    { top: "48%", left: "50%", label: "Denver", tier: 2 },
+    { top: "60%", left: "55%", label: "Houston", tier: 2 },
+    { top: "55%", left: "57%", label: "Dallas", tier: 2 },
+    { top: "56%", left: "70%", label: "Atlanta", tier: 2 },
+    { top: "60%", left: "81%", label: "Miami", tier: 2 },
+    { top: "46%", left: "75%", label: "DC", tier: 2 },
+    { top: "38%", left: "81%", label: "Boston", tier: 2 },
+    // add more as needed…
+  ];
 
   return (
     <>
-      {/* soft, slow pulse */}
+      {/* ring animation for pins */}
       <style jsx global>{`
-        @keyframes pulseHeat {
-          0% { transform: translate(-50%, -50%) scale(0.96); opacity: .35; }
-          50% { transform: translate(-50%, -50%) scale(1.08); opacity: .55; }
-          100% { transform: translate(-50%, -50%) scale(0.96); opacity: .35; }
+        @keyframes pinRing {
+          0%   { transform: translate(-50%, -50%) scale(.6); opacity:.35; }
+          65%  { transform: translate(-50%, -50%) scale(1.2); opacity:0; }
+          100% { transform: translate(-50%, -50%) scale(1.2); opacity:0; }
         }
       `}</style>
 
-      {/* No border/shadow — just image + overlays */}
       <div className="relative w-full h-96 overflow-hidden">
         <img
           src="/MAP.jpg"
@@ -373,47 +374,49 @@ function MapWithHeat() {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Heat overlay wrapper — global intensity knob via opacity */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ opacity: 0.75 }}
-        >
-          {heatpoints.map((p, i) => (
-            <div key={i}>
-              {/* Core (small, a bit brighter) */}
-              <span
-                className="absolute"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  width: 70,
-                  height: 70,
-                  transform: "translate(-50%, -50%)",
-                  background:
-                    "radial-gradient(circle, rgba(105,189,255,0.18) 0%, rgba(105,189,255,0.00) 70%)",
-                  filter: "blur(6px)",
-                  animation: "pulseHeat 5.2s ease-in-out infinite",
-                  animationDelay: `${i * 0.25}s`,
-                }}
-              />
-              {/* Halo (larger, very soft) */}
-              <span
-                className="absolute"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  width: 150,
-                  height: 150,
-                  transform: "translate(-50%, -50%)",
-                  background:
-                    "radial-gradient(circle, rgba(105,189,255,0.12) 0%, rgba(105,189,255,0.05) 45%, rgba(255,255,255,0) 70%)",
-                  filter: "blur(14px)",
-                  animation: "pulseHeat 6.2s ease-in-out infinite",
-                  animationDelay: `${0.8 + i * 0.25}s`,
-                }}
-              />
-            </div>
-          ))}
+        {/* Pins overlay — intensity via opacity */}
+        <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.9 }}>
+          {pins.map((p, i) => {
+            const coreSize = p.tier === 1 ? 12 : 8;
+            const ringSize = p.tier === 1 ? 28 : 22;
+            return (
+              <div key={`${p.label}-${i}`}>
+                {/* Core dot */}
+                <span
+                  className="absolute"
+                  style={{
+                    top: p.top,
+                    left: p.left,
+                    width: coreSize,
+                    height: coreSize,
+                    transform: "translate(-50%, -50%)",
+                    borderRadius: 9999,
+                    background: "#69bdff",
+                    boxShadow: "0 0 6px rgba(105,189,255,.6)",
+                  }}
+                />
+                {/* Ring ping (disabled for reduced motion) */}
+                {!prefersReduced && (
+                  <span
+                    className="absolute"
+                    style={{
+                      top: p.top,
+                      left: p.left,
+                      width: ringSize,
+                      height: ringSize,
+                      transform: "translate(-50%, -50%)",
+                      borderRadius: 9999,
+                      background:
+                        "radial-gradient(circle, rgba(105,189,255,.22) 0%, rgba(105,189,255,.06) 55%, rgba(105,189,255,0) 70%)",
+                      filter: "blur(2px)",
+                      animation: "pinRing 2.8s ease-out infinite",
+                      animationDelay: `${i * 0.18}s`,
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </>
@@ -726,7 +729,7 @@ export default function Home() {
                 </p>
                 <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
               </div>
-              {/* Heat map (no border, no shadow) */}
+              {/* Map with pins (no border, no shadow) */}
               <MapWithHeat />
             </div>
             <div className="mt-12 text-center text-white/60 text-sm">
