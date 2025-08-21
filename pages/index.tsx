@@ -27,7 +27,7 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-/** Parallax translateY.  (Typed as any on offset to keep TS happy across framer versions.) */
+/** Parallax translateY. (Typed as any on offset to keep TS happy across framer versions.) */
 function ParallaxY({
   children,
   strength = 12,
@@ -102,7 +102,7 @@ function TypingSectionTitle({ text }: { text: string }) {
   useEffect(() => {
     if (!started) return;
     if (chars >= text.length) return;
-    const t = setTimeout(() => setChars((c) => c + 1), 30); // typing speed
+    const t = setTimeout(() => setChars((c) => c + 1), 45); // slower typing
     return () => clearTimeout(t);
   }, [started, chars, text.length]);
 
@@ -251,7 +251,7 @@ function WordsTabs() {
 
 /* ---------------------------- Exec cards (clean) ------------------------- */
 
-function QuoteTyper({ text, active }: { text: string; active: boolean }) {
+function QuoteTyper({ text, active, speed = 32 }: { text: string; active: boolean; speed?: number }) {
   const [chars, setChars] = useState(0);
   useEffect(() => {
     if (!active) {
@@ -259,9 +259,9 @@ function QuoteTyper({ text, active }: { text: string; active: boolean }) {
       return;
     }
     if (chars >= text.length) return;
-    const t = setTimeout(() => setChars((c) => c + 1), 18);
+    const t = setTimeout(() => setChars((c) => c + 1), speed); // slower typing for exec bio
     return () => clearTimeout(t);
-  }, [active, chars, text.length]);
+  }, [active, chars, text.length, speed]);
   return <span>{text.slice(0, chars)}</span>;
 }
 
@@ -269,14 +269,14 @@ function ExecCard({
   name,
   title,
   img,
-  quote,
+  onHover,
   delay = 0,
   parallaxStrength = 12,
 }: {
   name: string;
   title: string;
   img: string;
-  quote: string;
+  onHover: () => void;
   delay?: number;
   parallaxStrength?: number;
 }) {
@@ -290,10 +290,17 @@ function ExecCard({
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: 1.0, ease: "easeOut", delay }}
       className="w-[13rem] sm:w-[14rem] flex flex-col items-center text-center"
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => {
+        setHovered(true);
+        onHover();
+      }}
       onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
+      onFocus={() => {
+        setHovered(true);
+        onHover();
+      }}
       onBlur={() => setHovered(false)}
+      onClick={onHover}
     >
       <motion.div
         animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
@@ -323,66 +330,60 @@ function ExecCard({
         <div className="text-base font-bold">{name}</div>
         <div className="text-sm text-white/80">{title}</div>
       </figcaption>
-
-      {/* Quote bar under the bubble */}
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="mt-3 w-full rounded-xl bg-white/6 border border-white/10 px-4 py-3 text-sm text-white/90"
-          >
-            <QuoteTyper text={quote} active={hovered} />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.figure>
   );
 }
 
-/* ---------------------------- Map with pulsing pins ---------------------- */
+/* ---------------------------- Map with heat overlay ---------------------- */
 
-function MapWithPins() {
-  // rough % positions for NYC & Denver; tweak if your /MAP.jpg changes
-  const pins = [
-    { id: "nyc", label: "New York, NY (HQ)", top: "42%", left: "78%" },
-    { id: "denver", label: "Denver, CO", top: "48%", left: "50%" },
+function MapWithHeat() {
+  // Rough % positions for major markets (tweak to fit your /MAP.jpg)
+  const heatpoints = [
+    { top: "42%", left: "78%" }, // NYC
+    { top: "38%", left: "81%" }, // Boston
+    { top: "46%", left: "75%" }, // DC
+    { top: "60%", left: "81%" }, // Miami
+    { top: "40%", left: "64%" }, // Chicago
+    { top: "55%", left: "57%" }, // Dallas
+    { top: "60%", left: "55%" }, // Houston
+    { top: "48%", left: "50%" }, // Denver
+    { top: "44%", left: "20%" }, // SF
+    { top: "56%", left: "18%" }, // LA
+    { top: "36%", left: "16%" }, // Seattle
+    { top: "58%", left: "34%" }, // Phoenix
+    { top: "56%", left: "70%" }, // Atlanta
+    { top: "58%", left: "58%" }, // Austin
   ];
 
   return (
     <>
       <style jsx global>{`
-        @keyframes pulsePin {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.25); opacity: .55; }
-          100% { transform: scale(1); opacity: 1; }
+        @keyframes pulseHeat {
+          0% { transform: translate(-50%, -50%) scale(0.95); opacity: .35; }
+          50% { transform: translate(-50%, -50%) scale(1.1); opacity: .55; }
+          100% { transform: translate(-50%, -50%) scale(0.95); opacity: .35; }
         }
       `}</style>
-      <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg">
+      {/* No border, no shadow, just image + overlays */}
+      <div className="relative w-full h-96 overflow-hidden">
         <img src="/MAP.jpg" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
-        {/* overlay pins */}
-        {pins.map((p) => (
-          <div
-            key={p.id}
+        {/* heat spots */}
+        {heatpoints.map((p, i) => (
+          <span
+            key={i}
             className="absolute"
-            style={{ top: p.top, left: p.left, transform: "translate(-50%, -50%)" }}
-          >
-            <div className="group relative">
-              {/* core dot */}
-              <span className="block w-3 h-3 rounded-full bg-[#69bdff] shadow" />
-              {/* pulse ring */}
-              <span
-                className="absolute inset-0 rounded-full border-2 border-[#69bdff]/60"
-                style={{ animation: "pulsePin 1.6s ease-in-out infinite" }}
-              />
-              {/* tooltip */}
-              <div className="absolute left-1/2 top-6 -translate-x-1/2 whitespace-nowrap rounded-md bg-black/70 px-3 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                {p.label}
-              </div>
-            </div>
-          </div>
+            style={{
+              top: p.top,
+              left: p.left,
+              width: 180,
+              height: 180,
+              transform: "translate(-50%, -50%)",
+              background:
+                "radial-gradient(circle, rgba(255,72,0,0.28) 0%, rgba(255,154,0,0.22) 35%, rgba(255,255,0,0.12) 60%, rgba(255,255,255,0) 75%)",
+              filter: "blur(6px)",
+              animation: "pulseHeat 3.2s ease-in-out infinite",
+            }}
+          />
         ))}
       </div>
     </>
@@ -455,6 +456,15 @@ export default function Home() {
   const d1 = useOdometer(128, statsActive);
   const d2 = useOdometer(5, statsActive);
   const d3 = useOdometer(98, statsActive);
+
+  /* Exec bio quote (shared bar, no layout jump) */
+  const [execQuote, setExecQuote] = useState("");
+  const execQuotes = [
+    "Built high-scale hiring ops. Ex-Oracle.",
+    "Enterprise GTM leader across SaaS & FinTech.",
+    "Brand + revenue architect. Ops-obsessed.",
+    "Finance & FP&A at growth-stage companies.",
+  ];
 
   return (
     <>
@@ -586,12 +596,16 @@ export default function Home() {
         <section id="exec" className="py-24 relative">
           <TypingSectionTitle text="Executive Team" />
           <SectionWrap>
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center">
+            {/* Grid with unified quote bar below (no layout jump) */}
+            <div
+              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
+              onMouseLeave={() => setExecQuote("")}
+            >
               <ExecCard
                 name="Steven Perlman"
                 title="CEO"
                 img="/team/steve.jpg"
-                quote="Built high-scale hiring ops. Ex-Oracle."
+                onHover={() => setExecQuote(execQuotes[0])}
                 delay={0.0}
                 parallaxStrength={12}
               />
@@ -599,7 +613,7 @@ export default function Home() {
                 name="Matt Hall"
                 title="CRO"
                 img="/team/matt.jpg"
-                quote="Enterprise GTM leader across SaaS & FinTech."
+                onHover={() => setExecQuote(execQuotes[1])}
                 delay={0.12}
                 parallaxStrength={16}
               />
@@ -607,7 +621,7 @@ export default function Home() {
                 name="Nikka Winchell"
                 title="CRO"
                 img="/team/nikka.jpg"
-                quote="Brand + revenue architect. Ops-obsessed."
+                onHover={() => setExecQuote(execQuotes[2])}
                 delay={0.24}
                 parallaxStrength={14}
               />
@@ -615,10 +629,36 @@ export default function Home() {
                 name="Ira Plutner"
                 title="CFO"
                 img="/team/ira.jpg"
-                quote="Finance & FP&A at growth-stage companies."
+                onHover={() => setExecQuote(execQuotes[3])}
                 delay={0.36}
                 parallaxStrength={10}
               />
+            </div>
+
+            {/* Reserved height quote area so section height stays constant */}
+            <div className="mt-8 min-h-[64px] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {execQuote ? (
+                  <motion.div
+                    key={execQuote}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="text-center text-xl md:text-2xl text-white/95"
+                  >
+                    <QuoteTyper text={execQuote} active={!!execQuote} speed={32} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="placeholder"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xl md:text-2xl"
+                  />
+                )}
+              </AnimatePresence>
             </div>
           </SectionWrap>
         </section>
@@ -627,7 +667,7 @@ export default function Home() {
         <section className="py-24">
           <TypingSectionTitle text="What Our Clients Say" />
           <SectionWrap>
-            <div className="mt-10 min-h-[120px] text-center">
+            <div className="mt-10 min-h-[110px] text-center">
               <AnimatePresence mode="wait">
                 <motion.blockquote
                   key={displayText + "-t"}
@@ -635,7 +675,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.5 }}
-                  className="relative font-medium text-3xl md:text-4xl leading-snug text-white/95"
+                  className="relative italic font-medium text-2xl md:text-3xl leading-snug text-white/95"
                 >
                   <span className="absolute -left-6 -top-4 text-5xl text-white/30 select-none">“</span>
                   Recruiting this fast? Unreal. — Tech Startup CEO
@@ -656,8 +696,8 @@ export default function Home() {
                 </p>
                 <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
               </div>
-              {/* Map without border, with pulsing pins */}
-              <MapWithPins />
+              {/* Heat map (no border, no shadow) */}
+              <MapWithHeat />
             </div>
             <div className="mt-12 text-center text-white/60 text-sm">
               © {new Date().getFullYear()} Syfter. All rights reserved.
