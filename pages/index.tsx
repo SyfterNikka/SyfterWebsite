@@ -338,22 +338,21 @@ function ExecCard({
 
 function MapWithHeat() {
   // Major markets. Tweak positions to match your /MAP.jpg.
-  const heatpoints = [
-    { top: "42%", left: "78%" }, // NYC
-    { top: "38%", left: "81%" }, // Boston
-    { top: "46%", left: "75%" }, // DC
-    { top: "60%", left: "81%" }, // Miami
-    { top: "40%", left: "64%" }, // Chicago
-    { top: "55%", left: "57%" }, // Dallas
-    { top: "60%", left: "55%" }, // Houston
-    { top: "48%", left: "50%" }, // Denver
-    { top: "44%", left: "20%" }, // SF
-    { top: "56%", left: "18%" }, // LA
-    { top: "36%", left: "16%" }, // Seattle
-    { top: "58%", left: "34%" }, // Phoenix
-    { top: "56%", left: "70%" }, // Atlanta
-    { top: "58%", left: "58%" }, // Austin
-  ];
+ const pins = [
+  { top: "42%", left: "78%", label: "New York", tier: 1 },
+  { top: "56%", left: "18%", label: "Los Angeles", tier: 1 },
+  { top: "40%", left: "64%", label: "Chicago", tier: 1 },
+  { top: "36%", left: "16%", label: "Seattle", tier: 2 },
+  { top: "44%", left: "20%", label: "San Francisco", tier: 2 },
+  { top: "48%", left: "50%", label: "Denver", tier: 2 },
+  { top: "60%", left: "55%", label: "Houston", tier: 2 },
+  { top: "55%", left: "57%", label: "Dallas", tier: 2 },
+  { top: "56%", left: "70%", label: "Atlanta", tier: 2 },
+  { top: "60%", left: "81%", label: "Miami", tier: 2 },
+  { top: "46%", left: "75%", label: "DC", tier: 2 },
+  { top: "38%", left: "81%", label: "Boston", tier: 2 },
+  // …add ~12–24 more lightweight pins to imply “everywhere”
+];
 
   return (
     <>
