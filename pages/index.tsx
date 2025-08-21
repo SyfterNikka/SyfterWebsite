@@ -335,23 +335,12 @@ function ExecCard({
 }
 
 /* --------------------------- Dark banner wrapper ------------------------- */
-/** Solid darker section that blends into the main gradient. */
+/** Solid darker section with hard edges (no gradient). */
 function DarkBanner({ children }: { children: React.ReactNode }) {
   return (
-    <section className="relative py-24 bg-[#222F3A]">
-      {/* Gentle fades so the band blends into the surrounding gradient */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-8"
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0))" }}
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-8"
-        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0))" }}
-        aria-hidden
-      />
-      {children}
-    </section>
+    <section className="relative py-24 bg-[#212D37]">
+  {children}
+</section>
   );
 }
 
