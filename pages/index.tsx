@@ -350,7 +350,7 @@ function DarkBanner({ children }: { children: React.ReactNode }) {
 function MapSimple() {
   return (
     <div className="relative w-full h-96 overflow-hidden">
-      <img src="/MAP1.jpg" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
+      <img src="/MAP1.png" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
     </div>
   );
 }
