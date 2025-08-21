@@ -334,25 +334,28 @@ function ExecCard({
   );
 }
 
-/* ----------------------- Section background banding ---------------------- */
-
-function SectionBand({
-  children,
-  tone = "mid",
-}: {
-  children: React.ReactNode;
-  tone?: "light" | "mid" | "deep";
-}) {
-  const bg =
-    tone === "light"
-      ? "linear-gradient(180deg, #3A4A59 0%, #344251 100%)"
-      : tone === "deep"
-      ? "linear-gradient(180deg, #26313B 0%, #212A33 100%)"
-      : "linear-gradient(180deg, #324151 0%, #2A3643 100%)";
-
+/* --------------------------- Dark banner wrapper ------------------------- */
+/** Darker band that sits on top of the site gradient without changing it. */
+function DarkBanner({ children }: { children: React.ReactNode }) {
   return (
     <section className="relative py-24">
-      <div className="absolute inset-0 -z-10" style={{ background: bg }} aria-hidden />
+      {/* Solid darker plate */}
+      <div
+        className="absolute inset-0 -z-10"
+        style={{ backgroundColor: "#222F3A" /* darker sibling of site tone */ }}
+        aria-hidden
+      />
+      {/* Gentle fade edges so it blends into the main gradient */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-8 -z-10"
+        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0))" }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-8 -z-10"
+        style={{ background: "linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0))" }}
+        aria-hidden
+      />
       {children}
     </section>
   );
@@ -492,7 +495,7 @@ export default function Home() {
         className="min-h-screen text-white"
         style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
       >
-        {/* HERO (kept as-is over base gradient) */}
+        {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
           <motion.div className="absolute inset-0" style={{ opacity: rainOpacity }}>
             <BinaryRain />
@@ -524,14 +527,14 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* WHY SYFTER */}
-        <SectionBand tone="light">
+        {/* WHY SYFTER (normal background) */}
+        <section id="whysyfter" className="relative py-24">
           <TypingSectionTitle text="Why Syfter" />
           <WordsTabs />
-        </SectionBand>
+        </section>
 
-        {/* TRUSTED RESULTS */}
-        <SectionBand tone="mid">
+        {/* TRUSTED RESULTS — DARK BANNER */}
+        <DarkBanner>
           <div id="trusted" ref={statsRef}>
             <TypingSectionTitle text="Trusted Results" />
             <SectionWrap>
@@ -574,83 +577,81 @@ export default function Home() {
               </div>
             </SectionWrap>
           </div>
-        </SectionBand>
+        </DarkBanner>
 
-        {/* EXECUTIVE TEAM */}
-        <SectionBand tone="mid">
-          <div id="exec">
-            <TypingSectionTitle text="Executive Team" />
-            <SectionWrap>
-              {/* Grid with unified quote bar below (no layout jump) */}
-              <div
-                className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
-                onMouseLeave={() => setExecQuote("")}
-              >
-                <ExecCard
-                  name="Steven Perlman"
-                  title="CEO"
-                  img="/team/steve.jpg"
-                  onHover={() => setExecQuote(execQuotes[0])}
-                  delay={0.0}
-                  parallaxStrength={12}
-                />
-                <ExecCard
-                  name="Matt Hall"
-                  title="CRO"
-                  img="/team/matt.jpg"
-                  onHover={() => setExecQuote(execQuotes[1])}
-                  delay={0.12}
-                  parallaxStrength={16}
-                />
-                <ExecCard
-                  name="Nikka Winchell"
-                  title="CRO"
-                  img="/team/nikka.jpg"
-                  onHover={() => setExecQuote(execQuotes[2])}
-                  delay={0.24}
-                  parallaxStrength={14}
-                />
-                <ExecCard
-                  name="Ira Plutner"
-                  title="CFO"
-                  img="/team/ira.jpg"
-                  onHover={() => setExecQuote(execQuotes[3])}
-                  delay={0.36}
-                  parallaxStrength={10}
-                />
-              </div>
+        {/* EXECUTIVE TEAM (normal background) */}
+        <section id="exec" className="py-24 relative">
+          <TypingSectionTitle text="Executive Team" />
+          <SectionWrap>
+            {/* Grid with unified quote bar below (no layout jump) */}
+            <div
+              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
+              onMouseLeave={() => setExecQuote("")}
+            >
+              <ExecCard
+                name="Steven Perlman"
+                title="CEO"
+                img="/team/steve.jpg"
+                onHover={() => setExecQuote(execQuotes[0])}
+                delay={0.0}
+                parallaxStrength={12}
+              />
+              <ExecCard
+                name="Matt Hall"
+                title="CRO"
+                img="/team/matt.jpg"
+                onHover={() => setExecQuote(execQuotes[1])}
+                delay={0.12}
+                parallaxStrength={16}
+              />
+              <ExecCard
+                name="Nikka Winchell"
+                title="CRO"
+                img="/team/nikka.jpg"
+                onHover={() => setExecQuote(execQuotes[2])}
+                delay={0.24}
+                parallaxStrength={14}
+              />
+              <ExecCard
+                name="Ira Plutner"
+                title="CFO"
+                img="/team/ira.jpg"
+                onHover={() => setExecQuote(execQuotes[3])}
+                delay={0.36}
+                parallaxStrength={10}
+              />
+            </div>
 
-              {/* Reserved height quote area so section height stays constant */}
-              <div className="mt-8 min-h-[80px] flex items-center justify-center">
-                <AnimatePresence mode="wait">
-                  {execQuote ? (
-                    <motion.div
-                      key={execQuote}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="text-center text-xl md:text-2xl text-white/95"
-                    >
-                      <QuoteTyper text={execQuote} active={!!execQuote} speed={48} />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="placeholder"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 0.0 }}
-                      exit={{ opacity: 0 }}
-                      className="text-xl md:text-2xl"
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
-            </SectionWrap>
-          </div>
-        </SectionBand>
+            {/* Reserved height quote area so section height stays constant */}
+            <div className="mt-8 min-h-[80px] flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {execQuote ? (
+                  <motion.div
+                    key={execQuote}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="text-center text-xl md:text-2xl text-white/95"
+                  >
+                    <QuoteTyper text={execQuote} active={!!execQuote} speed={48} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="placeholder"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-xl md:text-2xl"
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+          </SectionWrap>
+        </section>
 
-        {/* TESTIMONIALS */}
-        <SectionBand tone="deep">
+        {/* TESTIMONIALS — DARK BANNER */}
+        <DarkBanner>
           <TypingSectionTitle text="What Our Clients Say" />
           <SectionWrap>
             <div className="mt-10 min-h-[110px] text-center">
@@ -669,28 +670,26 @@ export default function Home() {
               </AnimatePresence>
             </div>
           </SectionWrap>
-        </SectionBand>
+        </DarkBanner>
 
-        {/* CONTACT / MAP */}
-        <SectionBand tone="mid">
-          <div id="contact">
-            <TypingSectionTitle text="Let’s Build the Future of Work" />
-            <SectionWrap>
-              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-                <div className="text-center md:text-left">
-                  <p className="mb-6 text-lg leading-relaxed text-white/90">
-                    Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
-                  </p>
-                  <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
-                </div>
-                <MapSimple />
+        {/* CONTACT / MAP (normal background) */}
+        <section id="contact" className="py-24">
+          <TypingSectionTitle text="Let’s Build the Future of Work" />
+          <SectionWrap>
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+              <div className="text-center md:text-left">
+                <p className="mb-6 text-lg leading-relaxed text-white/90">
+                  Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+                </p>
+                <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
               </div>
-              <div className="mt-12 text-center text-white/60 text-sm">
-                © {new Date().getFullYear()} Syfter. All rights reserved.
-              </div>
-            </SectionWrap>
-          </div>
-        </SectionBand>
+              <MapSimple />
+            </div>
+            <div className="mt-12 text-center text-white/60 text-sm">
+              © {new Date().getFullYear()} Syfter. All rights reserved.
+            </div>
+          </SectionWrap>
+        </section>
       </main>
     </>
   );
