@@ -102,7 +102,7 @@ function TypingSectionTitle({ text }: { text: string }) {
   useEffect(() => {
     if (!started) return;
     if (chars >= text.length) return;
-    const t = setTimeout(() => setChars((c) => c + 1), 45); // slower typing
+    const t = setTimeout(() => setChars((c) => c + 1), 65); // slower typing
     return () => clearTimeout(t);
   }, [started, chars, text.length]);
 
@@ -251,7 +251,7 @@ function WordsTabs() {
 
 /* ---------------------------- Exec cards (clean) ------------------------- */
 
-function QuoteTyper({ text, active, speed = 32 }: { text: string; active: boolean; speed?: number }) {
+function QuoteTyper({ text, active, speed = 55 }: { text: string; active: boolean; speed?: number }) {
   const [chars, setChars] = useState(0);
   useEffect(() => {
     if (!active) {
@@ -334,89 +334,198 @@ function ExecCard({
   );
 }
 
-/* ---------------------------- Map with PIN overlay ----------------------- */
-/* Keeping the function name MapWithHeat to avoid changing your usage. */
-function MapWithHeat() {
-  const prefersReduced = useReducedMotion();
+/* ------------------------ Testimonials: Carousel ------------------------- */
 
-  // Major markets (adjust to match your /MAP.jpg positioning)
-  const pins = [
-    { top: "42%", left: "78%", label: "New York", tier: 1 },
-    { top: "56%", left: "18%", label: "Los Angeles", tier: 1 },
-    { top: "40%", left: "64%", label: "Chicago", tier: 1 },
-    { top: "36%", left: "16%", label: "Seattle", tier: 2 },
-    { top: "44%", left: "20%", label: "San Francisco", tier: 2 },
-    { top: "48%", left: "50%", label: "Denver", tier: 2 },
-    { top: "60%", left: "55%", label: "Houston", tier: 2 },
-    { top: "55%", left: "57%", label: "Dallas", tier: 2 },
-    { top: "56%", left: "70%", label: "Atlanta", tier: 2 },
-    { top: "60%", left: "81%", label: "Miami", tier: 2 },
-    { top: "46%", left: "75%", label: "DC", tier: 2 },
-    { top: "38%", left: "81%", label: "Boston", tier: 2 },
-    // add more as needed…
+function QuotesCarousel({
+  quotes,
+  intervalMs = 5200,
+}: {
+  quotes: string[];
+  intervalMs?: number;
+}) {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setI((p) => (p + 1) % quotes.length), intervalMs);
+    return () => clearInterval(id);
+  }, [quotes.length, intervalMs]);
+
+  return (
+    <div className="mt-10 min-h-[120px] text-center">
+      <AnimatePresence mode="wait">
+        <motion.blockquote
+          key={i}
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -10, scale: 0.98 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          className="relative italic font-medium text-2xl md:text-3xl leading-snug text-white/95"
+        >
+          <span className="absolute -left-6 -top-4 text-5xl text-white/25 select-none">“</span>
+          {quotes[i]}
+        </motion.blockquote>
+      </AnimatePresence>
+
+      {/* dots */}
+      <div className="mt-6 flex items-center justify-center gap-2">
+        {quotes.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setI(idx)}
+            className={
+              "h-2 w-2 rounded-full transition " +
+              (idx === i ? "bg-white" : "bg-white/30 hover:bg-white/60")
+            }
+            aria-label={`Show quote ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------- Map with dense pins ------------------------ */
+
+function MapWithPins() {
+  // A dense set of major US markets (approximate % positions).
+  const pins: { top: string; left: string; label?: string; strong?: boolean }[] = [
+    // West
+    { top: "36%", left: "16%", label: "Seattle", strong: true },
+    { top: "33%", left: "18%", label: "Spokane" },
+    { top: "42%", left: "21%", label: "Sacramento" },
+    { top: "44%", left: "20%", label: "San Francisco", strong: true },
+    { top: "46%", left: "21%", label: "San Jose" },
+    { top: "56%", left: "18%", label: "Los Angeles", strong: true },
+    { top: "60%", left: "19%", label: "San Diego" },
+    { top: "50%", left: "24%", label: "Las Vegas" },
+    { top: "44%", left: "31%", label: "Salt Lake City", strong: true },
+    { top: "48%", left: "31%", label: "Provo" },
+    { top: "56%", left: "28%", label: "Phoenix", strong: true },
+    { top: "60%", left: "29%", label: "Tucson" },
+    { top: "55%", left: "39%", label: "Albuquerque" },
+    { top: "37%", left: "26%", label: "Boise" },
+    { top: "31%", left: "36%", label: "Helena" },
+    { top: "34%", left: "41%", label: "Billings" },
+
+    // Mountain / Plains
+    { top: "48%", left: "49%", label: "Denver", strong: true },
+    { top: "43%", left: "44%", label: "Cheyenne" },
+    { top: "38%", left: "47%", label: "Rapid City" },
+    { top: "29%", left: "54%", label: "Fargo" },
+    { top: "41%", left: "50%", label: "Sioux Falls" },
+    { top: "43%", left: "54%", label: "Omaha" },
+    { top: "45%", left: "58%", label: "Des Moines" },
+    { top: "51%", left: "49%", label: "Wichita" },
+
+    // Texas + neighbors
+    { top: "55%", left: "54%", label: "Austin" },
+    { top: "61%", left: "53%", label: "San Antonio" },
+    { top: "60%", left: "55%", label: "Houston", strong: true },
+    { top: "55%", left: "57%", label: "Dallas", strong: true },
+    { top: "63%", left: "44%", label: "El Paso" },
+    { top: "55%", left: "49%", label: "Lubbock" },
+    { top: "52%", left: "53%", label: "Oklahoma City" },
+    { top: "50%", left: "54%", label: "Tulsa" },
+
+    // Midwest
+    { top: "40%", left: "64%", label: "Chicago", strong: true },
+    { top: "39%", left: "62%", label: "Milwaukee" },
+    { top: "44%", left: "63%", label: "Indianapolis" },
+    { top: "46%", left: "64%", label: "Cincinnati" },
+    { top: "44%", left: "66%", label: "Columbus" },
+    { top: "41%", left: "68%", label: "Cleveland" },
+    { top: "40%", left: "67%", label: "Detroit" },
+    { top: "33%", left: "59%", label: "Minneapolis", strong: true },
+    { top: "47%", left: "60%", label: "St. Louis" },
+    { top: "48%", left: "57%", label: "Kansas City" },
+
+    // South
+    { top: "55%", left: "62%", label: "Memphis" },
+    { top: "57%", left: "66%", label: "Birmingham" },
+    { top: "60%", left: "62%", label: "Jackson" },
+    { top: "60%", left: "60%", label: "New Orleans" },
+    { top: "56%", left: "70%", label: "Atlanta", strong: true },
+    { top: "54%", left: "73%", label: "Charlotte" },
+    { top: "60%", left: "81%", label: "Miami", strong: true },
+    { top: "58%", left: "79%", label: "Orlando" },
+    { top: "57%", left: "77%", label: "Tampa" },
+    { top: "53%", left: "65%", label: "Nashville" },
+
+    // Mid-Atlantic / NE
+    { top: "46%", left: "75%", label: "Washington DC", strong: true },
+    { top: "43%", left: "76%", label: "Philadelphia" },
+    { top: "42%", left: "78%", label: "New York", strong: true },
+    { top: "38%", left: "81%", label: "Boston", strong: true },
+    { top: "45%", left: "72%", label: "Pittsburgh" },
+    { top: "42%", left: "72%", label: "Buffalo" },
+    { top: "42%", left: "74%", label: "Rochester" },
+
+    // Fillers to densify the look
+    { top: "49%", left: "67%" }, { top: "52%", left: "69%" }, { top: "47%", left: "70%" },
+    { top: "43%", left: "62%" }, { top: "51%", left: "61%" }, { top: "48%", left: "66%" },
+    { top: "41%", left: "60%" }, { top: "55%", left: "72%" }, { top: "58%", left: "71%" },
+    { top: "59%", left: "58%" }, { top: "62%", left: "57%" }, { top: "59%", left: "63%" },
+    { top: "50%", left: "59%" }, { top: "47%", left: "55%" }, { top: "53%", left: "52%" },
+    { top: "46%", left: "51%" }, { top: "41%", left: "56%" }, { top: "36%", left: "52%" },
+    { top: "35%", left: "48%" }, { top: "37%", left: "44%" }, { top: "33%", left: "40%" },
+    { top: "47%", left: "34%" }, { top: "52%", left: "36%" }, { top: "57%", left: "33%" },
   ];
 
   return (
     <>
-      {/* ring animation for pins */}
       <style jsx global>{`
-        @keyframes pinRing {
-          0%   { transform: translate(-50%, -50%) scale(.6); opacity:.35; }
-          65%  { transform: translate(-50%, -50%) scale(1.2); opacity:0; }
-          100% { transform: translate(-50%, -50%) scale(1.2); opacity:0; }
+        @keyframes pinPulse {
+          0% { transform: translate(-50%, -50%) scale(0.9); opacity: .45; }
+          50% { transform: translate(-50%, -50%) scale(1.08); opacity: .75; }
+          100% { transform: translate(-50%, -50%) scale(0.9); opacity: .45; }
         }
       `}</style>
 
       <div className="relative w-full h-96 overflow-hidden">
+        {/* Base map image (no border/shadow) */}
         <img
           src="/MAP.jpg"
           alt="US Coverage Map"
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Pins overlay — intensity via opacity */}
-        <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.9 }}>
-          {pins.map((p, i) => {
-            const coreSize = p.tier === 1 ? 12 : 8;
-            const ringSize = p.tier === 1 ? 28 : 22;
-            return (
-              <div key={`${p.label}-${i}`}>
-                {/* Core dot */}
-                <span
-                  className="absolute"
-                  style={{
-                    top: p.top,
-                    left: p.left,
-                    width: coreSize,
-                    height: coreSize,
-                    transform: "translate(-50%, -50%)",
-                    borderRadius: 9999,
-                    background: "#69bdff",
-                    boxShadow: "0 0 6px rgba(105,189,255,.6)",
-                  }}
-                />
-                {/* Ring ping (disabled for reduced motion) */}
-                {!prefersReduced && (
-                  <span
-                    className="absolute"
-                    style={{
-                      top: p.top,
-                      left: p.left,
-                      width: ringSize,
-                      height: ringSize,
-                      transform: "translate(-50%, -50%)",
-                      borderRadius: 9999,
-                      background:
-                        "radial-gradient(circle, rgba(105,189,255,.22) 0%, rgba(105,189,255,.06) 55%, rgba(105,189,255,0) 70%)",
-                      filter: "blur(2px)",
-                      animation: "pinRing 2.8s ease-out infinite",
-                      animationDelay: `${i * 0.18}s`,
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
+        {/* Dense pins layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {pins.map((p, i) => (
+            <div key={i}>
+              {/* Core dot */}
+              <span
+                className="absolute"
+                style={{
+                  top: p.top,
+                  left: p.left,
+                  width: 6,
+                  height: 6,
+                  borderRadius: "9999px",
+                  transform: "translate(-50%, -50%)",
+                  background: "rgba(105,189,255,0.95)",
+                  boxShadow: "0 0 6px rgba(105,189,255,0.6)",
+                }}
+              />
+              {/* Soft halo */}
+              <span
+                className="absolute"
+                style={{
+                  top: p.top,
+                  left: p.left,
+                  width: p.strong ? 32 : 22,
+                  height: p.strong ? 32 : 22,
+                  borderRadius: "9999px",
+                  transform: "translate(-50%, -50%)",
+                  background:
+                    "radial-gradient(circle, rgba(105,189,255,0.28) 0%, rgba(105,189,255,0.00) 70%)",
+                  filter: "blur(6px)",
+                  animation: "pinPulse 5.8s ease-in-out infinite",
+                  animationDelay: `${(i % 12) * 0.18}s`,
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </>
@@ -581,8 +690,12 @@ export default function Home() {
           <WordsTabs />
         </section>
 
-        {/* TRUSTED RESULTS */}
-        <section id="trusted" ref={statsRef} className="py-24">
+        {/* TRUSTED RESULTS — banded background */}
+        <section id="trusted" ref={statsRef} className="relative py-24">
+          <div
+            className="absolute inset-0 -z-10"
+            style={{ background: "linear-gradient(180deg, #1d2a35 0%, #16222c 100%)" }}
+          />
           <TypingSectionTitle text="Trusted Results" />
           <SectionWrap>
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center">
@@ -626,7 +739,7 @@ export default function Home() {
         </section>
 
         {/* EXECUTIVE TEAM */}
-        <section id="exec" className="py-24 relative">
+        <section id="exec" className="relative py-24">
           <TypingSectionTitle text="Executive Team" />
           <SectionWrap>
             {/* Grid with unified quote bar below (no layout jump) */}
@@ -680,7 +793,7 @@ export default function Home() {
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     className="text-center text-xl md:text-2xl text-white/95"
                   >
-                    <QuoteTyper text={execQuote} active={!!execQuote} speed={32} />
+                    <QuoteTyper text={execQuote} active={!!execQuote} speed={55} />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -696,25 +809,22 @@ export default function Home() {
           </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS */}
-        <section className="py-24">
+        {/* TESTIMONIALS — banded background with carousel */}
+        <section className="relative py-24">
+          <div
+            className="absolute inset-0 -z-10"
+            style={{ background: "linear-gradient(180deg, #0f1720 0%, #0b121a 100%)" }}
+          />
           <TypingSectionTitle text="What Our Clients Say" />
           <SectionWrap>
-            <div className="mt-10 min-h-[110px] text-center">
-              <AnimatePresence mode="wait">
-                <motion.blockquote
-                  key={displayText + "-t"}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative italic font-medium text-2xl md:text-3xl leading-snug text-white/95"
-                >
-                  <span className="absolute -left-6 -top-4 text-5xl text-white/30 select-none">“</span>
-                  Recruiting this fast? Unreal. — Tech Startup CEO
-                </motion.blockquote>
-              </AnimatePresence>
-            </div>
+            <QuotesCarousel
+              quotes={[
+                "Syfter delivered top candidates in days — felt like magic.",
+                "Recruiting this fast? Unreal. — Tech Startup CEO",
+                "Candidate quality was unmatched. — Healthcare Director",
+                "The process felt human and precise. — VP Engineering",
+              ]}
+            />
           </SectionWrap>
         </section>
 
@@ -729,8 +839,8 @@ export default function Home() {
                 </p>
                 <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
               </div>
-              {/* Map with pins (no border, no shadow) */}
-              <MapWithHeat />
+              {/* Pin-dense map (no border, no shadow) */}
+              <MapWithPins />
             </div>
             <div className="mt-12 text-center text-white/60 text-sm">
               © {new Date().getFullYear()} Syfter. All rights reserved.
