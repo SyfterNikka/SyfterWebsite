@@ -27,7 +27,7 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-/** Parallax translateY. (Typed as any on offset to keep TS happy across framer versions.) */
+/** Parallax translateY. (offset typed as any for framer-types compatibility) */
 function ParallaxY({
   children,
   strength = 12,
@@ -102,7 +102,7 @@ function TypingSectionTitle({ text }: { text: string }) {
   useEffect(() => {
     if (!started) return;
     if (chars >= text.length) return;
-    const t = setTimeout(() => setChars((c) => c + 1), 65); // slower typing
+    const t = setTimeout(() => setChars((c) => c + 1), 60); // slower typing
     return () => clearTimeout(t);
   }, [started, chars, text.length]);
 
@@ -222,7 +222,7 @@ function WordsTabs() {
           </ul>
         </div>
 
-        {/* RIGHT: wave reveal description, lowered for alignment */}
+        {/* RIGHT: description, lowered for alignment */}
         <div className="md:col-span-2 md:sticky md:top-24 mt-12 md:mt-28">
           <AnimatePresence mode="wait">
             <motion.div
@@ -251,7 +251,7 @@ function WordsTabs() {
 
 /* ---------------------------- Exec cards (clean) ------------------------- */
 
-function QuoteTyper({ text, active, speed = 55 }: { text: string; active: boolean; speed?: number }) {
+function QuoteTyper({ text, active, speed = 48 }: { text: string; active: boolean; speed?: number }) {
   const [chars, setChars] = useState(0);
   useEffect(() => {
     if (!active) {
@@ -334,201 +334,37 @@ function ExecCard({
   );
 }
 
-/* ------------------------ Testimonials: Carousel ------------------------- */
+/* ----------------------- Section background banding ---------------------- */
 
-function QuotesCarousel({
-  quotes,
-  intervalMs = 5200,
+function SectionBand({
+  children,
+  tone = "mid",
 }: {
-  quotes: string[];
-  intervalMs?: number;
+  children: React.ReactNode;
+  tone?: "light" | "mid" | "deep";
 }) {
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setI((p) => (p + 1) % quotes.length), intervalMs);
-    return () => clearInterval(id);
-  }, [quotes.length, intervalMs]);
+  const bg =
+    tone === "light"
+      ? "linear-gradient(180deg, #3A4A59 0%, #344251 100%)"
+      : tone === "deep"
+      ? "linear-gradient(180deg, #26313B 0%, #212A33 100%)"
+      : "linear-gradient(180deg, #324151 0%, #2A3643 100%)";
 
   return (
-    <div className="mt-10 min-h-[120px] text-center">
-      <AnimatePresence mode="wait">
-        <motion.blockquote
-          key={i}
-          initial={{ opacity: 0, y: 10, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.98 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
-          className="relative italic font-medium text-2xl md:text-3xl leading-snug text-white/95"
-        >
-          <span className="absolute -left-6 -top-4 text-5xl text-white/25 select-none">“</span>
-          {quotes[i]}
-        </motion.blockquote>
-      </AnimatePresence>
-
-      {/* dots */}
-      <div className="mt-6 flex items-center justify-center gap-2">
-        {quotes.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setI(idx)}
-            className={
-              "h-2 w-2 rounded-full transition " +
-              (idx === i ? "bg-white" : "bg-white/30 hover:bg-white/60")
-            }
-            aria-label={`Show quote ${idx + 1}`}
-          />
-        ))}
-      </div>
-    </div>
+    <section className="relative py-24">
+      <div className="absolute inset-0 -z-10" style={{ background: bg }} aria-hidden />
+      {children}
+    </section>
   );
 }
 
-/* ---------------------------- Map with dense pins ------------------------ */
+/* ------------------------------- Simple Map ------------------------------ */
 
-function MapWithPins() {
-  // A dense set of major US markets (approximate % positions).
-  const pins: { top: string; left: string; label?: string; strong?: boolean }[] = [
-    // West
-    { top: "36%", left: "16%", label: "Seattle", strong: true },
-    { top: "33%", left: "18%", label: "Spokane" },
-    { top: "42%", left: "21%", label: "Sacramento" },
-    { top: "44%", left: "20%", label: "San Francisco", strong: true },
-    { top: "46%", left: "21%", label: "San Jose" },
-    { top: "56%", left: "18%", label: "Los Angeles", strong: true },
-    { top: "60%", left: "19%", label: "San Diego" },
-    { top: "50%", left: "24%", label: "Las Vegas" },
-    { top: "44%", left: "31%", label: "Salt Lake City", strong: true },
-    { top: "48%", left: "31%", label: "Provo" },
-    { top: "56%", left: "28%", label: "Phoenix", strong: true },
-    { top: "60%", left: "29%", label: "Tucson" },
-    { top: "55%", left: "39%", label: "Albuquerque" },
-    { top: "37%", left: "26%", label: "Boise" },
-    { top: "31%", left: "36%", label: "Helena" },
-    { top: "34%", left: "41%", label: "Billings" },
-
-    // Mountain / Plains
-    { top: "48%", left: "49%", label: "Denver", strong: true },
-    { top: "43%", left: "44%", label: "Cheyenne" },
-    { top: "38%", left: "47%", label: "Rapid City" },
-    { top: "29%", left: "54%", label: "Fargo" },
-    { top: "41%", left: "50%", label: "Sioux Falls" },
-    { top: "43%", left: "54%", label: "Omaha" },
-    { top: "45%", left: "58%", label: "Des Moines" },
-    { top: "51%", left: "49%", label: "Wichita" },
-
-    // Texas + neighbors
-    { top: "55%", left: "54%", label: "Austin" },
-    { top: "61%", left: "53%", label: "San Antonio" },
-    { top: "60%", left: "55%", label: "Houston", strong: true },
-    { top: "55%", left: "57%", label: "Dallas", strong: true },
-    { top: "63%", left: "44%", label: "El Paso" },
-    { top: "55%", left: "49%", label: "Lubbock" },
-    { top: "52%", left: "53%", label: "Oklahoma City" },
-    { top: "50%", left: "54%", label: "Tulsa" },
-
-    // Midwest
-    { top: "40%", left: "64%", label: "Chicago", strong: true },
-    { top: "39%", left: "62%", label: "Milwaukee" },
-    { top: "44%", left: "63%", label: "Indianapolis" },
-    { top: "46%", left: "64%", label: "Cincinnati" },
-    { top: "44%", left: "66%", label: "Columbus" },
-    { top: "41%", left: "68%", label: "Cleveland" },
-    { top: "40%", left: "67%", label: "Detroit" },
-    { top: "33%", left: "59%", label: "Minneapolis", strong: true },
-    { top: "47%", left: "60%", label: "St. Louis" },
-    { top: "48%", left: "57%", label: "Kansas City" },
-
-    // South
-    { top: "55%", left: "62%", label: "Memphis" },
-    { top: "57%", left: "66%", label: "Birmingham" },
-    { top: "60%", left: "62%", label: "Jackson" },
-    { top: "60%", left: "60%", label: "New Orleans" },
-    { top: "56%", left: "70%", label: "Atlanta", strong: true },
-    { top: "54%", left: "73%", label: "Charlotte" },
-    { top: "60%", left: "81%", label: "Miami", strong: true },
-    { top: "58%", left: "79%", label: "Orlando" },
-    { top: "57%", left: "77%", label: "Tampa" },
-    { top: "53%", left: "65%", label: "Nashville" },
-
-    // Mid-Atlantic / NE
-    { top: "46%", left: "75%", label: "Washington DC", strong: true },
-    { top: "43%", left: "76%", label: "Philadelphia" },
-    { top: "42%", left: "78%", label: "New York", strong: true },
-    { top: "38%", left: "81%", label: "Boston", strong: true },
-    { top: "45%", left: "72%", label: "Pittsburgh" },
-    { top: "42%", left: "72%", label: "Buffalo" },
-    { top: "42%", left: "74%", label: "Rochester" },
-
-    // Fillers to densify the look
-    { top: "49%", left: "67%" }, { top: "52%", left: "69%" }, { top: "47%", left: "70%" },
-    { top: "43%", left: "62%" }, { top: "51%", left: "61%" }, { top: "48%", left: "66%" },
-    { top: "41%", left: "60%" }, { top: "55%", left: "72%" }, { top: "58%", left: "71%" },
-    { top: "59%", left: "58%" }, { top: "62%", left: "57%" }, { top: "59%", left: "63%" },
-    { top: "50%", left: "59%" }, { top: "47%", left: "55%" }, { top: "53%", left: "52%" },
-    { top: "46%", left: "51%" }, { top: "41%", left: "56%" }, { top: "36%", left: "52%" },
-    { top: "35%", left: "48%" }, { top: "37%", left: "44%" }, { top: "33%", left: "40%" },
-    { top: "47%", left: "34%" }, { top: "52%", left: "36%" }, { top: "57%", left: "33%" },
-  ];
-
+function MapSimple() {
   return (
-    <>
-      <style jsx global>{`
-        @keyframes pinPulse {
-          0% { transform: translate(-50%, -50%) scale(0.9); opacity: .45; }
-          50% { transform: translate(-50%, -50%) scale(1.08); opacity: .75; }
-          100% { transform: translate(-50%, -50%) scale(0.9); opacity: .45; }
-        }
-      `}</style>
-
-      <div className="relative w-full h-96 overflow-hidden">
-        {/* Base map image (no border/shadow) */}
-        <img
-          src="/MAP.jpg"
-          alt="US Coverage Map"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-
-        {/* Dense pins layer */}
-        <div className="absolute inset-0 pointer-events-none">
-          {pins.map((p, i) => (
-            <div key={i}>
-              {/* Core dot */}
-              <span
-                className="absolute"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  width: 6,
-                  height: 6,
-                  borderRadius: "9999px",
-                  transform: "translate(-50%, -50%)",
-                  background: "rgba(105,189,255,0.95)",
-                  boxShadow: "0 0 6px rgba(105,189,255,0.6)",
-                }}
-              />
-              {/* Soft halo */}
-              <span
-                className="absolute"
-                style={{
-                  top: p.top,
-                  left: p.left,
-                  width: p.strong ? 32 : 22,
-                  height: p.strong ? 32 : 22,
-                  borderRadius: "9999px",
-                  transform: "translate(-50%, -50%)",
-                  background:
-                    "radial-gradient(circle, rgba(105,189,255,0.28) 0%, rgba(105,189,255,0.00) 70%)",
-                  filter: "blur(6px)",
-                  animation: "pinPulse 5.8s ease-in-out infinite",
-                  animationDelay: `${(i % 12) * 0.18}s`,
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    <div className="relative w-full h-96 overflow-hidden">
+      <img src="/MAP.jpg" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
+    </div>
   );
 }
 
@@ -651,8 +487,12 @@ export default function Home() {
       </header>
 
       {/* PAGE BACKGROUND */}
-      <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
-        {/* HERO */}
+      <main
+        id="top"
+        className="min-h-screen text-white"
+        style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
+      >
+        {/* HERO (kept as-is over base gradient) */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
           <motion.div className="absolute inset-0" style={{ opacity: rainOpacity }}>
             <BinaryRain />
@@ -685,168 +525,172 @@ export default function Home() {
         </section>
 
         {/* WHY SYFTER */}
-        <section id="whysyfter" className="relative py-24">
+        <SectionBand tone="light">
           <TypingSectionTitle text="Why Syfter" />
           <WordsTabs />
-        </section>
+        </SectionBand>
 
-        {/* TRUSTED RESULTS — banded background */}
-        <section id="trusted" ref={statsRef} className="relative py-24">
-          <div
-            className="absolute inset-0 -z-10"
-            style={{ background: "linear-gradient(180deg, #1d2a35 0%, #16222c 100%)" }}
-          />
-          <TypingSectionTitle text="Trusted Results" />
-          <SectionWrap>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center">
-              {[
-                { val: d1, label: "HIRES PLACED", suffix: "", strength: 10 },
-                { val: d2, label: "AVG. FILL TIME (DAYS)", suffix: "", strength: 14 },
-                { val: d3, label: "RETENTION RATE", suffix: "%", strength: 12 },
-              ].map((s, i) => (
-                <div key={i} className="px-2 md:px-10">
-                  <div className="relative inline-block">
-                    <ParallaxY strength={s.strength}>
-                      <div className="text-[56px] leading-none font-extrabold tracking-tight">
-                        {s.val}
-                        {s.suffix}
-                      </div>
-                    </ParallaxY>
-                    {/* light sweep underline */}
-                    <motion.div
-                      className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full overflow-hidden relative"
-                      initial={{ scaleX: 0 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 * i }}
-                      style={{ transformOrigin: "left" }}
-                    >
-                      <motion.span
-                        className="absolute inset-y-0 left-0 w-8 bg-white/50"
-                        initial={{ x: -32, opacity: 0 }}
-                        whileInView={{ x: 80, opacity: 1 }}
+        {/* TRUSTED RESULTS */}
+        <SectionBand tone="mid">
+          <div id="trusted" ref={statsRef}>
+            <TypingSectionTitle text="Trusted Results" />
+            <SectionWrap>
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center">
+                {[
+                  { val: d1, label: "HIRES PLACED", suffix: "", strength: 10 },
+                  { val: d2, label: "AVG. FILL TIME (DAYS)", suffix: "", strength: 14 },
+                  { val: d3, label: "RETENTION RATE", suffix: "%", strength: 12 },
+                ].map((s, i) => (
+                  <div key={i} className="px-2 md:px-10">
+                    <div className="relative inline-block">
+                      <ParallaxY strength={s.strength}>
+                        <div className="text-[56px] leading-none font-extrabold tracking-tight">
+                          {s.val}
+                          {s.suffix}
+                        </div>
+                      </ParallaxY>
+                      {/* light sweep underline */}
+                      <motion.div
+                        className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full overflow-hidden relative"
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 * i }}
-                        style={{ filter: "blur(3px)" }}
-                      />
-                    </motion.div>
+                        transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 * i }}
+                        style={{ transformOrigin: "left" }}
+                      >
+                        <motion.span
+                          className="absolute inset-y-0 left-0 w-8 bg-white/50"
+                          initial={{ x: -32, opacity: 0 }}
+                          whileInView={{ x: 80, opacity: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.9, ease: "easeOut", delay: 0.2 * i }}
+                          style={{ filter: "blur(3px)" }}
+                        />
+                      </motion.div>
+                    </div>
+                    <p className="mt-4 text-xs tracking-widest text-white/70">{s.label}</p>
                   </div>
-                  <p className="mt-4 text-xs tracking-widest text-white/70">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </SectionWrap>
-        </section>
+                ))}
+              </div>
+            </SectionWrap>
+          </div>
+        </SectionBand>
 
         {/* EXECUTIVE TEAM */}
-        <section id="exec" className="relative py-24">
-          <TypingSectionTitle text="Executive Team" />
-          <SectionWrap>
-            {/* Grid with unified quote bar below (no layout jump) */}
-            <div
-              className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
-              onMouseLeave={() => setExecQuote("")}
-            >
-              <ExecCard
-                name="Steven Perlman"
-                title="CEO"
-                img="/team/steve.jpg"
-                onHover={() => setExecQuote(execQuotes[0])}
-                delay={0.0}
-                parallaxStrength={12}
-              />
-              <ExecCard
-                name="Matt Hall"
-                title="CRO"
-                img="/team/matt.jpg"
-                onHover={() => setExecQuote(execQuotes[1])}
-                delay={0.12}
-                parallaxStrength={16}
-              />
-              <ExecCard
-                name="Nikka Winchell"
-                title="CRO"
-                img="/team/nikka.jpg"
-                onHover={() => setExecQuote(execQuotes[2])}
-                delay={0.24}
-                parallaxStrength={14}
-              />
-              <ExecCard
-                name="Ira Plutner"
-                title="CFO"
-                img="/team/ira.jpg"
-                onHover={() => setExecQuote(execQuotes[3])}
-                delay={0.36}
-                parallaxStrength={10}
-              />
-            </div>
+        <SectionBand tone="mid">
+          <div id="exec">
+            <TypingSectionTitle text="Executive Team" />
+            <SectionWrap>
+              {/* Grid with unified quote bar below (no layout jump) */}
+              <div
+                className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center"
+                onMouseLeave={() => setExecQuote("")}
+              >
+                <ExecCard
+                  name="Steven Perlman"
+                  title="CEO"
+                  img="/team/steve.jpg"
+                  onHover={() => setExecQuote(execQuotes[0])}
+                  delay={0.0}
+                  parallaxStrength={12}
+                />
+                <ExecCard
+                  name="Matt Hall"
+                  title="CRO"
+                  img="/team/matt.jpg"
+                  onHover={() => setExecQuote(execQuotes[1])}
+                  delay={0.12}
+                  parallaxStrength={16}
+                />
+                <ExecCard
+                  name="Nikka Winchell"
+                  title="CRO"
+                  img="/team/nikka.jpg"
+                  onHover={() => setExecQuote(execQuotes[2])}
+                  delay={0.24}
+                  parallaxStrength={14}
+                />
+                <ExecCard
+                  name="Ira Plutner"
+                  title="CFO"
+                  img="/team/ira.jpg"
+                  onHover={() => setExecQuote(execQuotes[3])}
+                  delay={0.36}
+                  parallaxStrength={10}
+                />
+              </div>
 
-            {/* Reserved height quote area so section height stays constant */}
-            <div className="mt-8 min-h-[64px] flex items-center justify-center">
+              {/* Reserved height quote area so section height stays constant */}
+              <div className="mt-8 min-h-[80px] flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  {execQuote ? (
+                    <motion.div
+                      key={execQuote}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="text-center text-xl md:text-2xl text-white/95"
+                    >
+                      <QuoteTyper text={execQuote} active={!!execQuote} speed={48} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="placeholder"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-xl md:text-2xl"
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            </SectionWrap>
+          </div>
+        </SectionBand>
+
+        {/* TESTIMONIALS */}
+        <SectionBand tone="deep">
+          <TypingSectionTitle text="What Our Clients Say" />
+          <SectionWrap>
+            <div className="mt-10 min-h-[110px] text-center">
               <AnimatePresence mode="wait">
-                {execQuote ? (
-                  <motion.div
-                    key={execQuote}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="text-center text-xl md:text-2xl text-white/95"
-                  >
-                    <QuoteTyper text={execQuote} active={!!execQuote} speed={55} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="placeholder"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.0 }}
-                    exit={{ opacity: 0 }}
-                    className="text-xl md:text-2xl"
-                  />
-                )}
+                <motion.blockquote
+                  key="client-1"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative italic font-medium text-2xl md:text-[28px] leading-snug text-white/95"
+                >
+                  <span className="absolute -left-6 -top-4 text-5xl text-white/30 select-none">“</span>
+                  Recruiting this fast? Unreal. — Tech Startup CEO
+                </motion.blockquote>
               </AnimatePresence>
             </div>
           </SectionWrap>
-        </section>
-
-        {/* TESTIMONIALS — banded background with carousel */}
-        <section className="relative py-24">
-          <div
-            className="absolute inset-0 -z-10"
-            style={{ background: "linear-gradient(180deg, #0f1720 0%, #0b121a 100%)" }}
-          />
-          <TypingSectionTitle text="What Our Clients Say" />
-          <SectionWrap>
-            <QuotesCarousel
-              quotes={[
-                "Syfter delivered top candidates in days — felt like magic.",
-                "Recruiting this fast? Unreal. — Tech Startup CEO",
-                "Candidate quality was unmatched. — Healthcare Director",
-                "The process felt human and precise. — VP Engineering",
-              ]}
-            />
-          </SectionWrap>
-        </section>
+        </SectionBand>
 
         {/* CONTACT / MAP */}
-        <section id="contact" className="py-24">
-          <TypingSectionTitle text="Let’s Build the Future of Work" />
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-              <div className="text-center md:text-left">
-                <p className="mb-6 text-lg leading-relaxed text-white/90">
-                  Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
-                </p>
-                <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
+        <SectionBand tone="mid">
+          <div id="contact">
+            <TypingSectionTitle text="Let’s Build the Future of Work" />
+            <SectionWrap>
+              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
+                <div className="text-center md:text-left">
+                  <p className="mb-6 text-lg leading-relaxed text-white/90">
+                    Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
+                  </p>
+                  <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
+                </div>
+                <MapSimple />
               </div>
-              {/* Pin-dense map (no border, no shadow) */}
-              <MapWithPins />
-            </div>
-            <div className="mt-12 text-center text-white/60 text-sm">
-              © {new Date().getFullYear()} Syfter. All rights reserved.
-            </div>
-          </SectionWrap>
-        </section>
+              <div className="mt-12 text-center text-white/60 text-sm">
+                © {new Date().getFullYear()} Syfter. All rights reserved.
+              </div>
+            </SectionWrap>
+          </div>
+        </SectionBand>
       </main>
     </>
   );
