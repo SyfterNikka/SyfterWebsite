@@ -10,12 +10,10 @@ import {
   useReducedMotion,
   type MotionProps,
 } from "framer-motion";
-import type { Variants } from "framer-motion";
 import BinaryRain from "@/components/BinaryRain";
 
-/* ---------------------------------- */
-/* Motion presets                      */
-/* ---------------------------------- */
+/* ----------------------------- Motion presets ---------------------------- */
+
 const fadeIn: MotionProps = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -23,19 +21,40 @@ const fadeIn: MotionProps = {
   viewport: { once: false, amount: 0.3 },
 };
 
-const staggerContainer: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-};
+/* ------------------------------ Small helpers --------------------------- */
 
-const statIn: Variants = {
-  hidden: { opacity: 0, y: 12, scale: 0.96 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
-};
+function SectionWrap({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto max-w-6xl px-6">{children}</div>;
+}
 
-/* ---------------------------------- */
-/* Utilities                           */
-/* ---------------------------------- */
+/** Parallax translateY.  (Typed as any on offset to keep TS happy across framer versions.) */
+function ParallaxY({
+  children,
+  strength = 12,
+  mode = "default",
+}: {
+  children: React.ReactNode;
+  strength?: number;
+  mode?: "default" | "late";
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const prefersReduced = useReducedMotion();
+  const offsets = mode === "late" ? ["start 85%", "end 15%"] : ["start 80%", "end 20%"];
+  const { scrollYProgress } = useScroll({ target: ref, offset: offsets as any });
+  const yRaw = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [prefersReduced ? 0 : strength, prefersReduced ? 0 : -strength]
+  );
+  const y = useSpring(yRaw, { stiffness: 120, damping: 18, mass: 0.4 });
+  return (
+    <div ref={ref}>
+      <motion.div style={{ y }}>{children}</motion.div>
+    </div>
+  );
+}
+
+/** Odometer-like count with a tiny overshoot */
 function useOdometer(target: number, startOn = true, durationMs = 1600) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
@@ -50,7 +69,6 @@ function useOdometer(target: number, startOn = true, durationMs = 1600) {
       if (p < 1) {
         raf = requestAnimationFrame(animate);
       } else {
-        // tiny overshoot flicker
         setTimeout(() => setDisplay(target + 1), 90);
         setTimeout(() => setDisplay(target), 180);
       }
@@ -61,259 +79,52 @@ function useOdometer(target: number, startOn = true, durationMs = 1600) {
   return display;
 }
 
-/* Section content centered */
-function SectionWrap({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-6xl px-6">{children}</div>;
-}
+/* ------------------------ Typewriter Section Title ----------------------- */
 
-/* Title row: left-aligned heading + underline */
-function SectionTitle({ children }: { children: string }) {
+function TypingSectionTitle({ text }: { text: string }) {
+  const [started, setStarted] = useState(false);
+  const [chars, setChars] = useState(0);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) setStarted(true);
+      },
+      { threshold: 0.6 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+    if (chars >= text.length) return;
+    const t = setTimeout(() => setChars((c) => c + 1), 30); // typing speed
+    return () => clearTimeout(t);
+  }, [started, chars, text.length]);
+
   return (
-    <div className="mx-auto max-w-7xl pl-2 pr-6">
-      <motion.h2
-        className="text-5xl md:text-6xl font-extrabold tracking-tight text-left"
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.5 }}
-      >
-        {children}
-      </motion.h2>
+    <div ref={ref} className="mx-auto max-w-7xl pl-2 pr-6">
+      <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight text-left">
+        <span aria-label={text}>{text.slice(0, chars)}</span>
+        <span className="inline-block w-[0.55ch] border-r-2 border-white/80 ml-[1px] align-middle animate-pulse" />
+      </h2>
       <motion.div
         className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
         initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
+        animate={started ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        viewport={{ once: true, amount: 0.6 }}
         style={{ transformOrigin: "left" }}
       />
     </div>
   );
 }
 
-/* ---------------------------------- */
-/* Parallax helper (TS-safe via any)   */
-/* ---------------------------------- */
-function ParallaxY({
-  children,
-  strength = 12,
-  mode = "default",
-}: {
-  children: React.ReactNode;
-  strength?: number;
-  mode?: "default" | "late";
-}) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const prefersReduced = useReducedMotion();
+/* --------------------------- Why Syfter words --------------------------- */
 
-  const offsets = mode === "late" ? ["start 85%", "end 15%"] : ["start 80%", "end 20%"];
-  const { scrollYProgress } = useScroll({ target: ref, offset: offsets as any });
-
-  const yRaw = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [prefersReduced ? 0 : strength, prefersReduced ? 0 : -strength]
-  );
-  const y = useSpring(yRaw, { stiffness: 120, damping: 18, mass: 0.4 });
-
-  return (
-    <div ref={ref}>
-      <motion.div style={{ y }}>{children}</motion.div>
-    </div>
-  );
-}
-
-/* ---------------------------------- */
-/* Ocean extras for Exec Team          */
-/* ---------------------------------- */
-function OceanRippleDefs() {
-  return (
-    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
-      <filter id="ripple">
-        <feTurbulence type="fractalNoise" baseFrequency="0.015 0.02" numOctaves="2" seed="3" result="noise">
-          <animate attributeName="baseFrequency" dur="4s" values="0.012 0.016;0.02 0.024;0.012 0.016" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="6">
-          <animate attributeName="scale" dur="3.6s" values="3;7;3" repeatCount="indefinite" />
-        </feDisplacementMap>
-      </filter>
-    </svg>
-  );
-}
-
-/* Gentle background bubbles for depth */
-function OceanBackgroundBubbles() {
-  return (
-    <>
-      <style jsx global>{`
-        @keyframes rise {
-          0% { transform: translateY(40px) scale(0.9); opacity: 0; }
-          40% { opacity: .14; }
-          100% { transform: translateY(-260px) scale(1.04); opacity: 0; }
-        }
-      `}</style>
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        {[
-          { left: "12%", size: 120, dur: 18, delay: 0 },
-          { left: "28%", size: 70,  dur: 14, delay: 3 },
-          { left: "46%", size: 90,  dur: 20, delay: 1.2 },
-          { left: "62%", size: 110, dur: 17, delay: 2.6 },
-          { left: "78%", size: 80,  dur: 15, delay: 4.2 },
-        ].map((b, i) => (
-          <span
-            key={i}
-            style={{
-              left: b.left,
-              width: b.size,
-              height: b.size,
-              animation: `rise ${b.dur}s linear ${b.delay}s infinite`,
-            }}
-            className="absolute bottom-0 rounded-full bg-white/6 blur-md"
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/* Team card with tide-reveal bio + grayscale→color + bobbing + subtle tilt */
-function TeamCardOcean({
-  name,
-  title,
-  img,
-  bio,
-  isActive,
-  onActive,
-  delay = 0,
-  parallaxStrength = 12,
-}: {
-  name: string;
-  title: string;
-  img: string;
-  bio: string;
-  isActive: boolean;
-  onActive: () => void;
-  delay?: number;
-  parallaxStrength?: number;
-}) {
-  const prefersReduced = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
-  const [rx, setRx] = useState(0);
-  const [ry, setRy] = useState(0);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    setRy(px * 6);
-    setRx(-py * 6);
-  };
-
-  const onLeave = () => {
-    setHovered(false);
-    setRx(0);
-    setRy(0);
-  };
-
-  const show = hovered || isActive;
-
-  return (
-    <motion.figure
-      initial={{ opacity: 0, y: 28, scale: 0.94 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 1.0, ease: "easeOut", delay }}
-      className="relative flex flex-col items-center text-center"
-      onMouseEnter={onActive}
-      onFocus={onActive}
-    >
-      {/* slow bob */}
-      <motion.div
-        animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
-        transition={prefersReduced ? undefined : { duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {/* parallax drift */}
-        <ParallaxY strength={parallaxStrength} mode="late">
-          <div
-            ref={ref}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={onLeave}
-            onMouseMove={onMove}
-            style={{
-              transform: prefersReduced ? undefined : `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`,
-              willChange: "transform, filter, clip-path",
-            }}
-            className={
-              "relative w-44 h-44 rounded-full overflow-hidden border shadow-2xl " +
-              (show ? "border-white/20" : "border-white/10")
-            }
-          >
-            {/* avatar grayscale->color; ripple only while hovered/active */}
-            <img
-              src={img}
-              alt={name}
-              className={
-                "w-full h-full object-cover transition-all duration-300 " +
-                (show ? "grayscale-0" : "grayscale")
-              }
-              style={{ filter: show ? "url(#ripple)" : undefined }}
-            />
-
-            {/* Tide reveal overlay wiping upward */}
-            <motion.div
-              aria-hidden
-              initial={false}
-              animate={show ? { clipPath: "inset(0% 0% 0% 0% round 0% 0% 0% 0%)" } : { clipPath: "inset(100% 0% 0% 0% round 50% 50% 0% 0%)" }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(105,189,255,0.10) 0%, rgba(105,189,255,0.18) 40%, rgba(105,189,255,0.0) 100%)",
-                mixBlendMode: "screen",
-              }}
-            />
-            {/* subtle light sweep */}
-            <motion.div
-              initial={false}
-              animate={{ x: show ? "120%" : "-60%" }}
-              transition={{ duration: 1.1, ease: "easeOut" }}
-              className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/12 to-transparent"
-              style={{ mixBlendMode: "screen" }}
-            />
-          </div>
-        </ParallaxY>
-      </motion.div>
-
-      {/* Caption */}
-      <figcaption className="mt-5">
-        <div className={"text-base font-bold " + (show ? "text-white" : "text-white/90")}>{name}</div>
-        <div className={"text-sm " + (show ? "text-white/80" : "text-white/60")}>{title}</div>
-      </figcaption>
-
-      {/* Slide-in bio panel on hover/active (desktop) */}
-      <AnimatePresence>
-        {show && (
-          <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="hidden md:block absolute left-full top-1/2 -translate-y-1/2 ml-4 w-56 text-left rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-[2px]"
-          >
-            <div className="text-sm text-white/90">{bio}</div>
-            <div className="mt-3 h-[2px] w-10 bg-[#69bdff] rounded-full" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.figure>
-  );
-}
-
-/* ---------------------------------- */
-/* WHY SYFTER – Kinetic words + wave reveal desc + bg word */
 type Feature = { key: string; title: string; desc: string; drift: number; bgWord: string };
 
 function WordsTabs() {
@@ -352,7 +163,7 @@ function WordsTabs() {
         onKeyDown={onKeyDown}
         aria-label="Why Syfter features"
       >
-        {/* Floating background word for drama */}
+        {/* Background word */}
         <AnimatePresence mode="wait">
           <motion.div
             key={active.bgWord}
@@ -368,7 +179,7 @@ function WordsTabs() {
           </motion.div>
         </AnimatePresence>
 
-        {/* LEFT: big words */}
+        {/* LEFT: kinetic words */}
         <div className="md:col-span-3 relative mt-16">
           <ul className="space-y-6 md:space-y-7">
             {items.map((it, idx) => {
@@ -401,7 +212,7 @@ function WordsTabs() {
                         (isActive ? "text-5xl md:text-7xl " : "text-5xl md:text-6xl ") +
                         (isActive ? "text-white" : "text-white/40 hover:text-white/80")
                       }
-                  >
+                    >
                       {it.title}
                     </motion.span>
                   </motion.button>
@@ -411,7 +222,7 @@ function WordsTabs() {
           </ul>
         </div>
 
-        {/* RIGHT: wave-reveal description, lowered for alignment */}
+        {/* RIGHT: wave reveal description, lowered for alignment */}
         <div className="md:col-span-2 md:sticky md:top-24 mt-12 md:mt-28">
           <AnimatePresence mode="wait">
             <motion.div
@@ -438,9 +249,148 @@ function WordsTabs() {
   );
 }
 
-/* ---------------------------------- */
-/* Page                                */
-/* ---------------------------------- */
+/* ---------------------------- Exec cards (clean) ------------------------- */
+
+function QuoteTyper({ text, active }: { text: string; active: boolean }) {
+  const [chars, setChars] = useState(0);
+  useEffect(() => {
+    if (!active) {
+      setChars(0);
+      return;
+    }
+    if (chars >= text.length) return;
+    const t = setTimeout(() => setChars((c) => c + 1), 18);
+    return () => clearTimeout(t);
+  }, [active, chars, text.length]);
+  return <span>{text.slice(0, chars)}</span>;
+}
+
+function ExecCard({
+  name,
+  title,
+  img,
+  quote,
+  delay = 0,
+  parallaxStrength = 12,
+}: {
+  name: string;
+  title: string;
+  img: string;
+  quote: string;
+  delay?: number;
+  parallaxStrength?: number;
+}) {
+  const prefersReduced = useReducedMotion();
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.figure
+      initial={{ opacity: 0, y: 28, scale: 0.94 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{ duration: 1.0, ease: "easeOut", delay }}
+      className="w-[13rem] sm:w-[14rem] flex flex-col items-center text-center"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
+      <motion.div
+        animate={prefersReduced ? undefined : { y: [0, -5, 0, 4, 0] }}
+        transition={prefersReduced ? undefined : { duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <ParallaxY strength={parallaxStrength} mode="late">
+          <div className="relative w-44 h-44 rounded-full overflow-hidden border border-white/10 shadow-2xl">
+            <img
+              src={img}
+              alt={name}
+              className={"w-full h-full object-cover transition-all duration-300 " + (hovered ? "grayscale-0" : "grayscale")}
+            />
+            {/* soft light sweep */}
+            <motion.div
+              initial={false}
+              animate={{ x: hovered ? "120%" : "-60%" }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+              className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              style={{ mixBlendMode: "screen" }}
+            />
+          </div>
+        </ParallaxY>
+      </motion.div>
+
+      {/* Name/Title */}
+      <figcaption className="mt-5">
+        <div className="text-base font-bold">{name}</div>
+        <div className="text-sm text-white/80">{title}</div>
+      </figcaption>
+
+      {/* Quote bar under the bubble */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="mt-3 w-full rounded-xl bg-white/6 border border-white/10 px-4 py-3 text-sm text-white/90"
+          >
+            <QuoteTyper text={quote} active={hovered} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.figure>
+  );
+}
+
+/* ---------------------------- Map with pulsing pins ---------------------- */
+
+function MapWithPins() {
+  // rough % positions for NYC & Denver; tweak if your /MAP.jpg changes
+  const pins = [
+    { id: "nyc", label: "New York, NY (HQ)", top: "42%", left: "78%" },
+    { id: "denver", label: "Denver, CO", top: "48%", left: "50%" },
+  ];
+
+  return (
+    <>
+      <style jsx global>{`
+        @keyframes pulsePin {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.25); opacity: .55; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
+      <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg">
+        <img src="/MAP.jpg" alt="US Coverage Map" className="absolute inset-0 w-full h-full object-cover" />
+        {/* overlay pins */}
+        {pins.map((p) => (
+          <div
+            key={p.id}
+            className="absolute"
+            style={{ top: p.top, left: p.left, transform: "translate(-50%, -50%)" }}
+          >
+            <div className="group relative">
+              {/* core dot */}
+              <span className="block w-3 h-3 rounded-full bg-[#69bdff] shadow" />
+              {/* pulse ring */}
+              <span
+                className="absolute inset-0 rounded-full border-2 border-[#69bdff]/60"
+                style={{ animation: "pulsePin 1.6s ease-in-out infinite" }}
+              />
+              {/* tooltip */}
+              <div className="absolute left-1/2 top-6 -translate-x-1/2 whitespace-nowrap rounded-md bg-black/70 px-3 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                {p.label}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* ---------------------------------- Page --------------------------------- */
+
 export default function Home() {
   // Hero typewriter
   const words = useMemo(() => ["Smarter", "Faster", "Securely", "Syfter"], []);
@@ -469,7 +419,7 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [i, del, w, words]);
 
-  // Hero rain blend
+  // Hero blend
   const heroRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] as any });
   const rainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.45, 0]);
@@ -506,9 +456,6 @@ export default function Home() {
   const d2 = useOdometer(5, statsActive);
   const d3 = useOdometer(98, statsActive);
 
-  // Exec team active focus index for depth-of-field
-  const [activeExec, setActiveExec] = useState<number | null>(null);
-
   return (
     <>
       <Head>
@@ -516,7 +463,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* NAV — transparent, shrinks, bottom border after scroll; no blur */}
+      {/* NAV */}
       <header
         className={
           "fixed top-0 inset-x-0 z-50 transition-transform duration-300 " +
@@ -551,7 +498,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* PAGE */}
+      {/* PAGE BACKGROUND */}
       <main id="top" className="min-h-screen text-white" style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}>
         {/* HERO */}
         <section ref={heroRef} className="relative h-screen overflow-hidden">
@@ -587,32 +534,29 @@ export default function Home() {
 
         {/* WHY SYFTER */}
         <section id="whysyfter" className="relative py-24">
-          <SectionTitle>Why Syfter</SectionTitle>
+          <TypingSectionTitle text="Why Syfter" />
           <WordsTabs />
         </section>
 
-        {/* TRUSTED RESULTS — odometer + light sweep + parallax */}
+        {/* TRUSTED RESULTS */}
         <section id="trusted" ref={statsRef} className="py-24">
-          <SectionTitle>Trusted Results</SectionTitle>
+          <TypingSectionTitle text="Trusted Results" />
           <SectionWrap>
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.35 }}
-              className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center"
-            >
-              {[{ val: d1, label: "HIRES PLACED", suffix: "", strength: 10 },
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 items-start gap-10 md:gap-0 md:divide-x md:divide-white/10 text-center">
+              {[
+                { val: d1, label: "HIRES PLACED", suffix: "", strength: 10 },
                 { val: d2, label: "AVG. FILL TIME (DAYS)", suffix: "", strength: 14 },
-                { val: d3, label: "RETENTION RATE", suffix: "%", strength: 12 }].map((s, i) => (
-                <motion.div key={i} variants={statIn} className="px-2 md:px-10">
+                { val: d3, label: "RETENTION RATE", suffix: "%", strength: 12 },
+              ].map((s, i) => (
+                <div key={i} className="px-2 md:px-10">
                   <div className="relative inline-block">
                     <ParallaxY strength={s.strength}>
                       <div className="text-[56px] leading-none font-extrabold tracking-tight">
-                        {s.val}{s.suffix}
+                        {s.val}
+                        {s.suffix}
                       </div>
                     </ParallaxY>
-                    {/* light sweep under number */}
+                    {/* light sweep underline */}
                     <motion.div
                       className="mx-auto mt-3 h-[3px] w-16 bg-[#69bdff] rounded-full overflow-hidden relative"
                       initial={{ scaleX: 0 }}
@@ -632,53 +576,58 @@ export default function Home() {
                     </motion.div>
                   </div>
                   <p className="mt-4 text-xs tracking-widest text-white/70">{s.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </SectionWrap>
-        </section>
-
-        {/* EXEC TEAM — tide-reveal bios + depth focus + ocean vibe */}
-        <section id="exec" className="py-24 relative">
-          <SectionTitle>Executive Team</SectionTitle>
-          <OceanRippleDefs />
-          <OceanBackgroundBubbles />
-
-          <SectionWrap>
-            <div
-              className={
-                "mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center " +
-                (activeExec !== null ? "md:[&>*:not(:nth-child(" + ((activeExec ?? 0) + 1) + "))]:opacity-60" : "")
-              }
-            >
-              {[
-                { name: "Steven Perlman", title: "CEO", img: "/team/steve.jpg", bio: "Ex-Oracle | Built high-scale hiring ops." , strength: 12 },
-                { name: "Matt Hall", title: "CRO", img: "/team/matt.jpg", bio: "Enterprise GTM leader | FinTech & SaaS.", strength: 16 },
-                { name: "Nikka Winchell", title: "CRO", img: "/team/nikka.jpg", bio: "Brand + revenue architect | Ops obsessive.", strength: 14 },
-                { name: "Ira Plutner", title: "CFO", img: "/team/ira.jpg", bio: "Finance & FP&A | Growth-stage operator.", strength: 10 },
-              ].map((m, i) => (
-                <div key={i} onMouseLeave={() => setActiveExec(null)}>
-                  <TeamCardOcean
-                    name={m.name}
-                    title={m.title}
-                    img={m.img}
-                    bio={m.bio}
-                    isActive={activeExec === i}
-                    onActive={() => setActiveExec(i)}
-                    delay={i * 0.12}
-                    parallaxStrength={m.strength}
-                  />
                 </div>
               ))}
             </div>
           </SectionWrap>
         </section>
 
-        {/* TESTIMONIALS (kept simple & classy) */}
-        <section className="py-24">
-          <SectionTitle>What Our Clients Say</SectionTitle>
+        {/* EXECUTIVE TEAM */}
+        <section id="exec" className="py-24 relative">
+          <TypingSectionTitle text="Executive Team" />
           <SectionWrap>
-            <div className="mt-10 min-h-[96px] text-center">
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 justify-items-center">
+              <ExecCard
+                name="Steven Perlman"
+                title="CEO"
+                img="/team/steve.jpg"
+                quote="Built high-scale hiring ops. Ex-Oracle."
+                delay={0.0}
+                parallaxStrength={12}
+              />
+              <ExecCard
+                name="Matt Hall"
+                title="CRO"
+                img="/team/matt.jpg"
+                quote="Enterprise GTM leader across SaaS & FinTech."
+                delay={0.12}
+                parallaxStrength={16}
+              />
+              <ExecCard
+                name="Nikka Winchell"
+                title="CRO"
+                img="/team/nikka.jpg"
+                quote="Brand + revenue architect. Ops-obsessed."
+                delay={0.24}
+                parallaxStrength={14}
+              />
+              <ExecCard
+                name="Ira Plutner"
+                title="CFO"
+                img="/team/ira.jpg"
+                quote="Finance & FP&A at growth-stage companies."
+                delay={0.36}
+                parallaxStrength={10}
+              />
+            </div>
+          </SectionWrap>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section className="py-24">
+          <TypingSectionTitle text="What Our Clients Say" />
+          <SectionWrap>
+            <div className="mt-10 min-h-[120px] text-center">
               <AnimatePresence mode="wait">
                 <motion.blockquote
                   key={displayText + "-t"}
@@ -686,29 +635,29 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.5 }}
-                  className="italic text-lg text-white/90"
+                  className="relative font-medium text-3xl md:text-4xl leading-snug text-white/95"
                 >
-                  “Recruiting this fast? Unreal.” — Tech Startup CEO
+                  <span className="absolute -left-6 -top-4 text-5xl text-white/30 select-none">“</span>
+                  Recruiting this fast? Unreal. — Tech Startup CEO
                 </motion.blockquote>
               </AnimatePresence>
             </div>
           </SectionWrap>
         </section>
 
-        {/* CONTACT */}
+        {/* CONTACT / MAP */}
         <section id="contact" className="py-24">
-          <SectionTitle>Let’s Build the Future of Work</SectionTitle>
+          <TypingSectionTitle text="Let’s Build the Future of Work" />
           <SectionWrap>
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
               <div className="text-center md:text-left">
                 <p className="mb-6 text-lg leading-relaxed text-white/90">
                   Join hundreds of companies who trust Syfter to hire smarter, faster, and with clarity.
                 </p>
-                <p className="mb-4 text-md text-white/80">New York, NY, Denver, CO, Remote Nationwide</p>
+                <p className="mb-4 text-md text-white/80">New York, NY • Denver, CO • Remote Nationwide</p>
               </div>
-              <div className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg border border-white/10">
-                <img src="/MAP.jpg" alt="US Coverage Map" className="w-full h-full object-cover" />
-              </div>
+              {/* Map without border, with pulsing pins */}
+              <MapWithPins />
             </div>
             <div className="mt-12 text-center text-white/60 text-sm">
               © {new Date().getFullYear()} Syfter. All rights reserved.
