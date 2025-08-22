@@ -1,6 +1,7 @@
 // pages/index.tsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import {
   motion,
   AnimatePresence,
@@ -454,20 +455,31 @@ export default function Home() {
               Syfter
             </a>
             <div className="hidden md:flex items-center gap-8 text-sm text-white/80">
-              {[
-                { t: "Why Syfter", id: "whysyfter" },
-                { t: "Find Work", id: "findwork" },
-                { t: "Hire Talent", id: "hiretalent" },
-                { t: "Contact", id: "contact" },
-              ].map((l) => (
-                <a
-                  key={l.id}
-                  href={`#${l.id}`}
-                  className="relative hover:text-white transition-colors after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[#69bdff] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  {l.t}
-                </a>
-              ))}
+             {[
+  { t: "Why Syfter", id: "whysyfter" },
+  { t: "Find Work", id: "findwork" },
+  { t: "Hire Talent", id: "hiretalent" },
+  { t: "Contact", id: "contact" },
+  { t: "Content", id: "content" },
+].map((l) =>
+  l.id === "content" ? (
+    <Link
+      key={l.id}
+      href="/content"
+      className="relative hover:text-white transition-colors after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[#69bdff] after:transition-all after:duration-300 hover:after:w-full"
+    >
+      {l.t}
+    </Link>
+  ) : (
+    <a
+      key={l.id}
+      href={`#${l.id}`}
+      className="relative hover:text-white transition-colors after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-[#69bdff] after:transition-all after:duration-300 hover:after:w-full"
+    >
+      {l.t}
+    </a>
+  )
+)}
             </div>
           </nav>
         </div>
