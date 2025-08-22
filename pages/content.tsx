@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 /* ---------- Small layout helpers (local copy so this file is standalone) ---------- */
 
@@ -12,21 +13,24 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
 
 function TypingSectionTitle({ text }: { text: string }) {
   // light, one-time “type” effect
-  const [chars, setChars] = React.useState(0);
-  const [started, setStarted] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [chars, setChars] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started) setStarted(true);
-    }, { threshold: 0.6 });
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) setStarted(true);
+      },
+      { threshold: 0.6 }
+    );
     obs.observe(el);
     return () => obs.disconnect();
   }, [started]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!started) return;
     if (chars >= text.length) return;
     const t = setTimeout(() => setChars((c) => c + 1), 55);
