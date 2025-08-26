@@ -79,7 +79,7 @@ const posts: Post[] = [
   {
     title: "Why Location-Based Sourcing Beats Nationwide Job Boards in Remote Tech Hiring",
     href: "/blog/location-based-sourcing",
-    image: "/blog/location-sourcing.jpg",
+    image: "/blog/BLOG2.avif",
     excerpt: "Precision over volume: how location focus wins in remote hiring.",
     date: "2025-05-12",
     tags: ["Strategy", "Remote"],
@@ -88,7 +88,7 @@ const posts: Post[] = [
   {
     title: "When Candidates Ghost: A Guide to Fixing Your Hiring Process",
     href: "/blog/candidates-ghosting",
-    image: "/blog/ghosting.jpg",
+    image: "/blog/BLOG3.avif",
     excerpt: "Ghosting is feedback. Here’s how to fix the process signals causing it.",
     date: "2025-05-05",
     tags: ["Process", "Experience"],
@@ -97,7 +97,7 @@ const posts: Post[] = [
   {
     title: "How to Win at Remote Tech Hiring in 2025: Why Location Strategy Still Matters",
     href: "/blog/remote-tech-hiring-2025",
-    image: "/blog/remote-2025.jpg",
+    image: "/blog/BLOG4.avif",
     excerpt: "Remote doesn’t erase geography — it amplifies it.",
     date: "2025-04-28",
     tags: ["Strategy", "Compensation"],
