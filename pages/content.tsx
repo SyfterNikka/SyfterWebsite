@@ -70,7 +70,7 @@ const posts: Post[] = [
   {
     title: "Remote Hiring Is Not About Location. It’s About How You Operate.",
     href: "/blog/remote-hiring-ops",
-    image: "/blog/remote-ops.jpg",
+    image: "/blog/BLOG1.avif",
     excerpt: "Remote isn’t just a location strategy — it’s an operating model.",
     date: "2025-05-19",
     tags: ["Remote", "Process"],
