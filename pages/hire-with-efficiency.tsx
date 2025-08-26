@@ -8,7 +8,7 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-// darker “band” (no gradient) for section contrast
+// darker banner rows for contrast (no gradient)
 function Band({ children }: { children: React.ReactNode }) {
   return (
     <section className="py-28" style={{ backgroundColor: "#2f3b46" }}>
@@ -69,83 +69,85 @@ function TypingTitle({
   );
 }
 
-/* ------------------------------ Automation panel ------------------------- */
-/** Stripe-ish: glass + grid + pills that reveal one-by-one, then drift gently. */
+/* ------------------------------ Word canvas ------------------------------ */
+/** Modern hero: big phrases, no boxes, sequential blur→crisp pop-in. */
 
-function AutomationPanel() {
+type WordSpec = {
+  text: string;
+  top: string; // percentages in container
+  left: string;
+  size: number; // clamp base size
+  weight?: number;
+  opacity?: number;
+};
+
+const WORDS: WordSpec[] = [
+  { text: "Screened",           top: "26%", left: "20%", size: 30, weight: 800 },
+  { text: "Ready-to-interview", top: "28%", left: "56%", size: 32, weight: 800 },
+  { text: "ATS-first handoff",  top: "32%", left: "84%", size: 28, weight: 800 },
+  { text: "US-only",            top: "64%", left: "26%", size: 30, weight: 800 },
+  { text: "Culture add",        top: "66%", left: "56%", size: 30, weight: 800 },
+  { text: "Weekly cadence",     top: "68%", left: "82%", size: 28, weight: 800 },
+];
+
+function WordCanvas() {
   return (
-    <>
-      <style jsx>{`
-        @keyframes driftA {
-          0% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
-        }
-      `}</style>
+    <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden bg-white/5 ring-1 ring-white/10">
+      {/* subtle mesh + hairline grid (very light) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(60% 80% at 12% 18%, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 80% at 88% 82%, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 70%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 opacity-[0.08] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          backgroundPosition: "center",
+        }}
+      />
 
-      <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden bg-white/5 ring-1 ring-white/10">
-        {/* soft mesh lights */}
-        <div
-          className="absolute inset-0"
+      {/* big words — staggered, blur->crisp */}
+      {WORDS.map((w, i) => (
+        <motion.div
+          key={w.text}
+          className="absolute pointer-events-none select-none"
           style={{
-            background:
-              "radial-gradient(60% 80% at 15% 20%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 80% at 85% 80%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 70%)",
+            top: w.top,
+            left: w.left,
+            transform: "translate(-50%, -50%)",
           }}
-        />
-        {/* hairline grid */}
-        <div
-          className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-            backgroundPosition: "center",
-          }}
-        />
-
-        {/* pills (absolute), staggered reveal then gentle drift */}
-        {PILLS.map((p, i) => (
-          <motion.div
-            key={p.k}
-            initial={{ opacity: 0, x: p.enterX, y: p.enterY, scale: 0.98 }}
-            whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 + i * 0.18 }}
-            className="absolute"
+          initial={{ opacity: 0, y: 12, filter: "blur(10px)" }}
+          whileInView={{ opacity: 0.95, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.22 }}
+        >
+          <div
+            className="tracking-tight bg-clip-text text-transparent"
             style={{
-              top: p.top,
-              left: p.left,
-              transform: "translate(-50%, -50%)",
-              animation: "driftA 9s ease-in-out infinite",
-              animationDelay: `${i * 0.4}s`,
-              willChange: "transform",
+              // modern gradient text
+              backgroundImage:
+                "linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.75))",
+              fontWeight: w.weight ?? 800,
+              fontSize: `clamp(${w.size - 8}px, ${w.size / 10}vw + ${w.size - 16}px, ${
+                w.size + 8
+              }px)`,
+              textShadow: "0 1px 0 rgba(0,0,0,.15)",
+              opacity: w.opacity ?? 1,
+              whiteSpace: "nowrap",
             }}
           >
-            <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/10 backdrop-blur-sm px-4 py-3">
-              <div className="text-[13px] font-semibold">{p.title}</div>
-              <div className="text-[12px] text-white/70">{p.sub}</div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </>
+            {w.text}
+          </div>
+        </motion.div>
+      ))}
+    </div>
   );
 }
-
-const PILLS = [
-  { k: "scr", title: "Screened", sub: "Syfter-Certify", top: "28%", left: "22%", enterX: -24, enterY: -10 },
-  { k: "rti", title: "Ready-to-interview", sub: "Availability set", top: "30%", left: "55%", enterX: 20, enterY: -12 },
-  { k: "ats", title: "ATS-first handoff", sub: "You own candidates", top: "32%", left: "82%", enterX: 26, enterY: -8 },
-  { k: "us", title: "US-only", sub: "Verified location", top: "62%", left: "28%", enterX: -16, enterY: 12 },
-  { k: "culture", title: "Culture add", sub: "Human-reviewed", top: "64%", left: "56%", enterX: 12, enterY: 12 },
-  { k: "cad", title: "Weekly cadence", sub: "Predictable flow", top: "66%", left: "80%", enterX: 24, enterY: 16 },
-];
 
 /* --------------------------------- Motion preset -------------------------- */
 
@@ -178,7 +180,7 @@ export default function Efficiency() {
         {/* HERO */}
         <section className="py-28">
           <SectionWrap>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-18 md:gap-20 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
               <div>
                 <TypingTitle
                   as="h1"
@@ -193,11 +195,16 @@ export default function Efficiency() {
                 </motion.p>
 
                 <motion.div className="mt-8 flex flex-wrap gap-3" {...fadeUp}>
-                  {["Weekly delivery", "US-only talent", "Syfter-Certify signal", "ATS-first handoff"].map((t) => (
-                    <span key={t} className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15">
-                      {t}
-                    </span>
-                  ))}
+                  {["Weekly delivery", "US-only talent", "Syfter-Certify signal", "ATS-first handoff"].map(
+                    (t) => (
+                      <span
+                        key={t}
+                        className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15"
+                      >
+                        {t}
+                      </span>
+                    )
+                  )}
                 </motion.div>
 
                 <motion.div className="mt-10 flex flex-wrap gap-4" {...fadeUp}>
@@ -216,7 +223,8 @@ export default function Efficiency() {
                 </motion.div>
               </div>
 
-              <AutomationPanel />
+              {/* Right: modern word animation, no boxes */}
+              <WordCanvas />
             </div>
           </SectionWrap>
         </section>
@@ -225,7 +233,7 @@ export default function Efficiency() {
         <Band>
           <TypingTitle as="h2" text="What you get" className="text-4xl md:text-5xl font-extrabold tracking-tight" />
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-14">
             {[
               {
                 t: "Qualified slate, weekly",
@@ -242,7 +250,7 @@ export default function Efficiency() {
             ].map((card, i) => (
               <motion.div
                 key={card.t}
-                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-8 backdrop-blur-sm hover:-translate-y-1 transition-transform"
+                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-9 backdrop-blur-sm hover:-translate-y-1 transition-transform"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
@@ -257,7 +265,7 @@ export default function Efficiency() {
             ))}
           </div>
 
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-14">
+          <div className="mt-18 grid grid-cols-1 md:grid-cols-2 gap-16">
             <div>
               <motion.h3 className="text-2xl font-bold" {...fadeUp}>
                 Who it’s for
@@ -309,11 +317,11 @@ export default function Efficiency() {
                   initial={{ x: "-20%" }}
                   whileInView={{ x: "110%" }}
                   viewport={{ once: false, amount: 0.6 }}
-                  transition={{ duration: 3.8, repeat: Infinity, ease: "linear" }}
+                  transition={{ duration: 3.6, repeat: Infinity, ease: "linear" }}
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mt-12">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-14 mt-12">
                 {[
                   { t: "Kickoff + calibration", d: "Role profiles, must-haves, culture signals." },
                   { t: "Sourcing & vetting", d: "US-only, Syfter-Certify screened." },
@@ -346,14 +354,14 @@ export default function Efficiency() {
             className="text-4xl md:text-5xl font-extrabold tracking-tight"
           />
 
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-12">
+          <div id="pricing" className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-14">
             {[
               { price: "$500", sub: "per month, per role", note: "Includes 5 qualified candidates" },
               { price: "$750", sub: "per month, per role", note: "Includes 10 qualified candidates" },
             ].map((p, i) => (
               <motion.div
                 key={p.price}
-                className="relative overflow-hidden rounded-3xl bg-white/6 ring-1 ring-white/10 p-8 backdrop-blur-sm hover:-translate-y-1 transition-transform"
+                className="relative overflow-hidden rounded-3xl bg-white/6 ring-1 ring-white/10 p-9 backdrop-blur-sm hover:-translate-y-1 transition-transform"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
