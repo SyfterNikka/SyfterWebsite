@@ -1,44 +1,74 @@
-// components/HeroOrbs.tsx
-import { useReducedMotion } from "framer-motion";
-
-export default function HeroOrbs() {
-  const reduce = useReducedMotion();
-  if (reduce) return null; // respects OS "Reduce Motion"
-
+function HeroOrbs() {
   return (
     <>
       <style jsx>{`
-        @keyframes driftA { 0%{transform:translate3d(0,0,0)} 50%{transform:translate3d(4%, -6%,0)} 100%{transform:translate3d(0,0,0)} }
-        @keyframes driftB { 0%{transform:translate3d(0,0,0)} 50%{transform:translate3d(-6%, 5%,0)} 100%{transform:translate3d(0,0,0)} }
-        @keyframes driftC { 0%{transform:translate3d(0,0,0)} 50%{transform:translate3d(5%, 6%,0)} 100%{transform:translate3d(0,0,0)} }
+        @keyframes orbA {
+          0% { transform: translate(-8%, -6%) scale(1); }
+          50% { transform: translate(6%, 8%) scale(1.15); }
+          100% { transform: translate(-8%, -6%) scale(1); }
+        }
+        @keyframes orbB {
+          0% { transform: translate(10%, -4%) scale(1.05); }
+          50% { transform: translate(-6%, 6%) scale(1.2); }
+          100% { transform: translate(10%, -4%) scale(1.05); }
+        }
+        @keyframes orbC {
+          0% { transform: translate(-4%, 10%) scale(1); }
+          50% { transform: translate(8%, -6%) scale(1.12); }
+          100% { transform: translate(-4%, 10%) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .orb { animation: none !important; }
+        }
       `}</style>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-      >
+      {/* IMPORTANT: z-0 (not -z-10) so it sits above the page background but below hero text */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {/* subtle grid */}
         <div
-          className="absolute left-[8%] top-[18%] w-[46vw] h-[46vw] rounded-full blur-[80px]"
+          className="absolute inset-0 opacity-[0.10]"
           style={{
-            background: "#69BDFF",
-            opacity: 0.18,
-            animation: "driftA 22s ease-in-out infinite",
+            backgroundImage:
+              "linear-gradient(transparent 31px, rgba(255,255,255,0.08) 32px), linear-gradient(90deg, transparent 31px, rgba(255,255,255,0.08) 32px)",
+            backgroundSize: "32px 32px",
           }}
         />
-        <div
-          className="absolute right-[6%] top-[28%] w-[52vw] h-[52vw] rounded-full blur-[90px]"
+        {/* glowing orbs */}
+        <span
+          className="orb absolute -left-20 -top-16 h-80 w-80 rounded-full"
           style={{
-            background: "#8EC5FF",
-            opacity: 0.14,
-            animation: "driftB 28s ease-in-out infinite -4s",
+            background:
+              "radial-gradient(closest-side, rgba(105,189,255,0.28), rgba(105,189,255,0) 70%)",
+            filter: "blur(22px)",
+            animation: "orbA 18s ease-in-out infinite",
           }}
         />
-        <div
-          className="absolute left-[28%] bottom-[-12%] w-[44vw] h-[44vw] rounded-full blur-[90px]"
+        <span
+          className="orb absolute right-0 top-1/4 h-96 w-96 rounded-full"
           style={{
-            background: "#2EB5FF",
-            opacity: 0.16,
-            animation: "driftC 26s ease-in-out infinite -10s",
+            background:
+              "radial-gradient(closest-side, rgba(105,189,255,0.22), rgba(105,189,255,0) 70%)",
+            filter: "blur(24px)",
+            animation: "orbB 22s ease-in-out infinite",
+          }}
+        />
+        <span
+          className="orb absolute left-1/3 -bottom-16 h-[22rem] w-[22rem] rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,0.16), rgba(255,255,255,0) 70%)",
+            filter: "blur(26px)",
+            animation: "orbC 20s ease-in-out infinite",
+          }}
+        />
+        {/* gentle top fade so they don’t crowd the header */}
+        <div
+          className="absolute inset-0"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,1) 40%)",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,1) 40%)",
           }}
         />
       </div>
