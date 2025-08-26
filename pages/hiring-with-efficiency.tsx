@@ -1,7 +1,7 @@
 // pages/efficiency.tsx
 import React from "react";
 import Head from "next/head";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 /* ------------------------------- Helpers -------------------------------- */
 
@@ -9,31 +9,26 @@ function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-// Darker “banner” band like the homepage sections (no gradient)
+// Darker banner band (no gradient)
 function Band({ children }: { children: React.ReactNode }) {
   return (
-    <section
-      className="py-28"
-      style={{ backgroundColor: "#2b3945" }} // a few shades darker than the page bg
-    >
+    <section className="py-28" style={{ backgroundColor: "#2b3945" }}>
       <SectionWrap>{children}</SectionWrap>
     </section>
   );
 }
 
-const fadeIn = {
-  initial: { opacity: 0, y: 18 },
+// punchier fade-up preset
+const fadeUp = {
+  initial: { opacity: 0, y: 26 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.35 },
-  transition: { duration: 0.6, ease: "easeOut" },
+  transition: { duration: 0.7, ease: "easeOut" },
 } as const;
 
 /* ------------------------------ Flow Panel ------------------------------ */
-/** Clean, software-y hero visual with floating “candidate cards”.
- *  No glow. Subtle motion only. */
+/** Clean hero visual with floating “candidate cards”. Animations forced on. */
 function FlowPanel() {
-  const prefersReduced = useReducedMotion();
-
   return (
     <>
       <style jsx>{`
@@ -42,7 +37,7 @@ function FlowPanel() {
             transform: translateY(0px);
           }
           50% {
-            transform: translateY(-12px);
+            transform: translateY(-16px);
           }
           100% {
             transform: translateY(0px);
@@ -50,24 +45,24 @@ function FlowPanel() {
         }
         @keyframes floatB {
           0% {
-            transform: translateY(6px);
+            transform: translateY(8px);
           }
           50% {
-            transform: translateY(-6px);
+            transform: translateY(-8px);
           }
           100% {
-            transform: translateY(6px);
+            transform: translateY(8px);
           }
         }
         @keyframes floatC {
           0% {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
           }
           50% {
-            transform: translateY(8px);
+            transform: translateY(10px);
           }
           100% {
-            transform: translateY(-8px);
+            transform: translateY(-10px);
           }
         }
       `}</style>
@@ -125,9 +120,9 @@ function FlowPanel() {
             <div
               key={col.k}
               className="flex flex-col gap-4 justify-center"
-              style={prefersReduced ? undefined : { animation: col.anim, animationDelay: col.delay }}
+              style={{ animation: col.anim, animationDelay: col.delay }}
             >
-              {col.list.map((row, i) => (
+              {col.list.map((row) => (
                 <div
                   key={row.tag}
                   className="rounded-2xl bg-white/[.06] ring-1 ring-white/10 px-4 py-3 backdrop-blur-sm"
@@ -166,22 +161,22 @@ export default function Efficiency() {
         {/* HERO */}
         <section className="py-28">
           <SectionWrap>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-18 md:gap-20 items-center">
               <div>
                 <motion.h1
                   className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
-                  {...fadeIn}
+                  {...fadeUp}
                 >
                   Hiring with <span className="italic text-[#69bdff]">Efficiency</span>
                 </motion.h1>
 
-                <motion.p className="mt-6 text-xl leading-relaxed text-white/90" {...fadeIn}>
+                <motion.p className="mt-6 text-xl leading-relaxed text-white/90" {...fadeUp}>
                   A subscription that extends your recruiting team. We source and vet.{" "}
                   <span className="font-semibold">You own the candidates</span> from day one and run
                   the process in your ATS.
                 </motion.p>
 
-                <motion.div className="mt-8 flex flex-wrap gap-3" {...fadeIn}>
+                <motion.div className="mt-8 flex flex-wrap gap-3" {...fadeUp}>
                   {["Weekly delivery", "US-only talent", "Syfter-Certify signal", "ATS-first handoff"].map(
                     (t) => (
                       <span
@@ -194,7 +189,7 @@ export default function Efficiency() {
                   )}
                 </motion.div>
 
-                <motion.div className="mt-10 flex flex-wrap gap-4" {...fadeIn}>
+                <motion.div className="mt-10 flex flex-wrap gap-4" {...fadeUp}>
                   <a
                     href="#pricing"
                     className="inline-flex items-center justify-center rounded-2xl px-5 py-3 bg-[#69bdff] text-gray-900 font-semibold hover:brightness-110 transition"
@@ -217,11 +212,11 @@ export default function Efficiency() {
 
         {/* WHAT YOU GET — banner */}
         <Band>
-          <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeIn}>
+          <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
             What you get
           </motion.h2>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
               {
                 t: "Qualified slate, weekly",
@@ -238,11 +233,11 @@ export default function Efficiency() {
             ].map((card, i) => (
               <motion.div
                 key={card.t}
-                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-7 backdrop-blur-sm"
-                initial={{ opacity: 0, y: 18 }}
+                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-7 backdrop-blur-sm hover:-translate-y-1 transition-transform"
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.55, ease: "easeOut", delay: i * 0.05 }}
+                transition={{ duration: 0.65, ease: "easeOut", delay: i * 0.06 }}
               >
                 <div className="h-10 w-10 rounded-xl bg-[#69bdff]/20 ring-1 ring-[#69bdff]/30 grid place-items-center font-bold">
                   {i + 1}
@@ -253,12 +248,12 @@ export default function Efficiency() {
             ))}
           </div>
 
-          <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-14">
             <div>
-              <motion.h3 className="text-2xl font-bold" {...fadeIn}>
+              <motion.h3 className="text-2xl font-bold" {...fadeUp}>
                 Who it’s for
               </motion.h3>
-              <motion.div className="mt-4 flex flex-wrap gap-3" {...fadeIn}>
+              <motion.div className="mt-4 flex flex-wrap gap-3" {...fadeUp}>
                 {["HR & People teams", "In-house recruiting", "Founder-led hiring", "Lean TA orgs"].map(
                   (t) => (
                     <span
@@ -273,10 +268,10 @@ export default function Efficiency() {
             </div>
 
             <div>
-              <motion.h3 className="text-2xl font-bold" {...fadeIn}>
+              <motion.h3 className="text-2xl font-bold" {...fadeUp}>
                 Why it’s different
               </motion.h3>
-              <motion.ul className="mt-4 space-y-3 text-white/90" {...fadeIn}>
+              <motion.ul className="mt-4 space-y-3 text-white/90" {...fadeUp}>
                 {[
                   "Not an agency engagement — pure candidate feed you own",
                   "Predictable throughput (5 or 10 / month / role)",
@@ -293,16 +288,25 @@ export default function Efficiency() {
           </div>
         </Band>
 
-        {/* HOW IT WORKS — rail with pop-in steps */}
+        {/* HOW IT WORKS — rail with pop-in steps + animated sweep */}
         <section className="py-28">
           <SectionWrap>
-            <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeIn}>
+            <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
               How it works
             </motion.h2>
 
-            <div className="mt-14 relative">
-              <div className="h-[2px] w-full bg-white/10 rounded-full" />
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mt-10">
+            <div className="mt-16 relative">
+              <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full w-56 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                  initial={{ x: "-20%" }}
+                  whileInView={{ x: "110%" }}
+                  viewport={{ once: false, amount: 0.6 }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: "linear" }}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mt-12">
                 {[
                   { t: "Kickoff + calibration", d: "Role profiles, must-haves, culture signals." },
                   { t: "Sourcing & vetting", d: "US-only, Syfter-Certify screened." },
@@ -311,15 +315,15 @@ export default function Efficiency() {
                 ].map((s, i) => (
                   <motion.div
                     key={s.t}
-                    className="relative"
-                    initial={{ opacity: 0, y: 18, scale: 0.98 }}
+                    className="relative text-center"
+                    initial={{ opacity: 0, y: 26, scale: 0.96 }}
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ duration: 0.55, ease: "easeOut", delay: i * 0.1 }}
+                    viewport={{ once: false, amount: 0.55 }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.1 }}
                   >
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 h-5 w-5 rounded-full bg-white/70 ring-2 ring-white/20" />
-                    <h4 className="text-lg font-semibold text-center">{s.t}</h4>
-                    <p className="text-white/80 leading-relaxed text-center mt-2">{s.d}</p>
+                    <h4 className="text-lg font-semibold">{s.t}</h4>
+                    <p className="text-white/80 leading-relaxed mt-2">{s.d}</p>
                   </motion.div>
                 ))}
               </div>
@@ -329,11 +333,11 @@ export default function Efficiency() {
 
         {/* PRICING — banner */}
         <Band>
-          <motion.h2 id="pricing" className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeIn}>
+          <motion.h2 id="pricing" className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
             Simple, transparent pricing
           </motion.h2>
 
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-10">
             {[
               {
                 price: "$500",
@@ -348,11 +352,11 @@ export default function Efficiency() {
             ].map((p, i) => (
               <motion.div
                 key={p.price}
-                className="relative overflow-hidden rounded-3xl bg-white/6 ring-1 ring-white/10 p-7 backdrop-blur-sm"
-                initial={{ opacity: 0, y: 18 }}
+                className="relative overflow-hidden rounded-3xl bg-white/6 ring-1 ring-white/10 p-8 backdrop-blur-sm hover:-translate-y-1 transition-transform"
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.55, ease: "easeOut", delay: i * 0.05 }}
+                transition={{ duration: 0.65, ease: "easeOut", delay: i * 0.06 }}
               >
                 <div className="absolute inset-x-0 top-0 h-[3px] bg-[#69bdff]" />
                 <div className="text-4xl font-extrabold">{p.price}</div>
@@ -371,7 +375,13 @@ export default function Efficiency() {
         {/* CTA */}
         <section id="contact" className="py-24">
           <SectionWrap>
-            <div className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-10 text-center backdrop-blur-sm">
+            <motion.div
+              className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-10 text-center backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <h3 className="text-2xl font-bold">Ready to hire with efficiency?</h3>
               <p className="text-white/80 mt-2">
                 We’ll calibrate roles this week and start your first slate.
@@ -382,7 +392,7 @@ export default function Efficiency() {
               >
                 Get started
               </a>
-            </div>
+            </motion.div>
           </SectionWrap>
         </section>
       </main>
