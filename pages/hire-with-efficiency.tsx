@@ -2,7 +2,6 @@
 import Head from "next/head";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import HeroOrbs from "@/components/HeroOrbs";
 import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------ tiny helpers ------------------------------ */
@@ -10,9 +9,11 @@ import { useEffect, useRef, useState } from "react";
 function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
+
 function CheckDot() {
   return <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />;
 }
+
 function TypingSectionTitle({ text }: { text: string }) {
   const [chars, setChars] = useState(0);
   const [started, setStarted] = useState(false);
@@ -50,10 +51,6 @@ function TypingSectionTitle({ text }: { text: string }) {
       />
     </div>
   );
-}
-
-function CheckDot() {
-  return <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />;
 }
 
 /* -------------------------- Hero animated background ---------------------- */
@@ -231,64 +228,62 @@ export default function HiringWithEfficiency() {
         {/* spacer for fixed nav */}
         <div className="h-12" />
 
-       {/* HERO (centered) */}
-<section className="relative py-24 md:py-32 min-h-[60vh] overflow-visible">
-  {/* animated background */}
-  <HeroOrbs />
+        {/* HERO (centered) */}
+        <section className="relative py-24 md:py-32 min-h-[60vh] overflow-visible">
+          <HeroOrbs />
+          <SectionWrap>
+            <div className="relative z-10 text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-5xl md:text-7xl font-extrabold tracking-tight"
+              >
+                Hire with <span className="italic text-[#69bdff]">Efficiency</span>
+              </motion.h1>
 
-  <SectionWrap>
-    <div className="relative z-10 text-center">
-      <motion.h1
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="text-5xl md:text-7xl font-extrabold tracking-tight"
-      >
-        Hire with <span className="italic text-[#69bdff]">Efficiency</span>
-      </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
+                className="mt-6 text-xl leading-relaxed text-white/90 mx-auto max-w-3xl"
+              >
+                A lightweight subscription that extends your recruiting team. We source and vet.{" "}
+                <strong>You own the candidates</strong> and run your process.
+              </motion.p>
 
-      <motion.p
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-        className="mt-6 text-xl leading-relaxed text-white/90 mx-auto max-w-3xl"
-      >
-        A lightweight subscription that extends your recruiting team. We source and vet.{" "}
-        <strong>You own the candidates</strong> and run your process.
-      </motion.p>
+              <ul className="mt-8 grid gap-3 text-white/85 mx-auto max-w-2xl text-left md:text-center">
+                {[
+                  "Qualified candidates delivered weekly",
+                  "ATS-first: candidates are yours from day one",
+                  "Syfter Certify vetting for signal over noise",
+                ].map((t) => (
+                  <li key={t} className="flex items-start md:justify-center gap-3">
+                    <CheckDot />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
 
-      <ul className="mt-8 grid gap-3 text-white/85 mx-auto max-w-2xl text-left md:text-center">
-        {[
-          "Qualified candidates delivered weekly",
-          "ATS-first: candidates are yours from day one",
-          "Syfter Certify vetting for signal over noise",
-        ].map((t) => (
-          <li key={t} className="flex items-start md:justify-center gap-3">
-            <CheckDot />
-            <span>{t}</span>
-          </li>
-        ))}
-      </ul>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Link
+                  href="#pricing"
+                  className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
+                >
+                  View pricing
+                </Link>
+                <Link
+                  href="/#contact"
+                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
+                >
+                  Talk to us
+                </Link>
+              </div>
+            </div>
+          </SectionWrap>
+        </section>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
-        <Link
-          href="#pricing"
-          className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
-        >
-          View pricing
-        </Link>
-        <Link
-          href="/#contact"
-          className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
-        >
-          Talk to us
-        </Link>
-      </div>
-    </div>
-  </SectionWrap>
-</section>
-
-        {/* BUILT FOR… (clean bullets, no boxes) */}
+        {/* BUILT FOR… */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="Built for Lean, Serious Teams" />
           <SectionWrap>
@@ -326,7 +321,7 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* HOW IT WORKS — timeline with line + nodes */}
+        {/* HOW IT WORKS — timeline */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="How It Works" />
           <SectionWrap>
