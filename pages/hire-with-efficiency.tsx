@@ -1,8 +1,8 @@
 // pages/efficiency.tsx
 import Head from "next/head";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------ tiny helpers ------------------------------ */
 
@@ -49,108 +49,85 @@ function TypingSectionTitle({ text }: { text: string }) {
   );
 }
 
-/* ------------------------------ micro bits ------------------------------- */
-
-function TypeOnce({ word, speed = 55 }: { word: string; speed?: number }) {
-  const [n, setN] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLSpanElement | null>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) setStarted(true);
-    }, { threshold: 0.6 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started || n >= word.length) return;
-    const t = setTimeout(() => setN((c) => c + 1), speed);
-    return () => clearTimeout(t);
-  }, [started, n, word.length, speed]);
-
-  return (
-    <span ref={ref}>
-      {word.slice(0, n)}
-      <span className="inline-block w-[0.55ch] border-r-2 border-white/80 ml-[1px] align-middle animate-pulse" />
-    </span>
-  );
+function CheckDot() {
+  return <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />;
 }
 
-function CheckIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 20 20"
-      fill="none"
-      aria-hidden
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="10" cy="10" r="9" stroke="currentColor" className="text-white/25" />
-      <path
-        d="M6 10.5l2.4 2.3L14 7.5"
-        stroke="currentColor"
-        strokeWidth="2"
-        className="text-[#69bdff]"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+/* ------------------------- How-it-works timeline -------------------------- */
 
-/* ------------------------ hero word looper (clean) ----------------------- */
-
-function WordLooper() {
-  const phrases = useMemo(
-    () => ["Screened", "Ready-to-interview", "ATS-first handoff", "US-only", "Culture add", "Weekly cadence"],
-    []
-  );
-  const anchors = useMemo(
-    () => [
-      { top: "18%", left: "14%" },
-      { top: "36%", left: "62%" },
-      { top: "64%", left: "28%" },
-      { top: "22%", left: "78%" },
-      { top: "58%", left: "75%" },
-      { top: "44%", left: "20%" },
-    ],
-    []
-  );
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setIdx((i) => (i + 1) % phrases.length), 1800);
-    return () => clearInterval(id);
-  }, [phrases.length]);
-
-  const pos = anchors[idx % anchors.length];
+function HowItWorksTimeline() {
+  const steps = [
+    {
+      title: "Kickoff",
+      text: "30-min intake. Role, must-haves, culture, and compensation realities.",
+    },
+    {
+      title: "Source & Vet",
+      text: "We outreach, qualify, and Syfter-Certify for signal and readiness.",
+    },
+    {
+      title: "Hand-off",
+      text: "Qualified candidates land directly in your ATS as yours to own.",
+    },
+    {
+      title: "Refresh",
+      text: "Weekly drops keep your pipeline fresh. Pause or scale per role.",
+    },
+  ];
 
   return (
-    <div className="relative h-[42vh] md:h-[46vh] lg:h-[50vh]">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={idx}
-          className="absolute select-none font-extrabold"
-          style={{
-            top: pos.top,
-            left: pos.left,
-            transform: "translate(-50%, -50%)",
-            fontSize: "clamp(28px, 5vw, 56px)",
-            textShadow: "0 6px 22px rgba(0,0,0,0.25)",
-            whiteSpace: "nowrap",
-          }}
-          initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          {phrases[idx]}
-        </motion.div>
-      </AnimatePresence>
+    <div className="mt-12">
+      {/* Desktop: horizontal line with nodes */}
+      <div className="relative hidden md:block">
+        {/* line */}
+        <div className="absolute left-0 right-0 top-4 h-px bg-gradient-to-r from-white/10 via-white/20 to-white/10" />
+        <div className="grid grid-cols-4 gap-8">
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
+              className="relative pt-10 text-center"
+            >
+              {/* node */}
+              <span
+                className="absolute left-1/2 top-4 -translate-x-1/2 -translate-y-1/2 h-3.5 w-3.5 rounded-full bg-[#69bdff]"
+                style={{ boxShadow: "0 0 0 8px rgba(105,189,255,0.12)" }}
+              />
+              <h3 className="text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-white/80">{s.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile: vertical line with nodes */}
+      <div className="relative md:hidden">
+        <div className="absolute left-4 top-0 bottom-0 w-px bg-white/15" />
+        <ul className="space-y-8 pl-10">
+          {steps.map((s, i) => (
+            <motion.li
+              key={s.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
+              className="relative"
+            >
+              <span
+                className="absolute left-4 top-2 -translate-x-1/2 h-3.5 w-3.5 rounded-full bg-[#69bdff]"
+                style={{ boxShadow: "0 0 0 8px rgba(105,189,255,0.12)" }}
+              />
+              <div className="ml-2">
+                <h3 className="text-lg font-semibold">{s.title}</h3>
+                <p className="mt-1.5 text-white/80">{s.text}</p>
+              </div>
+            </motion.li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -172,72 +149,64 @@ export default function HiringWithEfficiency() {
         className="min-h-screen text-white"
         style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
       >
-        {/* spacer since your global nav is fixed */}
+        {/* spacer for fixed nav */}
         <div className="h-12" />
 
-        {/* HERO */}
+        {/* HERO — single column, no floating words */}
         <section className="relative overflow-hidden">
           <SectionWrap>
-            <div className="py-24 md:py-28 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-              <div>
-                <motion.h1
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="text-5xl md:text-7xl font-extrabold tracking-tight"
+            <div className="py-24 md:py-28">
+              <motion.h1
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-5xl md:text-7xl font-extrabold tracking-tight"
+              >
+                Hiring with <span className="italic text-[#69bdff]">Efficiency</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
+                className="mt-6 text-xl leading-relaxed text-white/90 max-w-3xl"
+              >
+                A lightweight subscription that extends your recruiting team. We source and vet.{" "}
+                <strong>You own the candidates</strong> and run your process.
+              </motion.p>
+
+              <ul className="mt-8 grid gap-3 text-white/85 max-w-3xl">
+                {[
+                  "Qualified candidates delivered weekly",
+                  "ATS-first: candidates are yours from day one",
+                  "Syfter Certify vetting for signal over noise",
+                ].map((t) => (
+                  <li key={t} className="flex items-start gap-3">
+                    <CheckDot />
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="#pricing"
+                  className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
                 >
-                  Hiring with <span className="italic text-[#69bdff]"><TypeOnce word="Efficiency" /></span>
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-                  className="mt-6 text-xl leading-relaxed text-white/90"
+                  View pricing
+                </Link>
+                <Link
+                  href="/#contact"
+                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
                 >
-                  A lightweight subscription that extends your recruiting team. We source and vet.{" "}
-                  <strong>You own the candidates</strong> and run your process.
-                </motion.p>
-
-                {/* simple checklist (no pills) */}
-                <ul className="mt-8 grid gap-3 text-white/85">
-                  {[
-                    "Qualified candidates delivered weekly",
-                    "ATS-first: candidates are yours from day one",
-                    "Syfter Certify vetting for signal over noise",
-                  ].map((t) => (
-                    <li key={t} className="flex items-start gap-3">
-                      <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />
-                      <span>{t}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                    href="#pricing"
-                    className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
-                  >
-                    View pricing
-                  </Link>
-                  <Link
-                    href="/#contact"
-                    className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
-                  >
-                    Talk to us
-                  </Link>
-                </div>
-              </div>
-
-              {/* hero visual → clean word looper */}
-              <div className="relative">
-                <WordLooper />
+                  Talk to us
+                </Link>
               </div>
             </div>
           </SectionWrap>
         </section>
 
-        {/* WHY THIS / VALUE (back in, but modern rows; no boxes) */}
+        {/* BUILT FOR… (kept clean, no boxes) */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="Built for Lean, Serious Teams" />
           <SectionWrap>
@@ -264,7 +233,7 @@ export default function HiringWithEfficiency() {
                   transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.05 }}
                   className="flex gap-4"
                 >
-                  <CheckIcon />
+                  <CheckDot />
                   <div>
                     <div className="text-2xl font-semibold">{b.h}</div>
                     <p className="mt-2 text-white/80">{b.p}</p>
@@ -275,49 +244,15 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* HOW IT WORKS (back in, as a clean timeline list that pops in) */}
+        {/* HOW IT WORKS — timeline with line + nodes */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="How It Works" />
           <SectionWrap>
-            <ol className="mt-10 space-y-6">
-              {[
-                {
-                  step: "Kickoff",
-                  p: "30-min intake. Role, must-haves, culture, and compensation realities.",
-                },
-                {
-                  step: "Source & Vet",
-                  p: "We outreach, qualify, and Syfter-Certify for signal and readiness.",
-                },
-                {
-                  step: "Hand-off",
-                  p: "Qualified candidates land directly in your ATS as yours to own.",
-                },
-                {
-                  step: "Refresh",
-                  p: "Weekly drops keep your pipeline fresh. Pause or scale per role.",
-                },
-              ].map((s, i) => (
-                <motion.li
-                  key={s.step}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
-                  className="flex gap-4"
-                >
-                  <CheckIcon />
-                  <div>
-                    <div className="text-xl font-semibold">{s.step}</div>
-                    <p className="text-white/80">{s.p}</p>
-                  </div>
-                </motion.li>
-              ))}
-            </ol>
+            <HowItWorksTimeline />
           </SectionWrap>
         </section>
 
-        {/* PRICING (back in) */}
+        {/* PRICING */}
         <section id="pricing" className="py-18 md:py-24">
           <TypingSectionTitle text="Simple Pricing" />
           <SectionWrap>
@@ -367,7 +302,7 @@ export default function HiringWithEfficiency() {
                   <ul className="mt-4 space-y-2">
                     {p.items.map((it) => (
                       <li key={it} className="flex items-start gap-3 text-white/85">
-                        <span className="mt-[7px] inline-block h-2 w-2 rounded-full bg-[#69bdff]" />
+                        <CheckDot />
                         <span>{it}</span>
                       </li>
                     ))}
@@ -399,7 +334,7 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* AGENCY VS SUBSCRIPTION (back in) */}
+        {/* AGENCY VS SUBSCRIPTION */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="Agency vs. Efficiency" />
           <SectionWrap>
@@ -438,7 +373,7 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* FAQ (back in) */}
+        {/* FAQ */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="FAQs" />
           <SectionWrap>
@@ -477,7 +412,7 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* CTA (back in) */}
+        {/* CTA */}
         <section className="py-24">
           <SectionWrap>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12 text-center">
@@ -496,7 +431,7 @@ export default function HiringWithEfficiency() {
                 </Link>
                 <Link
                   href="#pricing"
-                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
+                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg白/5 transition"
                 >
                   See pricing
                 </Link>
