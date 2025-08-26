@@ -100,7 +100,7 @@ const posts: Post[] = [
     image: "/blog/BLOG4.avif",
     excerpt: "Remote doesn’t erase geography — it amplifies it.",
     date: "2025-04-28",
-    tags: ["Strategy", "Compensation"],
+    tags: ["Strategy", "Remote"],
     author: "Steve Perlman",
   },
 ];
