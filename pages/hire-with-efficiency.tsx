@@ -53,6 +53,84 @@ function CheckDot() {
   return <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />;
 }
 
+/* -------------------------- Hero animated background ---------------------- */
+
+function HeroOrbs() {
+  return (
+    <>
+      <style jsx>{`
+        @keyframes orbA {
+          0% { transform: translate(-8%, -6%) scale(1); }
+          50% { transform: translate(6%, 8%) scale(1.15); }
+          100% { transform: translate(-8%, -6%) scale(1); }
+        }
+        @keyframes orbB {
+          0% { transform: translate(10%, -4%) scale(1.05); }
+          50% { transform: translate(-6%, 6%) scale(1.2); }
+          100% { transform: translate(10%, -4%) scale(1.05); }
+        }
+        @keyframes orbC {
+          0% { transform: translate(-4%, 10%) scale(1); }
+          50% { transform: translate(8%, -6%) scale(1.12); }
+          100% { transform: translate(-4%, 10%) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .orb { animation: none !important; }
+        }
+      `}</style>
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        {/* faint grid to echo the brand */}
+        <div
+          className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage:
+              "linear-gradient(transparent 31px, rgba(255,255,255,0.08) 32px), linear-gradient(90deg, transparent 31px, rgba(255,255,255,0.08) 32px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        {/* soft orbs */}
+        <span
+          className="orb absolute -left-20 -top-16 h-80 w-80 rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(105,189,255,0.22), rgba(105,189,255,0) 70%)",
+            filter: "blur(20px)",
+            animation: "orbA 18s ease-in-out infinite",
+          }}
+        />
+        <span
+          className="orb absolute right-0 top-1/4 h-96 w-96 rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(105,189,255,0.18), rgba(105,189,255,0) 70%)",
+            filter: "blur(22px)",
+            animation: "orbB 22s ease-in-out infinite",
+          }}
+        />
+        <span
+          className="orb absolute left-1/3 -bottom-16 h-[22rem] w-[22rem] rounded-full"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,0.12), rgba(255,255,255,0) 70%)",
+            filter: "blur(24px)",
+            animation: "orbC 20s ease-in-out infinite",
+          }}
+        />
+        {/* top-to-bottom fade so the orbs don’t fight the nav */}
+        <div
+          className="absolute inset-0"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,1) 40%, rgba(0,0,0,1))",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,1) 40%, rgba(0,0,0,1))",
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
 /* ------------------------- How-it-works timeline -------------------------- */
 
 function HowItWorksTimeline() {
@@ -77,9 +155,8 @@ function HowItWorksTimeline() {
 
   return (
     <div className="mt-12">
-      {/* Desktop: horizontal line with nodes */}
+      {/* Desktop: horizontal */}
       <div className="relative hidden md:block">
-        {/* line */}
         <div className="absolute left-0 right-0 top-4 h-px bg-gradient-to-r from-white/10 via-white/20 to-white/10" />
         <div className="grid grid-cols-4 gap-8">
           {steps.map((s, i) => (
@@ -91,7 +168,6 @@ function HowItWorksTimeline() {
               transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
               className="relative pt-10 text-center"
             >
-              {/* node */}
               <span
                 className="absolute left-1/2 top-4 -translate-x-1/2 -translate-y-1/2 h-3.5 w-3.5 rounded-full bg-[#69bdff]"
                 style={{ boxShadow: "0 0 0 8px rgba(105,189,255,0.12)" }}
@@ -103,7 +179,7 @@ function HowItWorksTimeline() {
         </div>
       </div>
 
-      {/* Mobile: vertical line with nodes */}
+      {/* Mobile: vertical */}
       <div className="relative md:hidden">
         <div className="absolute left-4 top-0 bottom-0 w-px bg-white/15" />
         <ul className="space-y-8 pl-10">
@@ -138,7 +214,7 @@ export default function HiringWithEfficiency() {
   return (
     <>
       <Head>
-        <title>Hiring with Efficiency — Syfter</title>
+        <title>Hire with Efficiency — Syfter</title>
         <meta
           name="description"
           content="A subscription model that extends your recruiting team. We source and vet — you own the candidates."
@@ -152,43 +228,44 @@ export default function HiringWithEfficiency() {
         {/* spacer for fixed nav */}
         <div className="h-12" />
 
-        {/* HERO — single column, no floating words */}
+        {/* HERO (centered) */}
         <section className="relative overflow-hidden">
+          <HeroOrbs />
           <SectionWrap>
-            <div className="py-24 md:py-28">
+            <div className="py-24 md:py-32 text-center">
               <motion.h1
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="text-5xl md:text-7xl font-extrabold tracking-tight"
               >
-                Hiring with <span className="italic text-[#69bdff]">Efficiency</span>
+                Hire with <span className="italic text-[#69bdff]">Efficiency</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-                className="mt-6 text-xl leading-relaxed text-white/90 max-w-3xl"
+                className="mt-6 text-xl leading-relaxed text-white/90 mx-auto max-w-3xl"
               >
                 A lightweight subscription that extends your recruiting team. We source and vet.{" "}
                 <strong>You own the candidates</strong> and run your process.
               </motion.p>
 
-              <ul className="mt-8 grid gap-3 text-white/85 max-w-3xl">
+              <ul className="mt-8 grid gap-3 text-white/85 mx-auto max-w-2xl text-left md:text-center">
                 {[
                   "Qualified candidates delivered weekly",
                   "ATS-first: candidates are yours from day one",
                   "Syfter Certify vetting for signal over noise",
                 ].map((t) => (
-                  <li key={t} className="flex items-start gap-3">
+                  <li key={t} className="flex items-start md:justify-center gap-3">
                     <CheckDot />
                     <span>{t}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Link
                   href="#pricing"
                   className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
@@ -206,7 +283,7 @@ export default function HiringWithEfficiency() {
           </SectionWrap>
         </section>
 
-        {/* BUILT FOR… (kept clean, no boxes) */}
+        {/* BUILT FOR… (clean bullets, no boxes) */}
         <section className="py-18 md:py-24">
           <TypingSectionTitle text="Built for Lean, Serious Teams" />
           <SectionWrap>
@@ -355,7 +432,7 @@ export default function HiringWithEfficiency() {
                 </ul>
               </div>
               <div className="rounded-2xl border border-[#69bdff]/40 bg-[#69bdff]/10 p-6">
-                <h3 className="text-xl font-semibold">Hiring with Efficiency</h3>
+                <h3 className="text-xl font-semibold">Hire with Efficiency</h3>
                 <ul className="mt-4 space-y-2 text-white/90">
                   {[
                     "Flat monthly cost",
@@ -431,7 +508,7 @@ export default function HiringWithEfficiency() {
                 </Link>
                 <Link
                   href="#pricing"
-                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg白/5 transition"
+                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
                 >
                   See pricing
                 </Link>
