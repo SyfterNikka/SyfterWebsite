@@ -1,64 +1,148 @@
 import Head from "next/head";
-import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import React from "react";
 
-/* ------------------------------ tiny helpers ------------------------------ */
-
+/* ---------- tiny layout helper ---------- */
 function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-function TypingSectionTitle({ text }: { text: string }) {
-  const [chars, setChars] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && setStarted(true),
-      { threshold: 0.6 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started || chars >= text.length) return;
-    const t = setTimeout(() => setChars((c) => c + 1), 45);
-    return () => clearTimeout(t);
-  }, [started, chars, text.length]);
+/* ---------- modern hero visual (no images) ---------- */
+function ModernEfficiencyVisual() {
+  const prefersReduced = useReducedMotion();
 
   return (
-    <div ref={ref} className="mx-auto max-w-7xl pl-2 pr-6">
-      <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight text-left">
-        <span aria-label={text}>{text.slice(0, chars)}</span>
-        <span className="inline-block w-[0.55ch] border-r-2 border-white/80 ml-[1px] align-middle animate-pulse" />
-      </h2>
-      <motion.div
-        className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={started ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        style={{ transformOrigin: "left" }}
+    <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden border border-white/10 bg-white/5">
+      {/* Background mesh + grid (brand-tinted, subtle) */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(60% 80% at 20% 25%, rgba(105,189,255,.12) 0%, rgba(105,189,255,0) 70%),
+            radial-gradient(60% 80% at 80% 70%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 70%),
+            linear-gradient(to bottom right, rgba(255,255,255,.04), rgba(0,0,0,.10))
+          `,
+        }}
       />
+      {/* Fine grid */}
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* Animated signal lines (flow/throughput) */}
+      <svg
+        className="absolute inset-0"
+        viewBox="0 0 1200 700"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="rgba(105,189,255,.0)" />
+            <stop offset="20%" stopColor="rgba(105,189,255,.55)" />
+            <stop offset="80%" stopColor="rgba(255,255,255,.35)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </linearGradient>
+        </defs>
+
+        {[
+          "M 0 370 C 300 300, 450 440, 700 390 C 900 350, 1000 300, 1200 330",
+          "M 0 420 C 250 420, 500 340, 800 410 C 950 450, 1100 430, 1200 420",
+          "M 0 470 C 260 520, 520 440, 780 480 C 1000 510, 1100 500, 1200 520",
+        ].map((d, i) => (
+          <motion.path
+            key={i}
+            d={d}
+            stroke="url(#g1)"
+            strokeWidth={i === 1 ? 3 : 2}
+            strokeLinecap="round"
+            strokeDasharray="180 520"
+            initial={{ pathLength: 0, strokeDashoffset: 700, opacity: 0.4 }}
+            animate={
+              prefersReduced
+                ? { opacity: 0.4 }
+                : {
+                    pathLength: 1,
+                    strokeDashoffset: [-700, 0],
+                    opacity: [0.25, 0.65, 0.4],
+                  }
+            }
+            transition={{
+              duration: 5 + i * 0.6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </svg>
+
+      {/* Candidate "tickets" gliding on rails (replaces bubbles) */}
+      <style jsx>{`
+        @keyframes railScroll {
+          0% {
+            transform: translateX(20%);
+            opacity: 0.0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateX(-120%);
+            opacity: 0.0;
+          }
+        }
+        @keyframes floatSoft {
+          0% { transform: translateY(0px) }
+          50% { transform: translateY(-6px) }
+          100% { transform: translateY(0px) }
+        }
+      `}</style>
+
+      {[
+        { top: "44%", delay: "0s", label: "Screened → ATS" },
+        { top: "58%", delay: "1.2s", label: "US-only" },
+        { top: "70%", delay: "2.4s", label: "Culture add" },
+      ].map((t, i) => (
+        <div
+          key={i}
+          className="absolute left-[6%] right-[6%] pointer-events-none"
+          style={{ top: t.top }}
+        >
+          <div
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-xl border border-white/10 bg-white/8 backdrop-blur-sm text-white/90"
+            style={{
+              animation: prefersReduced ? undefined : `railScroll 10s linear ${t.delay} infinite, floatSoft 6s ease-in-out infinite`,
+            }}
+          >
+            <span className="inline-block h-2 w-2 rounded-full bg-[#69bdff] shadow-[0_0_12px_rgba(105,189,255,.9)]" />
+            <span className="text-sm">{t.label}</span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-/* ---------------------------------- page ---------------------------------- */
-
-export default function HiringWithEfficiency() {
+/* ---------- page ---------- */
+export default function Efficiency() {
   return (
     <>
       <Head>
         <title>Hiring with Efficiency — Syfter</title>
         <meta
           name="description"
-          content="A subscription model that extends your recruiting team. We source and vet — you own the candidates."
+          content="A lightweight hiring subscription that extends your recruiting team. We source and vet. You own the candidates and run the process."
         />
       </Head>
 
@@ -66,356 +150,108 @@ export default function HiringWithEfficiency() {
         className="min-h-screen text-white"
         style={{ background: "linear-gradient(to bottom, #3e4e5e 0%, #28303b 100%)" }}
       >
-        {/* spacer since your global nav is fixed */}
+        {/* top spacer since your site uses a fixed nav */}
         <div className="h-12" />
 
         {/* HERO */}
-        <section className="relative overflow-hidden">
+        <section className="py-20">
           <SectionWrap>
-            <div className="py-24 md:py-28 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              {/* Left copy */}
               <div>
-                <motion.h1
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="text-5xl md:text-7xl font-extrabold tracking-tight"
-                >
-                  Hiring with <span className="italic text-[#69bdff]">Efficiency</span>
-                </motion.h1>
-                <motion.p
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-                  className="mt-6 text-xl leading-relaxed text-white/90"
-                >
-                  A lightweight subscription that extends your recruiting team. We source and vet.{" "}
-                  <strong>You own the candidates</strong> and run your process.
-                </motion.p>
+                <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+                  Hiring with{" "}
+                  <span className="italic text-[#69bdff]">Efficiency</span>
+                </h1>
+                <p className="mt-6 text-xl leading-relaxed text-white/90">
+                  A lightweight subscription that extends your recruiting team.
+                  We source and vet. <span className="font-semibold">You own the candidates</span> and run your process.
+                </p>
 
                 <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
+                  <a
                     href="#pricing"
-                    className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
+                    className="inline-flex items-center justify-center rounded-2xl px-5 py-3 bg-[#69bdff] text-gray-900 font-semibold shadow-[0_8px_30px_rgba(105,189,255,.35)] hover:brightness-110 transition"
                   >
                     View pricing
-                  </Link>
-                  <Link
-                    href="/#contact"
-                    className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
+                  </a>
+                  <a
+                    href="#contact"
+                    className="inline-flex items-center justify-center rounded-2xl px-5 py-3 border border-white/20 bg-white/[.04] hover:bg-white/[.07] transition"
                   >
                     Talk to us
-                  </Link>
+                  </a>
                 </div>
 
-                <ul className="mt-8 grid gap-3 text-white/85">
-                  {[
-                    "Qualified candidates delivered weekly",
-                    "ATS-first: candidates are yours from day one",
-                    "Syfter Certify vetting for signal over noise",
-                  ].map((t) => (
-                    <li key={t} className="flex items-start gap-3">
-                      <span className="mt-[6px] inline-block h-2.5 w-2.5 rounded-full bg-[#69bdff]" />
-                      <span>{t}</span>
-                    </li>
-                  ))}
+                <ul className="mt-8 space-y-3 text-white/90">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-[6px] h-2 w-2 rounded-full bg-[#69bdff]" />
+                    Qualified candidates delivered weekly
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-[6px] h-2 w-2 rounded-full bg-[#69bdff]" />
+                    ATS-first: candidates are yours from day one
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-[6px] h-2 w-2 rounded-full bg-[#69bdff]" />
+                    Syfter Certify vetting for signal over noise
+                  </li>
                 </ul>
               </div>
 
-              {/* hero visual */}
-              <div className="relative">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-                  <Image
-                    src="/blog/remote-ops.jpg" // swap to any nice abstract you have handy
-                    alt="Efficient hiring visual"
-                    fill
-                    className="object-cover opacity-90"
-                  />
-                  {/* floating chips */}
-                  <div className="absolute inset-0">
-                    {["Screened", "US-only", "Ready-to-interview", "Culture add"].map((chip, i) => (
-                      <motion.span
-                        key={chip}
-                        className="absolute rounded-full bg-[#69bdff]/15 border border-[#69bdff]/30 text-sm text-white/90 px-3 py-1 backdrop-blur-sm"
-                        style={{
-                          left: `${20 + i * 18}%`,
-                          top: `${18 + (i % 2 === 0 ? 4 : 12)}%`,
-                        }}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.15 * i }}
-                      >
-                        {chip}
-                      </motion.span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </SectionWrap>
-        </section>
-
-        {/* WHY THIS / VALUE */}
-        <section className="py-18 md:py-24">
-          <TypingSectionTitle text="Built for Lean, Serious Teams" />
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  h: "Own your pipeline",
-                  p: "Every candidate is handed off into your ATS. You control comms, process, and offer.",
-                },
-                {
-                  h: "Zero bloat",
-                  p: "We filter the market noise and send only candidates that pass Syfter Certify.",
-                },
-                {
-                  h: "Predictable cost",
-                  p: "Subscription pricing keeps spend tight while keeping the top of funnel warm.",
-                },
-              ].map((b, i) => (
-                <motion.article
-                  key={b.h}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.05 }}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6"
-                >
-                  <h3 className="text-2xl font-semibold">{b.h}</h3>
-                  <p className="mt-3 text-white/80">{b.p}</p>
-                </motion.article>
-              ))}
-            </div>
-          </SectionWrap>
-        </section>
-
-        {/* HOW IT WORKS */}
-        <section className="py-18 md:py-24">
-          <TypingSectionTitle text="How It Works" />
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-4 gap-6">
-              {[
-                {
-                  step: "01",
-                  h: "Kickoff",
-                  p: "30-min intake. Role, must-haves, culture, and compensation realities.",
-                },
-                {
-                  step: "02",
-                  h: "Source & Vet",
-                  p: "We outreach, qualify, and Syfter-Certify for signal and readiness.",
-                },
-                {
-                  step: "03",
-                  h: "Hand-off",
-                  p: "Qualified candidates land directly in your ATS as yours to own.",
-                },
-                {
-                  step: "04",
-                  h: "Refresh",
-                  p: "Weekly drops keep your pipeline fresh. Pause or scale per role.",
-                },
-              ].map((s, i) => (
-                <motion.article
-                  key={s.step}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.05 }}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6"
-                >
-                  <div className="text-[#69bdff] text-sm font-semibold">{s.step}</div>
-                  <h3 className="mt-2 text-xl font-semibold">{s.h}</h3>
-                  <p className="mt-2 text-white/80">{s.p}</p>
-                </motion.article>
-              ))}
+              {/* Right visual */}
+              <ModernEfficiencyVisual />
             </div>
           </SectionWrap>
         </section>
 
         {/* PRICING */}
-        <section id="pricing" className="py-18 md:py-24">
-          <TypingSectionTitle text="Simple Pricing" />
+        <section id="pricing" className="py-20">
           <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                {
-                  name: "Starter",
-                  price: "$500",
-                  subtitle: "per month, per role",
-                  big: "5 qualified candidates",
-                  items: ["ATS handoff", "Syfter Certify vetting", "Light outreach", "Weekly refresh"],
-                },
-                {
-                  name: "Growth",
-                  price: "$750",
-                  subtitle: "per month, per role",
-                  big: "10 qualified candidates",
-                  items: ["ATS handoff", "Syfter Certify vetting", "Expanded outreach", "Priority refresh"],
-                  featured: true,
-                },
-              ].map((p, i) => (
-                <motion.div
-                  key={p.name}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.06 }}
-                  className={
-                    "rounded-2xl border p-6 md:p-8 " +
-                    (p.featured
-                      ? "border-[#69bdff]/40 bg-[#69bdff]/10"
-                      : "border-white/10 bg-white/5")
-                  }
-                >
-                  <div className="flex items-baseline gap-3">
-                    <h3 className="text-2xl font-semibold">{p.name}</h3>
-                    {p.featured && (
-                      <span className="text-xs px-2 py-1 rounded-full bg-[#69bdff]/20 border border-[#69bdff]/40 text-[#69bdff]">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-4 text-4xl font-extrabold tracking-tight">{p.price}</div>
-                  <div className="text-sm text-white/70">{p.subtitle}</div>
-                  <div className="mt-4 text-lg">{p.big}</div>
-                  <ul className="mt-4 space-y-2">
-                    {p.items.map((it) => (
-                      <li key={it} className="flex items-start gap-3 text-white/85">
-                        <span className="mt-[7px] inline-block h-2 w-2 rounded-full bg-[#69bdff]" />
-                        <span>{it}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-6">
-                    <Link
-                      href="/#contact"
-                      className={
-                        "inline-flex items-center gap-2 rounded-xl px-5 py-3 transition " +
-                        (p.featured
-                          ? "bg-[#69bdff] text-gray-900 hover:brightness-95"
-                          : "border border-white/20 hover:bg-white/5")
-                      }
-                    >
-                      Get started
-                      <span>→</span>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            <p className="mt-6 text-sm text-white/70">
-              Need multiple roles or more volume?{" "}
-              <Link href="/#contact" className="underline underline-offset-4">
-                Let’s tailor it
-              </Link>
-              .
-            </p>
-          </SectionWrap>
-        </section>
-
-        {/* AGENCY VS SUBSCRIPTION */}
-        <section className="py-18 md:py-24">
-          <TypingSectionTitle text="Agency vs. Efficiency" />
-          <SectionWrap>
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h3 className="text-xl font-semibold">Traditional Agency</h3>
-                <ul className="mt-4 space-y-2 text-white/80">
-                  {[
-                    "Percentage fees on hire",
-                    "Agency-owned process",
-                    "High volume, mixed signal",
-                  ].map((x) => (
-                    <li key={x} className="flex gap-3">
-                      <span className="mt-[7px] h-2 w-2 rounded-full bg-white/30" />
-                      <span>{x}</span>
-                    </li>
-                  ))}
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+              Simple, transparent pricing
+            </h2>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Tier 1 */}
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                <div className="text-4xl font-extrabold">$500</div>
+                <div className="text-white/70 mt-1">per month, per role</div>
+                <div className="mt-2 text-white/90">Includes 5 qualified candidates</div>
+                <ul className="mt-6 space-y-2 text-white/80">
+                  <li>• Delivered weekly</li>
+                  <li>• Your ATS, your process</li>
+                  <li>• Syfter Certify screening</li>
                 </ul>
               </div>
-              <div className="rounded-2xl border border-[#69bdff]/40 bg-[#69bdff]/10 p-6">
-                <h3 className="text-xl font-semibold">Hiring with Efficiency</h3>
-                <ul className="mt-4 space-y-2 text-white/90">
-                  {[
-                    "Flat monthly cost",
-                    "You own candidates and ATS",
-                    "Syfter-Certify signal, delivered weekly",
-                  ].map((x) => (
-                    <li key={x} className="flex gap-3">
-                      <span className="mt-[7px] h-2 w-2 rounded-full bg-[#69bdff]" />
-                      <span>{x}</span>
-                    </li>
-                  ))}
+              {/* Tier 2 */}
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                <div className="text-4xl font-extrabold">$750</div>
+                <div className="text-white/70 mt-1">per month, per role</div>
+                <div className="mt-2 text-white/90">Includes 10 qualified candidates</div>
+                <ul className="mt-6 space-y-2 text-white/80">
+                  <li>• Delivered weekly</li>
+                  <li>• Your ATS, your process</li>
+                  <li>• Syfter Certify screening</li>
                 </ul>
               </div>
             </div>
           </SectionWrap>
         </section>
 
-        {/* FAQ */}
-        <section className="py-18 md:py-24">
-          <TypingSectionTitle text="FAQs" />
+        {/* lightweight CTA footer */}
+        <section id="contact" className="py-16">
           <SectionWrap>
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                {
-                  q: "Do we really own the candidates?",
-                  a: "Yes. We hand off into your ATS or preferred workflow. You control comms and process.",
-                },
-                {
-                  q: "How many roles can we run?",
-                  a: "As many as you like. Pricing is per role so you can scale up or down based on need.",
-                },
-                {
-                  q: "What roles do you cover?",
-                  a: "Primarily technology, product, GTM, and operations across US time zones.",
-                },
-                {
-                  q: "Can you convert to full agency if we need it?",
-                  a: "Absolutely. If you want us to fully own the process, we can switch to a contingency or retained model.",
-                },
-              ].map((f, i) => (
-                <motion.div
-                  key={f.q}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.5, delay: i * 0.05 }}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6"
-                >
-                  <div className="text-lg font-semibold">{f.q}</div>
-                  <p className="mt-2 text-white/80">{f.a}</p>
-                </motion.div>
-              ))}
-            </div>
-          </SectionWrap>
-        </section>
-
-        {/* CTA */}
-        <section className="py-24">
-          <SectionWrap>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-12 text-center">
-              <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-                Ready to hire with <span className="italic text-[#69bdff]">efficiency</span>?
-              </h3>
-              <p className="mt-4 text-white/85">
-                We’ll plug into your process and keep the pipeline warm — without the agency price tag.
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center">
+              <h3 className="text-2xl font-bold">Ready to hire with efficiency?</h3>
+              <p className="text-white/80 mt-2">
+                We’ll calibrate on role profiles and start sourcing this week.
               </p>
-              <div className="mt-6 flex justify-center gap-4">
-                <Link
-                  href="/#contact"
-                  className="rounded-xl bg-[#69bdff] text-gray-900 font-semibold px-5 py-3 hover:brightness-95 transition"
-                >
-                  Talk to us
-                </Link>
-                <Link
-                  href="#pricing"
-                  className="rounded-xl border border-white/20 px-5 py-3 hover:bg-white/5 transition"
-                >
-                  See pricing
-                </Link>
-              </div>
+              <a
+                href="mailto:hello@syfter.com"
+                className="inline-flex items-center justify-center rounded-2xl px-5 py-3 bg-[#69bdff] text-gray-900 font-semibold mt-6 hover:brightness-110 transition"
+              >
+                Get started
+              </a>
             </div>
           </SectionWrap>
         </section>
