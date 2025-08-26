@@ -1,143 +1,160 @@
-// pages/efficiency.tsx
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
 
-/* ------------------------------- Helpers -------------------------------- */
+/* ------------------------------- Layout bits ------------------------------ */
 
 function SectionWrap({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-6">{children}</div>;
 }
 
-// Darker banner band (no gradient)
+// darker “band” (no gradient) for section contrast
 function Band({ children }: { children: React.ReactNode }) {
   return (
-    <section className="py-28" style={{ backgroundColor: "#2b3945" }}>
+    <section className="py-28" style={{ backgroundColor: "#2f3b46" }}>
       <SectionWrap>{children}</SectionWrap>
     </section>
   );
 }
 
-// punchier fade-up preset
+/* -------------------------- Typewriter section title --------------------- */
+
+function TypingTitle({
+  as = "h2",
+  text,
+  className = "",
+}: {
+  as?: "h1" | "h2";
+  text: string;
+  className?: string;
+}) {
+  const [chars, setChars] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && setStarted(true),
+      { threshold: 0.6 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started || chars >= text.length) return;
+    const id = setTimeout(() => setChars((c) => c + 1), 48);
+    return () => clearTimeout(id);
+  }, [started, chars, text.length]);
+
+  const Tag = as as any;
+  return (
+    <div ref={ref}>
+      <Tag className={className}>
+        <span aria-label={text}>{text.slice(0, chars)}</span>
+        <span className="inline-block w-[0.55ch] border-r-2 border-white/80 ml-[1px] align-middle animate-pulse" />
+      </Tag>
+      {as === "h2" && (
+        <motion.div
+          className="h-[3px] w-24 bg-[#69bdff] rounded-full mt-3"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={started ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          style={{ transformOrigin: "left" }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------ Automation panel ------------------------- */
+/** Stripe-ish: glass + grid + pills that reveal one-by-one, then drift gently. */
+
+function AutomationPanel() {
+  return (
+    <>
+      <style jsx>{`
+        @keyframes driftA {
+          0% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
+      `}</style>
+
+      <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden bg-white/5 ring-1 ring-white/10">
+        {/* soft mesh lights */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 80% at 15% 20%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 80% at 85% 80%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 70%)",
+          }}
+        />
+        {/* hairline grid */}
+        <div
+          className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            backgroundPosition: "center",
+          }}
+        />
+
+        {/* pills (absolute), staggered reveal then gentle drift */}
+        {PILLS.map((p, i) => (
+          <motion.div
+            key={p.k}
+            initial={{ opacity: 0, x: p.enterX, y: p.enterY, scale: 0.98 }}
+            whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 + i * 0.18 }}
+            className="absolute"
+            style={{
+              top: p.top,
+              left: p.left,
+              transform: "translate(-50%, -50%)",
+              animation: "driftA 9s ease-in-out infinite",
+              animationDelay: `${i * 0.4}s`,
+              willChange: "transform",
+            }}
+          >
+            <div className="rounded-2xl bg-white/[.06] ring-1 ring-white/10 backdrop-blur-sm px-4 py-3">
+              <div className="text-[13px] font-semibold">{p.title}</div>
+              <div className="text-[12px] text-white/70">{p.sub}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+const PILLS = [
+  { k: "scr", title: "Screened", sub: "Syfter-Certify", top: "28%", left: "22%", enterX: -24, enterY: -10 },
+  { k: "rti", title: "Ready-to-interview", sub: "Availability set", top: "30%", left: "55%", enterX: 20, enterY: -12 },
+  { k: "ats", title: "ATS-first handoff", sub: "You own candidates", top: "32%", left: "82%", enterX: 26, enterY: -8 },
+  { k: "us", title: "US-only", sub: "Verified location", top: "62%", left: "28%", enterX: -16, enterY: 12 },
+  { k: "culture", title: "Culture add", sub: "Human-reviewed", top: "64%", left: "56%", enterX: 12, enterY: 12 },
+  { k: "cad", title: "Weekly cadence", sub: "Predictable flow", top: "66%", left: "80%", enterX: 24, enterY: 16 },
+];
+
+/* --------------------------------- Motion preset -------------------------- */
+
 const fadeUp = {
   initial: { opacity: 0, y: 26 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.35 },
   transition: { duration: 0.7, ease: "easeOut" },
 } as const;
-
-/* ------------------------------ Flow Panel ------------------------------ */
-/** Clean hero visual with floating “candidate cards”. Animations forced on. */
-function FlowPanel() {
-  return (
-    <>
-      <style jsx>{`
-        @keyframes floatA {
-          0% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-16px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
-        }
-        @keyframes floatB {
-          0% {
-            transform: translateY(8px);
-          }
-          50% {
-            transform: translateY(-8px);
-          }
-          100% {
-            transform: translateY(8px);
-          }
-        }
-        @keyframes floatC {
-          0% {
-            transform: translateY(-10px);
-          }
-          50% {
-            transform: translateY(10px);
-          }
-          100% {
-            transform: translateY(-10px);
-          }
-        }
-      `}</style>
-
-      <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden bg-white/5 ring-1 ring-white/10">
-        {/* mesh + grid */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(70% 90% at 15% 25%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 80% at 85% 75%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 70%)",
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.10] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-            backgroundPosition: "center",
-          }}
-        />
-
-        {/* floating cards */}
-        <div className="absolute inset-0 grid grid-cols-3 gap-4 p-6 md:p-10">
-          {[
-            {
-              k: "card-a",
-              list: [
-                { tag: "Screened", sub: "Syfter-Certify" },
-                { tag: "US-only", sub: "Verified location" },
-              ],
-              anim: "floatA 8s ease-in-out infinite",
-              delay: "0s",
-            },
-            {
-              k: "card-b",
-              list: [
-                { tag: "Ready-to-interview", sub: "Availability set" },
-                { tag: "Culture add", sub: "Human-reviewed" },
-              ],
-              anim: "floatB 9.5s ease-in-out infinite",
-              delay: "0.3s",
-            },
-            {
-              k: "card-c",
-              list: [
-                { tag: "ATS-first handoff", sub: "You own candidates" },
-                { tag: "Weekly cadence", sub: "Predictable flow" },
-              ],
-              anim: "floatC 10s ease-in-out infinite",
-              delay: "0.6s",
-            },
-          ].map((col) => (
-            <div
-              key={col.k}
-              className="flex flex-col gap-4 justify-center"
-              style={{ animation: col.anim, animationDelay: col.delay }}
-            >
-              {col.list.map((row) => (
-                <div
-                  key={row.tag}
-                  className="rounded-2xl bg-white/[.06] ring-1 ring-white/10 px-4 py-3 backdrop-blur-sm"
-                >
-                  <div className="text-[13px] font-semibold">{row.tag}</div>
-                  <div className="text-[12px] text-white/70">{row.sub}</div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
 
 /* =================================== PAGE =================================== */
 
@@ -163,12 +180,11 @@ export default function Efficiency() {
           <SectionWrap>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-18 md:gap-20 items-center">
               <div>
-                <motion.h1
+                <TypingTitle
+                  as="h1"
+                  text="Hiring with Efficiency"
                   className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
-                  {...fadeUp}
-                >
-                  Hiring with <span className="italic text-[#69bdff]">Efficiency</span>
-                </motion.h1>
+                />
 
                 <motion.p className="mt-6 text-xl leading-relaxed text-white/90" {...fadeUp}>
                   A subscription that extends your recruiting team. We source and vet.{" "}
@@ -177,16 +193,11 @@ export default function Efficiency() {
                 </motion.p>
 
                 <motion.div className="mt-8 flex flex-wrap gap-3" {...fadeUp}>
-                  {["Weekly delivery", "US-only talent", "Syfter-Certify signal", "ATS-first handoff"].map(
-                    (t) => (
-                      <span
-                        key={t}
-                        className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15"
-                      >
-                        {t}
-                      </span>
-                    )
-                  )}
+                  {["Weekly delivery", "US-only talent", "Syfter-Certify signal", "ATS-first handoff"].map((t) => (
+                    <span key={t} className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15">
+                      {t}
+                    </span>
+                  ))}
                 </motion.div>
 
                 <motion.div className="mt-10 flex flex-wrap gap-4" {...fadeUp}>
@@ -205,18 +216,16 @@ export default function Efficiency() {
                 </motion.div>
               </div>
 
-              <FlowPanel />
+              <AutomationPanel />
             </div>
           </SectionWrap>
         </section>
 
         {/* WHAT YOU GET — banner */}
         <Band>
-          <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
-            What you get
-          </motion.h2>
+          <TypingTitle as="h2" text="What you get" className="text-4xl md:text-5xl font-extrabold tracking-tight" />
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               {
                 t: "Qualified slate, weekly",
@@ -233,7 +242,7 @@ export default function Efficiency() {
             ].map((card, i) => (
               <motion.div
                 key={card.t}
-                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-7 backdrop-blur-sm hover:-translate-y-1 transition-transform"
+                className="rounded-3xl bg-white/6 ring-1 ring-white/10 p-8 backdrop-blur-sm hover:-translate-y-1 transition-transform"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
@@ -254,16 +263,11 @@ export default function Efficiency() {
                 Who it’s for
               </motion.h3>
               <motion.div className="mt-4 flex flex-wrap gap-3" {...fadeUp}>
-                {["HR & People teams", "In-house recruiting", "Founder-led hiring", "Lean TA orgs"].map(
-                  (t) => (
-                    <span
-                      key={t}
-                      className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15"
-                    >
-                      {t}
-                    </span>
-                  )
-                )}
+                {["HR & People teams", "In-house recruiting", "Founder-led hiring", "Lean TA orgs"].map((t) => (
+                  <span key={t} className="px-3 py-1 rounded-full text-sm bg-white/8 ring-1 ring-white/15">
+                    {t}
+                  </span>
+                ))}
               </motion.div>
             </div>
 
@@ -288,14 +292,17 @@ export default function Efficiency() {
           </div>
         </Band>
 
-        {/* HOW IT WORKS — rail with pop-in steps + animated sweep */}
+        {/* HOW IT WORKS */}
         <section className="py-28">
           <SectionWrap>
-            <motion.h2 className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
-              How it works
-            </motion.h2>
+            <TypingTitle
+              as="h2"
+              text="How it works"
+              className="text-4xl md:text-5xl font-extrabold tracking-tight"
+            />
 
             <div className="mt-16 relative">
+              {/* progress sweep */}
               <div className="h-[2px] w-full bg-white/10 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full w-56 bg-gradient-to-r from-transparent via-white/50 to-transparent"
@@ -333,22 +340,16 @@ export default function Efficiency() {
 
         {/* PRICING — banner */}
         <Band>
-          <motion.h2 id="pricing" className="text-4xl md:text-5xl font-extrabold tracking-tight" {...fadeUp}>
-            Simple, transparent pricing
-          </motion.h2>
+          <TypingTitle
+            as="h2"
+            text="Simple, transparent pricing"
+            className="text-4xl md:text-5xl font-extrabold tracking-tight"
+          />
 
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-10">
+          <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-12">
             {[
-              {
-                price: "$500",
-                sub: "per month, per role",
-                note: "Includes 5 qualified candidates",
-              },
-              {
-                price: "$750",
-                sub: "per month, per role",
-                note: "Includes 10 qualified candidates",
-              },
+              { price: "$500", sub: "per month, per role", note: "Includes 5 qualified candidates" },
+              { price: "$750", sub: "per month, per role", note: "Includes 10 qualified candidates" },
             ].map((p, i) => (
               <motion.div
                 key={p.price}
@@ -383,9 +384,7 @@ export default function Efficiency() {
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h3 className="text-2xl font-bold">Ready to hire with efficiency?</h3>
-              <p className="text-white/80 mt-2">
-                We’ll calibrate roles this week and start your first slate.
-              </p>
+              <p className="text-white/80 mt-2">We’ll calibrate roles this week and start your first slate.</p>
               <a
                 href="mailto:hello@syfter.com"
                 className="inline-flex items-center justify-center rounded-2xl px-5 py-3 bg-[#69bdff] text-gray-900 font-semibold mt-6 hover:brightness-110 transition"
