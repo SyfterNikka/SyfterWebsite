@@ -63,8 +63,6 @@ function GridBackdrop() {
 
 function HeroBackdrop() {
   const prefersReduced = useReducedMotion();
-
-  // cubic-bezier for easeInOut to satisfy TS
   const easeInOut: [number, number, number, number] = [0.42, 0, 0.58, 1];
 
   return (
@@ -75,13 +73,9 @@ function HeroBackdrop() {
           background: `radial-gradient(closest-side, ${SYFTER_BLUE}22, transparent 65%)`,
           filter: "blur(20px)",
         }}
-        animate={
-          prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }
-        }
+        animate={prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }}
         transition={
-          prefersReduced
-            ? undefined
-            : { duration: 22, repeat: Infinity, ease: easeInOut }
+          prefersReduced ? undefined : { duration: 22, repeat: Infinity, ease: easeInOut }
         }
       />
       <motion.div
@@ -90,11 +84,14 @@ function HeroBackdrop() {
           background: `radial-gradient(closest-side, #ffffff1a, transparent 60%)`,
           filter: "blur(24px)",
         }}
-        animate={
-          prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }
-        }
+        animate={prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }}
         transition={
-          prefersReduced
+          prefersReduced ? undefined : { duration: 22, repeat: Infinity, ease: easeInOut }
+        }
+      />
+    </div>
+  );
+}
 
 
 function TrustCard({ title, desc, benefit, icon }: { title: string; desc: string; benefit: string; icon?: React.ReactNode }) {
