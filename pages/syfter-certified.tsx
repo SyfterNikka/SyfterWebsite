@@ -63,22 +63,39 @@ function GridBackdrop() {
 
 function HeroBackdrop() {
   const prefersReduced = useReducedMotion();
-  const anim = prefersReduced ? {} : { animate: { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }, transition: { duration: 22, repeat: Infinity, ease: "easeInOut" } };
+
+  // cubic-bezier for easeInOut to satisfy TS
+  const easeInOut: [number, number, number, number] = [0.42, 0, 0.58, 1];
+
   return (
     <div aria-hidden className="absolute inset-0 overflow-hidden">
       <motion.div
-        {...anim}
         className="absolute -top-40 -left-40 w-[55vw] h-[55vw] rounded-full"
-        style={{ background: `radial-gradient(closest-side, ${SYFTER_BLUE}22, transparent 65%)`, filter: "blur(20px)" }}
+        style={{
+          background: `radial-gradient(closest-side, ${SYFTER_BLUE}22, transparent 65%)`,
+          filter: "blur(20px)",
+        }}
+        animate={
+          prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }
+        }
+        transition={
+          prefersReduced
+            ? undefined
+            : { duration: 22, repeat: Infinity, ease: easeInOut }
+        }
       />
       <motion.div
-        {...anim}
         className="absolute -bottom-24 -right-32 w-[45vw] h-[45vw] rounded-full"
-        style={{ background: `radial-gradient(closest-side, #ffffff1a, transparent 60%)`, filter: "blur(24px)" }}
-      />
-    </div>
-  );
-}
+        style={{
+          background: `radial-gradient(closest-side, #ffffff1a, transparent 60%)`,
+          filter: "blur(24px)",
+        }}
+        animate={
+          prefersReduced ? undefined : { x: [0, 8, -6, 0], y: [0, -6, 8, 0] }
+        }
+        transition={
+          prefersReduced
+
 
 function TrustCard({ title, desc, benefit, icon }: { title: string; desc: string; benefit: string; icon?: React.ReactNode }) {
   return (
