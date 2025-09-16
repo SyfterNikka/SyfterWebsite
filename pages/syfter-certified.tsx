@@ -176,42 +176,37 @@ export default function CertifiedPage() {
         </div>
       </SectionWrap>
 
-      {/* 5-Point Protocol */}
-      <SectionWrap id="protocol">
-        <FivePointShield />
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <TrustCard
-            title="Human Verified Presence"
-            desc="Live human to human video screen with real backgrounds, recorded and transcribed."
-            benefit="Confirms the candidate is real, present, and personally accountable."
-            icon={<Shield className="w-7 h-7 text-white" />}
-          />
-          <TrustCard
-            title="Geo Location Check"
-            desc="We confirm stated location validity through our Syfter Trust process."
-            benefit="Prevents remote fraud and misrepresentation."
-            icon={<Shield className="w-7 h-7 text-white" />}
-          />
-          <TrustCard
-            title="AI Interview Prevention"
-            desc="Pre vetted open ended questions asked live, with real time monitoring for AI assistance."
-            benefit="Maximizes real human responses and disables AI help."
-            icon={<Shield className="w-7 h-7 text-white" />}
-          />
-          <TrustCard
-            title="Multi Channel Validation"
-            desc="We cross reference resume claims with publicly available profiles."
-            benefit="Minimizes identity fraud and verifies work history integrity."
-            icon={<Shield className="w-7 h-7 text-white" />}
-          />
-          <TrustCard
-            title="Syfter Trust Guarantee"
-            desc="A signed commitment that affirms identity, location, and exclusive engagement."
-            benefit="Adds an extra layer of protection and accountability."
-            icon={<Shield className="w-7 h-7 text-white" />}
-          />
-        </div>
-      </SectionWrap>
+      {/* 5-Point Protocol as vertical list */}
+<SectionWrap id="protocol">
+<TypingSectionTitle label="5-Point" highlight="Trust Protocol" />
+<div className="mt-10 space-y-10">
+<TrustRow
+title="Human Verified Presence"
+desc="Live human to human video screen with real backgrounds, recorded and transcribed."
+benefit="Confirms the candidate is real, present, and personally accountable."
+/>
+<TrustRow
+title="Geo Location Check"
+desc="We confirm stated location validity through our Syfter Trust process."
+benefit="Prevents remote fraud and misrepresentation."
+/>
+<TrustRow
+title="AI Interview Prevention"
+desc="Pre vetted open ended questions asked live, with real time monitoring for AI assistance."
+benefit="Maximizes real human responses and disables AI help."
+/>
+<TrustRow
+title="Multi Channel Validation"
+desc="We cross reference resume claims with publicly available profiles."
+benefit="Minimizes identity fraud and verifies work history integrity."
+/>
+<TrustRow
+title="Syfter Trust Guarantee"
+desc="A signed commitment that affirms identity, location, and exclusive engagement."
+benefit="Adds an extra layer of protection and accountability."
+/>
+</div>
+</SectionWrap>
 
       {/* How it fits your process */}
       <SectionWrap id="fit">
