@@ -131,8 +131,8 @@ type Feature = { key: string; title: string; desc: string; drift: number; bgWord
 function WordsTabs() {
   const items: Feature[] = [
     {
-      key: "certify",
-      title: "Syfter Certify",
+      key: "certified",
+      title: "Syfter Certified",
       desc:
         "A 5-step trust protocol to verify identity, communication, experience, and readiness — so every candidate is real and ready.",
       drift: 10,
